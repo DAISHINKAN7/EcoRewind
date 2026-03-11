@@ -1,0 +1,279 @@
+13:12:39 INFO ============================================================
+13:12:39 INFO  ECO-REWIND: Step 1 — Build Tensors & Patches
+13:12:39 INFO ============================================================
+13:12:39 INFO   Data mode:     local
+13:12:39 INFO   Processed dir: ./processed
+13:12:39 INFO   Force rebuild: True
+13:12:39 INFO Data root resolved: /home/CL502-17/Desktop/Kunal_IDL_V1/EcoRewind_Data
+13:12:39 WARNING Metadata file not found: /home/CL502-17/Desktop/Kunal_IDL_V1/EcoRewind_Data/pipeline_metadata_v2.json — continuing without it
+13:12:39 INFO 
+--- Building tensors ---
+13:12:39 INFO 
+[EVERGLADES]
+13:12:39 INFO [everglades] Found all 32 composites.
+13:12:39 INFO 
+[EVERGLADES] Time-index → Date mapping:
+13:12:39 INFO  Index                 Label   Quality  Note
+13:12:39 INFO --------------------------------------------------------
+13:12:39 INFO      0    everglades_2016_Q1      GOOD  
+13:12:39 INFO      1    everglades_2016_Q2      GOOD  
+13:12:39 INFO      2    everglades_2016_Q3      POOR  
+13:12:39 INFO      3    everglades_2016_Q4      FAIR  
+13:12:39 INFO      4    everglades_2017_Q1      GOOD  
+13:12:39 INFO      5    everglades_2017_Q2      GOOD  <-- last pre-event [INTERPOLATED]
+13:12:39 INFO      6    everglades_2017_Q3      GOOD  <-- t_event (Irma)
+13:12:39 INFO      7    everglades_2017_Q4      GOOD  
+13:12:39 INFO      8    everglades_2018_Q1      GOOD  
+13:12:39 INFO      9    everglades_2018_Q2      GOOD  
+13:12:39 INFO     10    everglades_2018_Q3      POOR  
+13:12:39 INFO     11    everglades_2018_Q4      GOOD  
+13:12:39 INFO     12    everglades_2019_Q1      GOOD  
+13:12:39 INFO     13    everglades_2019_Q2      GOOD  
+13:12:39 INFO     14    everglades_2019_Q3      POOR  
+13:12:39 INFO     15    everglades_2019_Q4      GOOD  
+13:12:39 INFO     16    everglades_2020_Q1      GOOD  
+13:12:39 INFO     17    everglades_2020_Q2      GOOD  
+13:12:39 INFO     18    everglades_2020_Q3      POOR  
+13:12:39 INFO     19    everglades_2020_Q4      GOOD  
+13:12:39 INFO     20    everglades_2021_Q1      GOOD  
+13:12:39 INFO     21    everglades_2021_Q2      GOOD  
+13:12:39 INFO     22    everglades_2021_Q3      POOR  
+13:12:39 INFO     23    everglades_2021_Q4      GOOD  
+13:12:39 INFO     24    everglades_2022_Q1      GOOD  
+13:12:39 INFO     25    everglades_2022_Q2      GOOD  
+13:12:39 INFO     26    everglades_2022_Q3      GOOD  
+13:12:39 INFO     27    everglades_2022_Q4      GOOD  
+13:12:39 INFO     28    everglades_2023_Q1      GOOD  
+13:12:39 INFO     29    everglades_2023_Q2      GOOD  
+13:12:39 INFO     30    everglades_2023_Q3      GOOD  
+13:12:39 INFO     31    everglades_2023_Q4      GOOD  
+13:12:39 INFO 
+13:12:39 INFO   t_event=6 → everglades_2017_Q3
+  If this does not match Irma (Q3 2017), edit t_event in configs/config.yaml.
+13:12:39 INFO [everglades] Allocating tensor (32, 7, 2005, 2203) ...
+13:12:39 INFO   Loaded mask: everglades_2016_Q2
+13:12:39 INFO   Loaded mask: everglades_2016_Q3
+13:12:39 INFO   Loaded mask: everglades_2018_Q3
+13:12:39 INFO   Loaded mask: everglades_2019_Q3
+13:12:39 INFO   Loaded mask: everglades_2020_Q3
+13:12:39 INFO   [00/31] Reading everglades_2016_Q1 (GOOD) ...
+13:12:40 INFO   [01/31] Reading everglades_2016_Q2 (GOOD) ...
+13:12:41 INFO     Using pre-computed validity mask for everglades_2016_Q2
+13:12:41 INFO   [02/31] Reading everglades_2016_Q3 (POOR) ...
+13:12:42 INFO     Using pre-computed validity mask for everglades_2016_Q3
+13:12:42 INFO   [03/31] Reading everglades_2016_Q4 (FAIR) ...
+13:12:43 INFO   [04/31] Reading everglades_2017_Q1 (GOOD) ...
+13:12:44 INFO   [05/31] Reading everglades_2017_Q2 (GOOD) ...
+13:12:45 INFO   [06/31] Reading everglades_2017_Q3 (GOOD) ...
+13:12:46 INFO   [07/31] Reading everglades_2017_Q4 (GOOD) ...
+13:12:47 INFO   [08/31] Reading everglades_2018_Q1 (GOOD) ...
+13:12:48 INFO   [09/31] Reading everglades_2018_Q2 (GOOD) ...
+13:12:49 INFO   [10/31] Reading everglades_2018_Q3 (POOR) ...
+13:12:50 INFO     Using pre-computed validity mask for everglades_2018_Q3
+13:12:50 INFO   [11/31] Reading everglades_2018_Q4 (GOOD) ...
+13:12:50 INFO   [12/31] Reading everglades_2019_Q1 (GOOD) ...
+13:12:51 INFO   [13/31] Reading everglades_2019_Q2 (GOOD) ...
+13:12:52 INFO   [14/31] Reading everglades_2019_Q3 (POOR) ...
+13:12:53 INFO     Using pre-computed validity mask for everglades_2019_Q3
+13:12:53 INFO   [15/31] Reading everglades_2019_Q4 (GOOD) ...
+13:12:54 INFO   [16/31] Reading everglades_2020_Q1 (GOOD) ...
+13:12:55 INFO   [17/31] Reading everglades_2020_Q2 (GOOD) ...
+13:12:56 INFO   [18/31] Reading everglades_2020_Q3 (POOR) ...
+13:12:57 INFO     Using pre-computed validity mask for everglades_2020_Q3
+13:12:57 INFO   [19/31] Reading everglades_2020_Q4 (GOOD) ...
+13:12:58 INFO   [20/31] Reading everglades_2021_Q1 (GOOD) ...
+13:12:59 INFO   [21/31] Reading everglades_2021_Q2 (GOOD) ...
+13:13:00 INFO   [22/31] Reading everglades_2021_Q3 (POOR) ...
+13:13:01 INFO   [23/31] Reading everglades_2021_Q4 (GOOD) ...
+13:13:02 INFO   [24/31] Reading everglades_2022_Q1 (GOOD) ...
+13:13:03 INFO   [25/31] Reading everglades_2022_Q2 (GOOD) ...
+13:13:04 INFO   [26/31] Reading everglades_2022_Q3 (GOOD) ...
+13:13:05 INFO   [27/31] Reading everglades_2022_Q4 (GOOD) ...
+13:13:06 INFO   [28/31] Reading everglades_2023_Q1 (GOOD) ...
+13:13:07 INFO   [29/31] Reading everglades_2023_Q2 (GOOD) ...
+13:13:08 INFO   [30/31] Reading everglades_2023_Q3 (GOOD) ...
+13:13:09 INFO   [31/31] Reading everglades_2023_Q4 (GOOD) ...
+13:13:10 INFO 
+[EVERGLADES] Disturbance signal validation:
+13:13:10 INFO   Baseline NDVI (Q3 prior years): 0.5223
+13:13:10 INFO   Event NDVI (t=6):        0.4247
+13:13:10 INFO   ΔNDVI at impact:                 -0.0976
+13:13:10 INFO   ✅ DROP CONFIRMED — hurricane signal present
+13:13:13 INFO [everglades] Saved tensor → processed/everglades/tensor.npy
+13:13:13 INFO [everglades] Saved validity → processed/everglades/validity.npy
+13:13:13 INFO 
+[EVERGLADES] Tensor summary:
+13:13:13 INFO   Shape: (T=32, C=7, H=2005, W=2203)
+13:13:13 INFO   Size:  3.96 GB
+13:13:13 INFO         Band      Mean       Std    NaN%
+13:13:13 INFO   --------------------------------------
+13:13:14 INFO         Blue  350.1753  254.5558    9.6%
+13:13:14 INFO        Green  587.5717  304.4405    9.5%
+13:13:15 INFO          Red  581.8914  350.8948    9.5%
+13:13:16 INFO          NIR  1869.3989  736.7350    9.5%
+13:13:16 INFO         NDVI    0.4968    0.2663    9.5%
+13:13:17 INFO         NDWI   -0.4972    0.2265    9.5%
+13:13:17 INFO       SAR_VV   -9.9505    3.3016   81.3%
+13:13:17 INFO 
+13:13:17 INFO 
+[MISSISSIPPI]
+13:13:17 INFO [mississippi] Found all 32 composites.
+13:13:17 INFO 
+[MISSISSIPPI] Time-index → Date mapping:
+13:13:17 INFO  Index                 Label   Quality  Note
+13:13:17 INFO --------------------------------------------------------
+13:13:17 INFO      0   mississippi_2016_Q1      GOOD  
+13:13:17 INFO      1   mississippi_2016_Q2      GOOD  
+13:13:17 INFO      2   mississippi_2016_Q3      GOOD  
+13:13:17 INFO      3   mississippi_2016_Q4      GOOD  
+13:13:17 INFO      4   mississippi_2017_Q1      GOOD  
+13:13:17 INFO      5   mississippi_2017_Q2      GOOD  
+13:13:17 INFO      6   mississippi_2017_Q3      GOOD  
+13:13:17 INFO      7   mississippi_2017_Q4      GOOD  
+13:13:17 INFO      8   mississippi_2018_Q1      GOOD  
+13:13:17 INFO      9   mississippi_2018_Q2      GOOD  
+13:13:17 INFO     10   mississippi_2018_Q3      GOOD  
+13:13:17 INFO     11   mississippi_2018_Q4      GOOD  
+13:13:17 INFO     12   mississippi_2019_Q1      GOOD  
+13:13:17 INFO     13   mississippi_2019_Q2      GOOD  
+13:13:17 INFO     14   mississippi_2019_Q3      GOOD  
+13:13:17 INFO     15   mississippi_2019_Q4      GOOD  
+13:13:17 INFO     16   mississippi_2020_Q1      GOOD  
+13:13:17 INFO     17   mississippi_2020_Q2      GOOD  
+13:13:17 INFO     18   mississippi_2020_Q3      GOOD  
+13:13:17 INFO     19   mississippi_2020_Q4      GOOD  
+13:13:17 INFO     20   mississippi_2021_Q1      GOOD  
+13:13:17 INFO     21   mississippi_2021_Q2      GOOD  <-- last pre-event
+13:13:17 INFO     22   mississippi_2021_Q3      GOOD  <-- t_event (Ida)
+13:13:17 INFO     23   mississippi_2021_Q4      GOOD  
+13:13:17 INFO     24   mississippi_2022_Q1      GOOD  
+13:13:17 INFO     25   mississippi_2022_Q2      GOOD  
+13:13:17 INFO     26   mississippi_2022_Q3      GOOD  
+13:13:17 INFO     27   mississippi_2022_Q4      GOOD  
+13:13:17 INFO     28   mississippi_2023_Q1      GOOD  
+13:13:17 INFO     29   mississippi_2023_Q2      GOOD  
+13:13:17 INFO     30   mississippi_2023_Q3      GOOD  
+13:13:17 INFO     31   mississippi_2023_Q4      GOOD  
+13:13:17 INFO 
+13:13:17 INFO   t_event=22 → mississippi_2021_Q3
+  If this does not match Ida (Q3 2021), edit t_event in configs/config.yaml.
+13:13:17 WARNING 
+============================================================
+[MISSISSIPPI] version='v1' — original open-water AOI.
+  Expected: NDVI ≈ 0.003 (open water delta — WRONG AOI)
+  This data will be loaded but may not show hurricane signal.
+  When Barataria Bay re-export is complete:
+    1. Place v2 files in Mississippi/ folder
+    2. Set version: 'v2' in configs/config.yaml
+============================================================
+13:13:17 INFO [mississippi] Allocating tensor (32, 7, 2004, 2287) ...
+13:13:18 INFO   [00/31] Reading mississippi_2016_Q1 (GOOD) ...
+13:13:19 INFO   [01/31] Reading mississippi_2016_Q2 (GOOD) ...
+13:13:20 INFO   [02/31] Reading mississippi_2016_Q3 (GOOD) ...
+13:13:21 INFO   [03/31] Reading mississippi_2016_Q4 (GOOD) ...
+13:13:22 INFO   [04/31] Reading mississippi_2017_Q1 (GOOD) ...
+13:13:23 INFO   [05/31] Reading mississippi_2017_Q2 (GOOD) ...
+13:13:24 INFO   [06/31] Reading mississippi_2017_Q3 (GOOD) ...
+13:13:25 INFO   [07/31] Reading mississippi_2017_Q4 (GOOD) ...
+13:13:26 INFO   [08/31] Reading mississippi_2018_Q1 (GOOD) ...
+13:13:27 INFO   [09/31] Reading mississippi_2018_Q2 (GOOD) ...
+13:13:28 INFO   [10/31] Reading mississippi_2018_Q3 (GOOD) ...
+13:13:29 INFO   [11/31] Reading mississippi_2018_Q4 (GOOD) ...
+13:13:30 INFO   [12/31] Reading mississippi_2019_Q1 (GOOD) ...
+13:13:31 INFO   [13/31] Reading mississippi_2019_Q2 (GOOD) ...
+13:13:32 INFO   [14/31] Reading mississippi_2019_Q3 (GOOD) ...
+13:13:33 INFO   [15/31] Reading mississippi_2019_Q4 (GOOD) ...
+13:13:34 INFO   [16/31] Reading mississippi_2020_Q1 (GOOD) ...
+13:13:35 INFO   [17/31] Reading mississippi_2020_Q2 (GOOD) ...
+13:13:36 INFO   [18/31] Reading mississippi_2020_Q3 (GOOD) ...
+13:13:37 INFO   [19/31] Reading mississippi_2020_Q4 (GOOD) ...
+13:13:39 INFO   [20/31] Reading mississippi_2021_Q1 (GOOD) ...
+13:13:40 INFO   [21/31] Reading mississippi_2021_Q2 (GOOD) ...
+13:13:41 INFO   [22/31] Reading mississippi_2021_Q3 (GOOD) ...
+13:13:42 INFO   [23/31] Reading mississippi_2021_Q4 (GOOD) ...
+13:13:43 INFO   [24/31] Reading mississippi_2022_Q1 (GOOD) ...
+13:13:44 INFO   [25/31] Reading mississippi_2022_Q2 (GOOD) ...
+13:13:45 INFO   [26/31] Reading mississippi_2022_Q3 (GOOD) ...
+13:13:46 INFO   [27/31] Reading mississippi_2022_Q4 (GOOD) ...
+13:13:47 INFO   [28/31] Reading mississippi_2023_Q1 (GOOD) ...
+13:13:48 INFO   [29/31] Reading mississippi_2023_Q2 (GOOD) ...
+13:13:49 INFO   [30/31] Reading mississippi_2023_Q3 (GOOD) ...
+13:13:50 INFO   [31/31] Reading mississippi_2023_Q4 (GOOD) ...
+13:13:51 INFO 
+[MISSISSIPPI] Disturbance signal validation:
+13:13:51 INFO   Mean NDVI across all timesteps: -0.0227
+13:13:51 WARNING   ⚠️  Very low NDVI (-0.0227 < 0.1).
+  This matches the v1 open-water delta AOI (wrong location).
+  Hurricane Ida signal will NOT be detectable.
+  ACTION: Re-export from Barataria Bay (29.45°N, −90.7°W)
+  and set mississippi.version='v2' in config.yaml.
+13:13:54 INFO [mississippi] Saved tensor → processed/mississippi/tensor.npy
+13:13:54 INFO [mississippi] Saved validity → processed/mississippi/validity.npy
+13:13:54 INFO 
+[MISSISSIPPI] Tensor summary:
+13:13:54 INFO   Shape: (T=32, C=7, H=2004, W=2287)
+13:13:54 INFO   Size:  4.11 GB
+13:13:54 INFO         Band      Mean       Std    NaN%
+13:13:54 INFO   --------------------------------------
+13:13:55 INFO         Blue  328.2087  112.9758    0.0%
+13:13:56 INFO        Green  433.8311  131.9803    0.0%
+13:13:57 INFO          Red  422.6027  150.0714    0.0%
+13:13:57 INFO          NIR  715.3679  752.3536    0.0%
+13:13:58 INFO         NDVI   -0.0227    0.4199    0.0%
+13:13:59 INFO         NDWI    0.0403    0.4443    0.0%
+13:13:59 INFO       SAR_VV  -16.6642    4.5879   87.5%
+13:13:59 INFO 
+13:13:59 INFO 
+--- Fitting normalizers (pre-disturbance only) ---
+13:13:59 INFO [everglades] Fitting normalizer (t_event=6) ...
+13:13:59 INFO Fitting normalizer on t=0..5 (6 pre-disturbance quarters)
+13:13:59 INFO         Blue [minmax]  min=0.0000  max=7984.0000  mean=302.7018  std=239.9195
+13:13:59 INFO        Green [minmax]  min=0.0000  max=7552.0000  mean=561.4307  std=279.3844
+13:13:59 INFO          Red [minmax]  min=0.0000  max=7320.0000  mean=570.3628  std=319.2935
+13:14:00 INFO          NIR [minmax]  min=0.0000  max=8000.0000  mean=1836.5759  std=689.6039
+13:14:00 INFO         NDVI [ shift]  min=-1.0000  max=1.0000  mean=0.4973  std=0.2728
+13:14:00 INFO         NDWI [ shift]  min=-1.0000  max=1.0000  mean=-0.5107  std=0.2307
+13:14:00 INFO       SAR_VV [zscore]  min=-49.2060  max=7.4958  mean=-10.2290  std=3.3377
+13:14:00 INFO Normalizer stats saved → processed/everglades/normalizer_stats.json
+13:14:00 INFO [mississippi] Fitting normalizer (t_event=22) ...
+13:14:00 INFO Fitting normalizer on t=0..21 (22 pre-disturbance quarters)
+13:14:00 INFO         Blue [minmax]  min=0.0000  max=5292.0000  mean=317.7307  std=110.8958
+13:14:01 INFO        Green [minmax]  min=0.0000  max=5188.0000  mean=420.1573  std=131.3191
+13:14:02 INFO          Red [minmax]  min=0.0000  max=4976.0000  mean=414.1583  std=149.2908
+13:14:02 INFO          NIR [minmax]  min=0.0000  max=6904.0000  mean=717.2729  std=742.3247
+13:14:03 INFO         NDVI [ shift]  min=-1.0000  max=0.9645  mean=-0.0158  std=0.4285
+13:14:03 INFO         NDWI [ shift]  min=-0.8861  max=1.0000  mean=0.0277  std=0.4502
+13:14:04 INFO       SAR_VV [zscore]  min=-47.8214  max=17.8524  mean=-16.6642  std=4.5879
+13:14:04 INFO Normalizer stats saved → processed/mississippi/normalizer_stats.json
+13:14:04 INFO 
+--- Normalizing tensors ---
+13:14:04 INFO   Normalizing everglades...
+13:14:18 INFO   Saved normalized tensor → processed/everglades/tensor_normalized.npy
+13:14:18 INFO   Normalizing mississippi...
+13:14:34 INFO   Saved normalized tensor → processed/mississippi/tensor_normalized.npy
+13:14:34 INFO 
+--- Extracting patches ---
+13:14:34 INFO 
+[EVERGLADES] Extracting patches...
+13:14:34 INFO [everglades] Sampling patches: 31×34 = 1054 candidates
+13:14:41 INFO [everglades] Accepted: 1054 patches | Rejected: 0 (NaN > 85%)
+13:15:16 INFO [everglades] Saved 1054 patches → processed/everglades/patches/patches.npy
+  Shape: (1054, 32, 8, 128, 128)
+  Size:  17.68 GB
+13:15:16 INFO   Patches saved → processed/everglades/patches
+13:15:16 INFO 
+[MISSISSIPPI] Extracting patches...
+13:15:16 INFO [mississippi] Sampling patches: 31×35 = 1085 candidates
+13:15:24 INFO [mississippi] Accepted: 1085 patches | Rejected: 0 (NaN > 85%)
+13:16:01 INFO [mississippi] Saved 1085 patches → processed/mississippi/patches/patches.npy
+  Shape: (1085, 32, 8, 128, 128)
+  Size:  18.20 GB
+13:16:01 INFO   Patches saved → processed/mississippi/patches
+13:16:01 INFO 
+============================================================
+13:16:01 INFO  Build Complete!
+13:16:01 INFO ============================================================
+13:16:01 INFO   everglades: 1054 patches, shape=(1054, 32, 8, 128, 128)
+13:16:01 INFO   mississippi: 1085 patches, shape=(1085, 32, 8, 128, 128)
+13:16:01 INFO 
+Next step: python scripts/02_train_convlstm.py
