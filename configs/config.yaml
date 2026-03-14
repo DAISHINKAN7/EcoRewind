@@ -155,7 +155,7 @@ model:
   t_input: 4                  # 4 quarters = 1 years of context
  
   # Number of future quarters to predict
-  t_output: 2                 # 2 quarters = 6 months ahead
+  t_output: 4                 # 2 quarters = 6 months ahead
 
  
   convlstm:
@@ -173,7 +173,7 @@ model:
 # LOSS FUNCTION
 # =============================================================================
 loss:
-  lambda_temporal: 0.1        # Weight for L_temporal_smooth
+  lambda_temporal: 0.2        # Weight for L_temporal_smooth
   lambda_ecological: 0.05     # Weight for L_ecological constraints
   # L_total = L_recon + lambda_temporal * L_temporal + lambda_ecological * L_eco
  
@@ -181,11 +181,11 @@ loss:
 # TRAINING
 # =============================================================================
 training:
-  epochs: 100
+  epochs: 150
   batch_size: 4
   learning_rate: 0.0001
   weight_decay: 0.00001
-  patience: 15                # Early stopping patience (epochs)
+  patience: 25                # Early stopping patience (epochs)
   grad_clip: 1.0
   train_on: joint
  

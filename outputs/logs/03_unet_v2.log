@@ -1,0 +1,46 @@
+nohup: ignoring input
+15:31:47 INFO ============================================================
+15:31:47 INFO  ECO-REWIND: Step 3 — Train U-Net + Temporal Attention
+15:31:47 INFO ============================================================
+15:31:47 INFO   Architecture:  U-Net (enc=[32, 64, 128, 256]) + LSTM(512) + Attn(8h)
+15:31:47 INFO   Train on:      joint
+15:31:47 INFO   Epochs:        150
+15:31:47 INFO   Batch size:    4
+15:31:47 INFO   GPU:           True
+15:31:47 INFO   GPU VRAM: 16.7 GB total, 16.7 GB free
+15:31:47 INFO Active ecosystems for training: ['everglades', 'mississippi']
+15:31:47 INFO Window mode: all | Balanced sampling: True
+15:31:47 INFO Generated 21 sliding windows (mode=all, t_input=4, t_output=4, t_event=6, T=32)
+15:31:47 INFO [everglades] Dataset: 1054 patches × 21 windows = 22134 samples | C=8 H=128 W=128
+15:31:47 INFO [everglades] Train: 18814 | Val: 3320 samples
+15:31:47 INFO Generated 21 sliding windows (mode=all, t_input=4, t_output=4, t_event=23, T=32)
+15:31:47 INFO [mississippi] Dataset: 1085 patches × 21 windows = 22785 samples | C=8 H=128 W=128
+15:31:47 INFO [mississippi] Train: 19368 | Val: 3417 samples
+15:31:47 INFO WeightedRandomSampler enabled: everglades=18814 | mississippi=19368
+15:31:47 INFO DataLoaders built: train=38182 samples (9545 batches) | val=6737 samples (1685 batches)
+15:31:48 INFO 
+  Model parameters: 6,027,751 (~6M)
+15:31:48 INFO Training on: cuda
+15:31:48 INFO   GPU: NVIDIA RTX A4000
+15:31:48 INFO   VRAM: 16.7 GB
+wandb: [wandb.login()] Loaded credentials for https://api.wandb.ai from /home/CL502-17/.netrc.
+wandb: Currently logged in as: kunalajgaonkar31682 (kunalajgaonkar31682-symbiosis-institute-of-technology) to https://api.wandb.ai. Use `wandb login --relogin` to force relogin
+wandb: setting up run 6an2epjj
+wandb: Tracking run with wandb version 0.25.0
+wandb: Run data is saved locally in /home/CL502-17/Desktop/Kunal_IDL_V1/wandb/run-20260314_153151-6an2epjj
+wandb: Run `wandb offline` to turn off syncing.
+wandb: Syncing run unet_temporal_joint
+wandb: ⭐️ View project at https://wandb.ai/kunalajgaonkar31682-symbiosis-institute-of-technology/eco-rewind
+wandb: 🚀 View run at https://wandb.ai/kunalajgaonkar31682-symbiosis-institute-of-technology/eco-rewind/runs/6an2epjj
+15:31:52 INFO W&B initialized: https://wandb.ai/kunalajgaonkar31682-symbiosis-institute-of-technology/eco-rewind/runs/6an2epjj
+15:31:52 INFO Compiling model with torch.compile() for faster training
+15:31:53 INFO 
+============================================================
+  Training started
+  Epochs:         1 → 150
+  Train batches:  9545 per epoch
+  Val batches:    1685 per epoch
+============================================================
+15:31:53 INFO 
+--- Epoch 1/150 ---
+W0314 15:32:31.477000 338915 venv/lib/python3.10/site-packages/torch/_inductor/utils.py:1679] [2/0] Not enough SMs to use max_autotune_gemm mode

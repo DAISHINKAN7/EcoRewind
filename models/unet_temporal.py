@@ -276,8 +276,11 @@ class UNetTemporalModel(nn.Module):
             rearrange(s, "(b t) c h w -> b t c h w", b=B, t=T_in)
             for s in skips_flat
         ]
-        # Use last-timestep skips for decoder (most recent context)
-        skips_last = [s[:, -1] for s in skips_bt]   # list of (B, ch, H_i, W_i)
+        # Aggregate skip features across ALL T_in timesteps (temporal mean).
+        # Previously used only the last timestep, discarding all earlier context.
+        # Mean aggregation gives the decoder access to the full pre-event history
+        # at every spatial scale, which is crucial for accurate CF generation.
+        skips_last = [s.mean(dim=1) for s in skips_bt]   # list of (B, ch, H_i, W_i)
  
         # Initial decoder bottleneck = last LSTM output
         dec_bottleneck = lstm_out[:, -1]   # (B, C_bn)

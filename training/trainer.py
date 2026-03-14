@@ -83,48 +83,51 @@ class Trainer:
 
         self.model = self.model.to(self.device)
 
-        # PyTorch 2 compile (safe speedup)
+        train_cfg = config["training"]
+ 
+        self.optimizer = AdamW(
+            model.parameters(),
+            lr=train_cfg["learning_rate"],
+            weight_decay=train_cfg["weight_decay"],
+        )
+ 
+        self.scheduler = CosineAnnealingLR(
+            self.optimizer,
+            T_max=train_cfg["epochs"],
+            eta_min=train_cfg["learning_rate"] * 0.01,
+        )
+ 
+        self.epochs = train_cfg["epochs"]
+        self.grad_clip = train_cfg["grad_clip"]
+        self.save_every = train_cfg["save_every_n_epochs"]
+ 
+        self.ckpt_dir = Path(config["outputs"]["checkpoints"]) / self.run_name
+        self.ckpt_dir.mkdir(parents=True, exist_ok=True)
+ 
+        self.early_stop = EarlyStoppingMonitor(patience=train_cfg["patience"])
+ 
+        self.use_wandb = config["wandb"]["enabled"]
+        self.wandb_run = None
+ 
+        if self.use_wandb:
+            self._init_wandb()
+ 
+        self.best_val_loss = float("inf")
+        self.best_ckpt_path = None
+        self.start_epoch = 0
+ 
+        # Resume BEFORE torch.compile so checkpoint keys match plain module keys.
+        # torch.compile wraps every key with "_orig_mod." which breaks load_state_dict
+        # on checkpoints saved from a non-compiled model.
+        self._try_resume()
+ 
+        # PyTorch 2 compile (safe speedup) — runs AFTER resume so key names match
         if torch.__version__ >= "2.0" and self.device.type == "cuda":
             try:
                 logger.info("Compiling model with torch.compile() for faster training")
                 self.model = torch.compile(self.model)
             except Exception as e:
                 logger.warning(f"torch.compile failed: {e}")
-
-        train_cfg = config["training"]
-
-        self.optimizer = AdamW(
-            model.parameters(),
-            lr=train_cfg["learning_rate"],
-            weight_decay=train_cfg["weight_decay"],
-        )
-
-        self.scheduler = CosineAnnealingLR(
-            self.optimizer,
-            T_max=train_cfg["epochs"],
-            eta_min=train_cfg["learning_rate"] * 0.01,
-        )
-
-        self.epochs = train_cfg["epochs"]
-        self.grad_clip = train_cfg["grad_clip"]
-        self.save_every = train_cfg["save_every_n_epochs"]
-
-        self.ckpt_dir = Path(config["outputs"]["checkpoints"]) / self.run_name
-        self.ckpt_dir.mkdir(parents=True, exist_ok=True)
-
-        self.early_stop = EarlyStoppingMonitor(patience=train_cfg["patience"])
-
-        self.use_wandb = config["wandb"]["enabled"]
-        self.wandb_run = None
-
-        if self.use_wandb:
-            self._init_wandb()
-
-        self.best_val_loss = float("inf")
-        self.best_ckpt_path = None
-        self.start_epoch = 0
-
-        self._try_resume()
 
     def _init_wandb(self):
         try:
@@ -159,7 +162,7 @@ class Trainer:
 
             ckpt = torch.load(latest, map_location=self.device)
 
-            self.model.load_state_dict(ckpt["model_state"])
+            self.model.load_state_dict(ckpt["model_state"], strict = False)
             self.optimizer.load_state_dict(ckpt["optimizer_state"])
             self.scheduler.load_state_dict(ckpt["scheduler_state"])
 

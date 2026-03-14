@@ -1,0 +1,3 @@
+ecosystem,hurricane,impacted_ha_max,impacted_ha_mean,carbon_loss_tco2_eq,actual_ndvi_slope,cf_ndvi_slope,gap_closing_rate,time_to_convergence_q,n_post_quarters
+everglades,everglades,21645.65,6278.079000000001,289438.78125,0.007867533329761403,-0.02170244509523564,0.029569978424997038,0,10
+mississippi,mississippi,36239.5,31473.939000000002,1474429.75,-0.0003689919640733477,-0.03802520289565575,0.037656210904771635,7,10

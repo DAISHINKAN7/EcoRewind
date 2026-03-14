@@ -45,6 +45,16 @@ class EcoRewindLoss(nn.Module):
         #   NDVI/NDWI (shift):    [0, 1]  (−1→0, +1→1)
         #   SAR_VV (zscore):      roughly [−3, 3] (3-sigma bounds)
         self.band_bounds = self._build_bounds(config)
+
+
+        # Per-band reconstruction weights.
+        # SAR_VV gets 0.1 — high speckle noise makes pixel-wise MSE unreliable,
+        # and SAR R² was −7.14 (ConvLSTM) / −1.25 (UNet), dragging gradients
+        # away from the vegetation bands that actually matter.
+        # All other bands keep weight 1.0.
+        weights = torch.ones(self.n_bands)
+        weights[self.sar_idx] = 0.1
+        self.register_buffer("band_weights", weights)
  
     def _build_bounds(self, config: Dict[str, Any]) -> Dict[str, Tuple[float, float]]:
         """
@@ -87,8 +97,9 @@ class EcoRewindLoss(nn.Module):
  
         n_valid = mask.sum().clamp(min=1.0)
  
-        # --- 1. Reconstruction loss (masked MSE) ---
-        diff_sq = ((pred - target) ** 2) * mask
+        # --- 1. Reconstruction loss (masked MSE, per-band weighted) ---
+        w = self.band_weights.to(pred.device).view(1, 1, -1, 1, 1)  # broadcast over (B, T, C, H, W)
+        diff_sq = ((pred - target) ** 2) * mask * w
         l_recon = diff_sq.sum() / n_valid
  
         # --- 2. Temporal smoothness loss ---
