@@ -72,30 +72,30 @@ ecosystems:
  
   mississippi:
     name: "Mississippi"
-    folder: "Mississippi"
+    folder: "Mississippi_v2"         # v2 re-export: Barataria Bay Spartina marsh
     n_composites: 32
     start_year: 2016
     start_quarter: 1
  
-    # 2021 Q3 = Ida
-    # 2016Q1=0 ... 2021Q1=20, 2021Q2=21, 2021Q3=22
-    # Note: project doc says t=21 — verify with tensor_builder output
-    t_event: 22                   # Hurricane Ida, Q3 2021
+    # Ida made landfall Aug 29 2021 = last 3 days of Q3 (Jul-Sep).
+    # Q3 2021 median composite is pre-Ida dominated (NDVI=0.371, healthy).
+    # First visibly damaged quarter is Q4 2021 (NDVI=0.274) → t_event=23.
+    # 2016Q1=0 ... 2021Q2=21, 2021Q3=22, 2021Q4=23
+    t_event: 23                      # Q4 2021 — first quarter with Ida damage
  
     hurricane: "Ida"
     hurricane_year: 2021
-    hurricane_quarter: 3
+    hurricane_quarter: 4             # Q4 2021 is the first damaged quarter
  
     poor_quarters: []
     fair_quarters: []
-    interpolated_quarters: []
+    # 2016-Q2 missing from GEE export (cloud gap). tensor builder NaN-fills it.
+    interpolated_quarters:
+      - {year: 2016, quarter: 2}
  
-    # Mississippi v1 (original wrong AOI) vs v2 (Barataria Bay)
-    # When v2 re-export is complete, set version to "v2"
-    # v1 = open water delta (NDVI ≈ 0.003, wrong target)
-    # v2 = Barataria Bay Spartina marsh (NDVI ≈ 0.25–0.45)
-    version: "v1"                 # Change to "v2" after Barataria re-export
- 
+    # v2 = Barataria Bay (29.45°N, -90.7°W) — NDVI 0.15–0.41, mean 0.293
+    # v1 = open water delta (NDVI ≈ -0.02, wrong AOI) — do not revert
+    version: "v2"
     # If NDVI mean < this threshold, warn that AOI may be wrong (v1 symptom)
     ndvi_mean_threshold: 0.10
  
@@ -195,7 +195,7 @@ training:
   # When v2 arrives: set mississippi: true → automatic balanced joint training.
   ecosystems_for_training:
     everglades: true
-    mississippi: false        # ← flip to true after Barataria Bay v2 re-export
+    mississippi: true        # ← flip to true after Barataria Bay v2 re-export
  
   # Window sampling mode:
   #   "pre_only" → windows restricted to pre-disturbance [0, t_event)  [old behaviour]
