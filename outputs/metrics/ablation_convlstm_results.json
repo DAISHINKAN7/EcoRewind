@@ -1,0 +1,44 @@
+{
+  "full": {
+    "experiment": "full",
+    "error": "Given groups=1, weight of size [256, 72, 3, 3], expected input[4, 66, 128, 128] to have 72 channels, but got 66 channels instead",
+    "best_val_loss": NaN,
+    "ndvi_mse": NaN
+  },
+  "no_sar": {
+    "experiment": "no_sar",
+    "description": "w/o SAR_VV band (6 bands only)",
+    "best_val_loss": 0.0018424843819927995,
+    "ndvi_mse": 0.1928452662996427,
+    "sar_mse": NaN,
+    "rmse_overall": 0.4475112510941197,
+    "checkpoint": null
+  },
+  "no_eco_loss": {
+    "experiment": "no_eco_loss",
+    "error": "Dynamo failed to run FX node with fake tensors: call_function <built-in method conv2d of type object at 0x7325178d1920>(*(FakeTensor(..., device='cuda:0', size=(4, 71, 128, 128)), Parameter(FakeTensor(..., device='cuda:0', size=(256, 72, 3, 3), requires_grad=True)), Parameter(FakeTensor(..., device='cuda:0', size=(256,), requires_grad=True)), (1, 1), (1, 1), (1, 1), 1), **{}): got RuntimeError('Given groups=1, weight of size [256, 72, 3, 3], expected input[4, 71, 128, 128] to have 72 channels, but got 71 channels instead')\n\nfrom user code:\n   File \"/home/CL502-17/Desktop/Kunal_IDL_V1/models/convlstm.py\", line 233, in forward\n    _, enc_states = self.encode(x)\n  File \"/home/CL502-17/Desktop/Kunal_IDL_V1/models/convlstm.py\", line 191, in encode\n    seq, (h, c) = layer(seq)\n  File \"/home/CL502-17/Desktop/Kunal_IDL_V1/models/convlstm.py\", line 118, in forward\n    h, c = self.cell(x_seq[:, t], h, c)\n  File \"/home/CL502-17/Desktop/Kunal_IDL_V1/models/convlstm.py\", line 74, in forward\n    gates = self.conv(combined)             # (B, 4*hidden, H, W)\n  File \"/home/CL502-17/Desktop/Kunal_IDL_V1/venv/lib/python3.10/site-packages/torch/nn/modules/conv.py\", line 553, in forward\n    return self._conv_forward(input, self.weight, self.bias)\n  File \"/home/CL502-17/Desktop/Kunal_IDL_V1/venv/lib/python3.10/site-packages/torch/nn/modules/conv.py\", line 548, in _conv_forward\n    return F.conv2d(\n\nSet TORCHDYNAMO_VERBOSE=1 for the internal stack trace (please do this especially if you're reporting a bug to PyTorch). For even more developer context, set TORCH_LOGS=\"+dynamo\"\n",
+    "best_val_loss": NaN,
+    "ndvi_mse": NaN
+  },
+  "no_temp_loss": {
+    "experiment": "no_temp_loss",
+    "error": "Dynamo failed to run FX node with fake tensors: call_function <built-in method conv2d of type object at 0x7325178d1920>(*(FakeTensor(..., device='cuda:0', size=(4, 71, 128, 128)), Parameter(FakeTensor(..., device='cuda:0', size=(256, 72, 3, 3), requires_grad=True)), Parameter(FakeTensor(..., device='cuda:0', size=(256,), requires_grad=True)), (1, 1), (1, 1), (1, 1), 1), **{}): got RuntimeError('Given groups=1, weight of size [256, 72, 3, 3], expected input[4, 71, 128, 128] to have 72 channels, but got 71 channels instead')\n\nfrom user code:\n   File \"/home/CL502-17/Desktop/Kunal_IDL_V1/models/convlstm.py\", line 233, in forward\n    _, enc_states = self.encode(x)\n  File \"/home/CL502-17/Desktop/Kunal_IDL_V1/models/convlstm.py\", line 191, in encode\n    seq, (h, c) = layer(seq)\n  File \"/home/CL502-17/Desktop/Kunal_IDL_V1/models/convlstm.py\", line 118, in forward\n    h, c = self.cell(x_seq[:, t], h, c)\n  File \"/home/CL502-17/Desktop/Kunal_IDL_V1/models/convlstm.py\", line 74, in forward\n    gates = self.conv(combined)             # (B, 4*hidden, H, W)\n  File \"/home/CL502-17/Desktop/Kunal_IDL_V1/venv/lib/python3.10/site-packages/torch/nn/modules/conv.py\", line 553, in forward\n    return self._conv_forward(input, self.weight, self.bias)\n  File \"/home/CL502-17/Desktop/Kunal_IDL_V1/venv/lib/python3.10/site-packages/torch/nn/modules/conv.py\", line 548, in _conv_forward\n    return F.conv2d(\n\nSet TORCHDYNAMO_VERBOSE=1 for the internal stack trace (please do this especially if you're reporting a bug to PyTorch). For even more developer context, set TORCH_LOGS=\"+dynamo\"\n",
+    "best_val_loss": NaN,
+    "ndvi_mse": NaN
+  },
+  "ndvi_only": {
+    "experiment": "ndvi_only",
+    "description": "NDVI-only input (1 band)",
+    "best_val_loss": 0.007472237510544175,
+    "ndvi_mse": 0.7503121369172049,
+    "sar_mse": NaN,
+    "rmse_overall": 0.8662055973712043,
+    "checkpoint": null
+  },
+  "single_eco": {
+    "experiment": "single_eco",
+    "error": "Dynamo failed to run FX node with fake tensors: call_function <built-in method conv2d of type object at 0x7325178d1920>(*(FakeTensor(..., device='cuda:0', size=(4, 66, 128, 128)), Parameter(FakeTensor(..., device='cuda:0', size=(256, 72, 3, 3), requires_grad=True)), Parameter(FakeTensor(..., device='cuda:0', size=(256,), requires_grad=True)), (1, 1), (1, 1), (1, 1), 1), **{}): got RuntimeError('Given groups=1, weight of size [256, 72, 3, 3], expected input[4, 66, 128, 128] to have 72 channels, but got 66 channels instead')\n\nfrom user code:\n   File \"/home/CL502-17/Desktop/Kunal_IDL_V1/models/convlstm.py\", line 233, in forward\n    _, enc_states = self.encode(x)\n  File \"/home/CL502-17/Desktop/Kunal_IDL_V1/models/convlstm.py\", line 191, in encode\n    seq, (h, c) = layer(seq)\n  File \"/home/CL502-17/Desktop/Kunal_IDL_V1/models/convlstm.py\", line 118, in forward\n    h, c = self.cell(x_seq[:, t], h, c)\n  File \"/home/CL502-17/Desktop/Kunal_IDL_V1/models/convlstm.py\", line 74, in forward\n    gates = self.conv(combined)             # (B, 4*hidden, H, W)\n  File \"/home/CL502-17/Desktop/Kunal_IDL_V1/venv/lib/python3.10/site-packages/torch/nn/modules/conv.py\", line 553, in forward\n    return self._conv_forward(input, self.weight, self.bias)\n  File \"/home/CL502-17/Desktop/Kunal_IDL_V1/venv/lib/python3.10/site-packages/torch/nn/modules/conv.py\", line 548, in _conv_forward\n    return F.conv2d(\n\nSet TORCHDYNAMO_VERBOSE=1 for the internal stack trace (please do this especially if you're reporting a bug to PyTorch). For even more developer context, set TORCH_LOGS=\"+dynamo\"\n",
+    "best_val_loss": NaN,
+    "ndvi_mse": NaN
+  }
+}

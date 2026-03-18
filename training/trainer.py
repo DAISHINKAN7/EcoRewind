@@ -125,6 +125,7 @@ class Trainer:
         if torch.__version__ >= "2.0" and self.device.type == "cuda":
             try:
                 logger.info("Compiling model with torch.compile() for faster training")
+                torch._dynamo.reset()
                 self.model = torch.compile(self.model)
             except Exception as e:
                 logger.warning(f"torch.compile failed: {e}")

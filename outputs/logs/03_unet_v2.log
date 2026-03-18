@@ -44,3 +44,673 @@ wandb: 🚀 View run at https://wandb.ai/kunalajgaonkar31682-symbiosis-institute
 15:31:53 INFO 
 --- Epoch 1/150 ---
 W0314 15:32:31.477000 338915 venv/lib/python3.10/site-packages/torch/_inductor/utils.py:1679] [2/0] Not enough SMs to use max_autotune_gemm mode
+W0314 15:53:23.854000 338915 venv/lib/python3.10/site-packages/torch/_dynamo/convert_frame.py:1676] [3/8] torch._dynamo hit config.recompile_limit (8)
+W0314 15:53:23.854000 338915 venv/lib/python3.10/site-packages/torch/_dynamo/convert_frame.py:1676] [3/8]    function: 'forward' (/home/CL502-17/Desktop/Kunal_IDL_V1/models/unet_temporal.py:67)
+W0314 15:53:23.854000 338915 venv/lib/python3.10/site-packages/torch/_dynamo/convert_frame.py:1676] [3/8]    last reason: 3/7: tensor 'self._modules['conv']._modules['net']._modules['0']._parameters['weight']' size mismatch at index 0. expected 64, actual 32. Guard failed on a parameter, consider using torch._dynamo.config.force_parameter_static_shapes = False to allow dynamism on parameters.
+W0314 15:53:23.854000 338915 venv/lib/python3.10/site-packages/torch/_dynamo/convert_frame.py:1676] [3/8] To log all recompilation reasons, use TORCH_LOGS="recompiles".
+W0314 15:53:23.854000 338915 venv/lib/python3.10/site-packages/torch/_dynamo/convert_frame.py:1676] [3/8] To diagnose recompilation issues, see https://pytorch.org/docs/main/compile/programming_model.recompilation.html
+15:53:24 INFO Epoch 001/150 | train=0.0213 | val=0.0209 | lr=1.00e-04 | 1291s
+15:53:24 INFO   Checkpoint saved: epoch_001_val0.0209.pt
+15:53:24 INFO   *** New best model: 0.020900
+15:53:24 WARNING   Drive sync failed: [Errno 13] Permission denied: '/content'
+15:53:24 INFO 
+--- Epoch 2/150 ---
+16:13:24 INFO Epoch 002/150 | train=0.0119 | val=0.0223 | lr=1.00e-04 | 1200s
+16:13:24 INFO 
+--- Epoch 3/150 ---
+16:33:11 INFO Epoch 003/150 | train=0.0109 | val=0.0200 | lr=9.99e-05 | 1187s
+16:33:11 INFO   Checkpoint saved: epoch_003_val0.0200.pt
+16:33:11 INFO   *** New best model: 0.020023
+16:33:11 WARNING   Drive sync failed: [Errno 13] Permission denied: '/content'
+16:33:11 INFO 
+--- Epoch 4/150 ---
+16:53:18 INFO Epoch 004/150 | train=0.0105 | val=0.0215 | lr=9.98e-05 | 1207s
+16:53:18 INFO 
+--- Epoch 5/150 ---
+17:11:02 INFO Epoch 005/150 | train=0.0100 | val=0.0215 | lr=9.97e-05 | 1064s
+17:11:02 INFO   Checkpoint saved: epoch_005_val0.0215.pt
+17:11:02 WARNING   Drive sync failed: [Errno 13] Permission denied: '/content'
+17:11:02 INFO 
+--- Epoch 6/150 ---
+17:25:33 INFO Epoch 006/150 | train=0.0098 | val=0.0151 | lr=9.96e-05 | 871s
+17:25:33 INFO   Checkpoint saved: epoch_006_val0.0151.pt
+17:25:34 INFO   *** New best model: 0.015056
+17:25:34 WARNING   Drive sync failed: [Errno 13] Permission denied: '/content'
+17:25:34 INFO 
+--- Epoch 7/150 ---
+17:40:10 INFO Epoch 007/150 | train=0.0093 | val=0.0147 | lr=9.95e-05 | 876s
+17:40:10 INFO   Checkpoint saved: epoch_007_val0.0147.pt
+17:40:10 INFO   *** New best model: 0.014657
+17:40:10 WARNING   Drive sync failed: [Errno 13] Permission denied: '/content'
+17:40:10 INFO 
+--- Epoch 8/150 ---
+17:54:44 INFO Epoch 008/150 | train=0.0092 | val=0.0163 | lr=9.93e-05 | 874s
+17:54:44 INFO 
+--- Epoch 9/150 ---
+18:09:17 INFO Epoch 009/150 | train=0.0091 | val=0.0137 | lr=9.91e-05 | 873s
+18:09:17 INFO   Checkpoint saved: epoch_009_val0.0137.pt
+18:09:17 INFO   *** New best model: 0.013725
+18:09:17 WARNING   Drive sync failed: [Errno 13] Permission denied: '/content'
+18:09:17 INFO 
+--- Epoch 10/150 ---
+18:23:58 INFO Epoch 010/150 | train=0.0088 | val=0.0115 | lr=9.89e-05 | 880s
+18:23:58 INFO   Checkpoint saved: epoch_010_val0.0115.pt
+18:23:58 INFO   *** New best model: 0.011456
+18:23:58 WARNING   Drive sync failed: [Errno 13] Permission denied: '/content'
+18:23:58 INFO   Checkpoint saved: epoch_010_val0.0115.pt
+18:23:58 WARNING   Drive sync failed: [Errno 13] Permission denied: '/content'
+18:23:58 INFO 
+--- Epoch 11/150 ---
+18:38:31 INFO Epoch 011/150 | train=0.0086 | val=0.0111 | lr=9.87e-05 | 873s
+18:38:31 INFO   Checkpoint saved: epoch_011_val0.0111.pt
+18:38:31 INFO   *** New best model: 0.011082
+18:38:31 WARNING   Drive sync failed: [Errno 13] Permission denied: '/content'
+18:38:31 INFO 
+--- Epoch 12/150 ---
+18:53:06 INFO Epoch 012/150 | train=0.0087 | val=0.0109 | lr=9.84e-05 | 875s
+18:53:06 INFO   Checkpoint saved: epoch_012_val0.0109.pt
+18:53:06 INFO   *** New best model: 0.010890
+18:53:06 WARNING   Drive sync failed: [Errno 13] Permission denied: '/content'
+18:53:06 INFO 
+--- Epoch 13/150 ---
+19:07:40 INFO Epoch 013/150 | train=0.0084 | val=0.0122 | lr=9.82e-05 | 873s
+19:07:40 INFO 
+--- Epoch 14/150 ---
+19:22:13 INFO Epoch 014/150 | train=0.0084 | val=0.0108 | lr=9.79e-05 | 874s
+19:22:13 INFO   Checkpoint saved: epoch_014_val0.0108.pt
+19:22:13 INFO   *** New best model: 0.010774
+19:22:13 WARNING   Drive sync failed: [Errno 13] Permission denied: '/content'
+19:22:13 INFO 
+--- Epoch 15/150 ---
+19:36:50 INFO Epoch 015/150 | train=0.0083 | val=0.0110 | lr=9.76e-05 | 877s
+19:36:51 INFO   Checkpoint saved: epoch_015_val0.0110.pt
+19:36:51 WARNING   Drive sync failed: [Errno 13] Permission denied: '/content'
+19:36:51 INFO 
+--- Epoch 16/150 ---
+19:51:23 INFO Epoch 016/150 | train=0.0084 | val=0.0106 | lr=9.72e-05 | 873s
+19:51:23 INFO   Checkpoint saved: epoch_016_val0.0106.pt
+19:51:23 INFO   *** New best model: 0.010579
+19:51:23 WARNING   Drive sync failed: [Errno 13] Permission denied: '/content'
+19:51:23 INFO 
+--- Epoch 17/150 ---
+20:06:01 INFO Epoch 017/150 | train=0.0084 | val=0.0101 | lr=9.69e-05 | 878s
+20:06:01 INFO   Checkpoint saved: epoch_017_val0.0101.pt
+20:06:02 INFO   *** New best model: 0.010108
+20:06:02 WARNING   Drive sync failed: [Errno 13] Permission denied: '/content'
+20:06:02 INFO 
+--- Epoch 18/150 ---
+20:20:33 INFO Epoch 018/150 | train=0.0079 | val=0.0107 | lr=9.65e-05 | 871s
+20:20:33 INFO 
+--- Epoch 19/150 ---
+20:35:06 INFO Epoch 019/150 | train=0.0078 | val=0.0102 | lr=9.61e-05 | 873s
+20:35:06 INFO 
+--- Epoch 20/150 ---
+20:49:44 INFO Epoch 020/150 | train=0.0078 | val=0.0097 | lr=9.57e-05 | 879s
+20:49:44 INFO   Checkpoint saved: epoch_020_val0.0097.pt
+20:49:44 INFO   *** New best model: 0.009656
+20:49:44 WARNING   Drive sync failed: [Errno 13] Permission denied: '/content'
+20:49:45 INFO   Checkpoint saved: epoch_020_val0.0097.pt
+20:49:45 WARNING   Drive sync failed: [Errno 13] Permission denied: '/content'
+20:49:45 INFO 
+--- Epoch 21/150 ---
+21:04:15 INFO Epoch 021/150 | train=0.0077 | val=0.0103 | lr=9.53e-05 | 871s
+21:04:15 INFO 
+--- Epoch 22/150 ---
+21:18:53 INFO Epoch 022/150 | train=0.0077 | val=0.0101 | lr=9.48e-05 | 877s
+21:18:53 INFO 
+--- Epoch 23/150 ---
+21:33:23 INFO Epoch 023/150 | train=0.0075 | val=0.0094 | lr=9.44e-05 | 870s
+21:33:23 INFO   Checkpoint saved: epoch_023_val0.0094.pt
+21:33:23 INFO   *** New best model: 0.009444
+21:33:23 WARNING   Drive sync failed: [Errno 13] Permission denied: '/content'
+21:33:23 INFO 
+--- Epoch 24/150 ---
+21:47:57 INFO Epoch 024/150 | train=0.0075 | val=0.0100 | lr=9.39e-05 | 874s
+21:47:57 INFO 
+--- Epoch 25/150 ---
+22:02:32 INFO Epoch 025/150 | train=0.0076 | val=0.0095 | lr=9.34e-05 | 875s
+22:02:32 INFO   Checkpoint saved: epoch_025_val0.0095.pt
+22:02:32 WARNING   Drive sync failed: [Errno 13] Permission denied: '/content'
+22:02:32 INFO 
+--- Epoch 26/150 ---
+22:17:03 INFO Epoch 026/150 | train=0.0074 | val=0.0098 | lr=9.28e-05 | 871s
+22:17:03 INFO 
+--- Epoch 27/150 ---
+22:31:41 INFO Epoch 027/150 | train=0.0073 | val=0.0096 | lr=9.23e-05 | 878s
+22:31:41 INFO 
+--- Epoch 28/150 ---
+22:46:13 INFO Epoch 028/150 | train=0.0071 | val=0.0096 | lr=9.17e-05 | 871s
+22:46:13 INFO 
+--- Epoch 29/150 ---
+23:00:48 INFO Epoch 029/150 | train=0.0070 | val=0.0095 | lr=9.11e-05 | 875s
+23:00:48 INFO 
+--- Epoch 30/150 ---
+23:15:22 INFO Epoch 030/150 | train=0.0071 | val=0.0101 | lr=9.05e-05 | 874s
+23:15:22 INFO   Checkpoint saved: epoch_030_val0.0101.pt
+23:15:22 WARNING   Drive sync failed: [Errno 13] Permission denied: '/content'
+23:15:22 INFO 
+--- Epoch 31/150 ---
+23:29:56 INFO Epoch 031/150 | train=0.0073 | val=0.0096 | lr=8.99e-05 | 874s
+23:29:56 INFO 
+--- Epoch 32/150 ---
+23:44:30 INFO Epoch 032/150 | train=0.0070 | val=0.0099 | lr=8.93e-05 | 874s
+23:44:30 INFO 
+--- Epoch 33/150 ---
+23:59:02 INFO Epoch 033/150 | train=0.0071 | val=0.0098 | lr=8.86e-05 | 873s
+23:59:02 INFO 
+--- Epoch 34/150 ---
+00:10:48 INFO Epoch 034/150 | train=0.0072 | val=0.0093 | lr=8.80e-05 | 706s
+00:10:48 INFO   Checkpoint saved: epoch_034_val0.0093.pt
+00:10:48 INFO   *** New best model: 0.009302
+00:10:48 WARNING   Drive sync failed: [Errno 13] Permission denied: '/content'
+00:10:48 INFO 
+--- Epoch 35/150 ---
+00:20:38 INFO Epoch 035/150 | train=0.0068 | val=0.0098 | lr=8.73e-05 | 590s
+00:20:38 INFO   Checkpoint saved: epoch_035_val0.0098.pt
+00:20:38 WARNING   Drive sync failed: [Errno 13] Permission denied: '/content'
+00:20:38 INFO 
+--- Epoch 36/150 ---
+00:30:27 INFO Epoch 036/150 | train=0.0068 | val=0.0097 | lr=8.66e-05 | 589s
+00:30:27 INFO 
+--- Epoch 37/150 ---
+00:40:18 INFO Epoch 037/150 | train=0.0068 | val=0.0101 | lr=8.59e-05 | 590s
+00:40:18 INFO 
+--- Epoch 38/150 ---
+00:50:06 INFO Epoch 038/150 | train=0.0069 | val=0.0095 | lr=8.51e-05 | 588s
+00:50:06 INFO 
+--- Epoch 39/150 ---
+00:59:54 INFO Epoch 039/150 | train=0.0066 | val=0.0098 | lr=8.44e-05 | 588s
+00:59:54 INFO 
+--- Epoch 40/150 ---
+01:09:42 INFO Epoch 040/150 | train=0.0067 | val=0.0100 | lr=8.36e-05 | 588s
+01:09:42 INFO   Checkpoint saved: epoch_040_val0.0100.pt
+01:09:42 WARNING   Drive sync failed: [Errno 13] Permission denied: '/content'
+01:09:42 INFO 
+--- Epoch 41/150 ---
+01:19:34 INFO Epoch 041/150 | train=0.0066 | val=0.0096 | lr=8.28e-05 | 591s
+01:19:34 INFO 
+--- Epoch 42/150 ---
+01:29:25 INFO Epoch 042/150 | train=0.0067 | val=0.0103 | lr=8.21e-05 | 591s
+01:29:25 INFO 
+--- Epoch 43/150 ---
+01:39:17 INFO Epoch 043/150 | train=0.0064 | val=0.0090 | lr=8.12e-05 | 592s
+01:39:17 INFO   Checkpoint saved: epoch_043_val0.0090.pt
+01:39:17 INFO   *** New best model: 0.009038
+01:39:17 WARNING   Drive sync failed: [Errno 13] Permission denied: '/content'
+01:39:17 INFO 
+--- Epoch 44/150 ---
+01:49:07 INFO Epoch 044/150 | train=0.0065 | val=0.0102 | lr=8.04e-05 | 589s
+01:49:07 INFO 
+--- Epoch 45/150 ---
+01:58:55 INFO Epoch 045/150 | train=0.0065 | val=0.0093 | lr=7.96e-05 | 589s
+01:58:55 INFO   Checkpoint saved: epoch_045_val0.0093.pt
+01:58:55 WARNING   Drive sync failed: [Errno 13] Permission denied: '/content'
+01:58:56 INFO 
+--- Epoch 46/150 ---
+02:08:41 INFO Epoch 046/150 | train=0.0064 | val=0.0104 | lr=7.88e-05 | 586s
+02:08:41 INFO 
+--- Epoch 47/150 ---
+02:18:26 INFO Epoch 047/150 | train=0.0064 | val=0.0091 | lr=7.79e-05 | 584s
+02:18:26 INFO 
+--- Epoch 48/150 ---
+02:28:12 INFO Epoch 048/150 | train=0.0063 | val=0.0090 | lr=7.70e-05 | 587s
+02:28:12 INFO 
+--- Epoch 49/150 ---
+02:38:03 INFO Epoch 049/150 | train=0.0062 | val=0.0084 | lr=7.61e-05 | 591s
+02:38:03 INFO   Checkpoint saved: epoch_049_val0.0084.pt
+02:38:03 INFO   *** New best model: 0.008434
+02:38:03 WARNING   Drive sync failed: [Errno 13] Permission denied: '/content'
+02:38:03 INFO 
+--- Epoch 50/150 ---
+02:47:55 INFO Epoch 050/150 | train=0.0060 | val=0.0089 | lr=7.53e-05 | 592s
+02:47:55 INFO   Checkpoint saved: epoch_050_val0.0089.pt
+02:47:55 WARNING   Drive sync failed: [Errno 13] Permission denied: '/content'
+02:47:55 INFO 
+--- Epoch 51/150 ---
+02:57:46 INFO Epoch 051/150 | train=0.0060 | val=0.0095 | lr=7.43e-05 | 590s
+02:57:46 INFO 
+--- Epoch 52/150 ---
+03:07:35 INFO Epoch 052/150 | train=0.0063 | val=0.0087 | lr=7.34e-05 | 589s
+03:07:35 INFO 
+--- Epoch 53/150 ---
+03:17:24 INFO Epoch 053/150 | train=0.0061 | val=0.0090 | lr=7.25e-05 | 589s
+03:17:24 INFO 
+--- Epoch 54/150 ---
+03:27:11 INFO Epoch 054/150 | train=0.0059 | val=0.0090 | lr=7.16e-05 | 587s
+03:27:11 INFO 
+--- Epoch 55/150 ---
+03:36:57 INFO Epoch 055/150 | train=0.0059 | val=0.0088 | lr=7.06e-05 | 587s
+03:36:57 INFO   Checkpoint saved: epoch_055_val0.0088.pt
+03:36:57 WARNING   Drive sync failed: [Errno 13] Permission denied: '/content'
+03:36:58 INFO 
+--- Epoch 56/150 ---
+03:46:45 INFO Epoch 056/150 | train=0.0059 | val=0.0084 | lr=6.97e-05 | 588s
+03:46:46 INFO   Checkpoint saved: epoch_056_val0.0084.pt
+03:46:46 INFO   *** New best model: 0.008409
+03:46:46 WARNING   Drive sync failed: [Errno 13] Permission denied: '/content'
+03:46:46 INFO 
+--- Epoch 57/150 ---
+03:56:34 INFO Epoch 057/150 | train=0.0059 | val=0.0086 | lr=6.87e-05 | 588s
+03:56:34 INFO 
+--- Epoch 58/150 ---
+04:06:22 INFO Epoch 058/150 | train=0.0059 | val=0.0089 | lr=6.78e-05 | 588s
+04:06:22 INFO 
+--- Epoch 59/150 ---
+04:16:12 INFO Epoch 059/150 | train=0.0059 | val=0.0079 | lr=6.68e-05 | 590s
+04:16:12 INFO   Checkpoint saved: epoch_059_val0.0079.pt
+04:16:12 INFO   *** New best model: 0.007864
+04:16:12 WARNING   Drive sync failed: [Errno 13] Permission denied: '/content'
+04:16:12 INFO 
+--- Epoch 60/150 ---
+04:26:03 INFO Epoch 060/150 | train=0.0059 | val=0.0085 | lr=6.58e-05 | 591s
+04:26:03 INFO   Checkpoint saved: epoch_060_val0.0085.pt
+04:26:03 WARNING   Drive sync failed: [Errno 13] Permission denied: '/content'
+04:26:03 INFO 
+--- Epoch 61/150 ---
+04:35:52 INFO Epoch 061/150 | train=0.0058 | val=0.0083 | lr=6.48e-05 | 589s
+04:35:52 INFO 
+--- Epoch 62/150 ---
+04:45:37 INFO Epoch 062/150 | train=0.0060 | val=0.0084 | lr=6.38e-05 | 585s
+04:45:37 INFO 
+--- Epoch 63/150 ---
+04:55:24 INFO Epoch 063/150 | train=0.0056 | val=0.0083 | lr=6.28e-05 | 587s
+04:55:24 INFO 
+--- Epoch 64/150 ---
+05:05:11 INFO Epoch 064/150 | train=0.0056 | val=0.0081 | lr=6.18e-05 | 587s
+05:05:11 INFO 
+--- Epoch 65/150 ---
+05:14:57 INFO Epoch 065/150 | train=0.0057 | val=0.0088 | lr=6.08e-05 | 586s
+05:14:57 INFO   Checkpoint saved: epoch_065_val0.0088.pt
+05:14:57 WARNING   Drive sync failed: [Errno 13] Permission denied: '/content'
+05:14:57 INFO 
+--- Epoch 66/150 ---
+05:24:48 INFO Epoch 066/150 | train=0.0055 | val=0.0081 | lr=5.98e-05 | 591s
+05:24:48 INFO 
+--- Epoch 67/150 ---
+05:34:39 INFO Epoch 067/150 | train=0.0056 | val=0.0078 | lr=5.88e-05 | 591s
+05:34:39 INFO   Checkpoint saved: epoch_067_val0.0078.pt
+05:34:39 INFO   *** New best model: 0.007751
+05:34:39 WARNING   Drive sync failed: [Errno 13] Permission denied: '/content'
+05:34:40 INFO 
+--- Epoch 68/150 ---
+05:44:28 INFO Epoch 068/150 | train=0.0054 | val=0.0083 | lr=5.77e-05 | 589s
+05:44:28 INFO 
+--- Epoch 69/150 ---
+05:54:18 INFO Epoch 069/150 | train=0.0055 | val=0.0080 | lr=5.67e-05 | 590s
+05:54:18 INFO 
+--- Epoch 70/150 ---
+06:04:08 INFO Epoch 070/150 | train=0.0054 | val=0.0078 | lr=5.57e-05 | 590s
+06:04:08 INFO   Checkpoint saved: epoch_070_val0.0078.pt
+06:04:08 WARNING   Drive sync failed: [Errno 13] Permission denied: '/content'
+06:04:08 INFO 
+--- Epoch 71/150 ---
+06:13:56 INFO Epoch 071/150 | train=0.0054 | val=0.0074 | lr=5.46e-05 | 588s
+06:13:56 INFO   Checkpoint saved: epoch_071_val0.0074.pt
+06:13:56 INFO   *** New best model: 0.007379
+06:13:56 WARNING   Drive sync failed: [Errno 13] Permission denied: '/content'
+06:13:56 INFO 
+--- Epoch 72/150 ---
+06:23:45 INFO Epoch 072/150 | train=0.0055 | val=0.0079 | lr=5.36e-05 | 589s
+06:23:45 INFO 
+--- Epoch 73/150 ---
+06:33:35 INFO Epoch 073/150 | train=0.0054 | val=0.0074 | lr=5.26e-05 | 589s
+06:33:35 INFO 
+--- Epoch 74/150 ---
+06:43:23 INFO Epoch 074/150 | train=0.0054 | val=0.0079 | lr=5.15e-05 | 589s
+06:43:23 INFO 
+--- Epoch 75/150 ---
+06:53:14 INFO Epoch 075/150 | train=0.0054 | val=0.0075 | lr=5.05e-05 | 591s
+06:53:14 INFO   Checkpoint saved: epoch_075_val0.0075.pt
+06:53:14 WARNING   Drive sync failed: [Errno 13] Permission denied: '/content'
+06:53:14 INFO 
+--- Epoch 76/150 ---
+07:03:06 INFO Epoch 076/150 | train=0.0053 | val=0.0076 | lr=4.95e-05 | 591s
+07:03:06 INFO 
+--- Epoch 77/150 ---
+07:12:55 INFO Epoch 077/150 | train=0.0053 | val=0.0073 | lr=4.84e-05 | 589s
+07:12:55 INFO   Checkpoint saved: epoch_077_val0.0073.pt
+07:12:55 INFO   *** New best model: 0.007331
+07:12:55 WARNING   Drive sync failed: [Errno 13] Permission denied: '/content'
+07:12:55 INFO 
+--- Epoch 78/150 ---
+07:22:43 INFO Epoch 078/150 | train=0.0052 | val=0.0075 | lr=4.74e-05 | 588s
+07:22:43 INFO 
+--- Epoch 79/150 ---
+07:32:32 INFO Epoch 079/150 | train=0.0053 | val=0.0078 | lr=4.64e-05 | 589s
+07:32:32 INFO 
+--- Epoch 80/150 ---
+07:42:21 INFO Epoch 080/150 | train=0.0052 | val=0.0071 | lr=4.53e-05 | 588s
+07:42:21 INFO   Checkpoint saved: epoch_080_val0.0071.pt
+07:42:21 INFO   *** New best model: 0.007099
+07:42:21 WARNING   Drive sync failed: [Errno 13] Permission denied: '/content'
+07:42:21 INFO   Checkpoint saved: epoch_080_val0.0071.pt
+07:42:21 WARNING   Drive sync failed: [Errno 13] Permission denied: '/content'
+07:42:21 INFO 
+--- Epoch 81/150 ---
+07:52:12 INFO Epoch 081/150 | train=0.0053 | val=0.0075 | lr=4.43e-05 | 591s
+07:52:12 INFO 
+--- Epoch 82/150 ---
+08:02:02 INFO Epoch 082/150 | train=0.0052 | val=0.0076 | lr=4.33e-05 | 590s
+08:02:02 INFO 
+--- Epoch 83/150 ---
+08:11:50 INFO Epoch 083/150 | train=0.0052 | val=0.0078 | lr=4.22e-05 | 588s
+08:11:50 INFO 
+--- Epoch 84/150 ---
+08:21:37 INFO Epoch 084/150 | train=0.0052 | val=0.0077 | lr=4.12e-05 | 587s
+08:21:37 INFO 
+--- Epoch 85/150 ---
+08:31:27 INFO Epoch 085/150 | train=0.0052 | val=0.0075 | lr=4.02e-05 | 590s
+08:31:27 INFO   Checkpoint saved: epoch_085_val0.0075.pt
+08:31:27 WARNING   Drive sync failed: [Errno 13] Permission denied: '/content'
+08:31:27 INFO 
+--- Epoch 86/150 ---
+08:41:16 INFO Epoch 086/150 | train=0.0052 | val=0.0073 | lr=3.92e-05 | 589s
+08:41:16 INFO 
+--- Epoch 87/150 ---
+08:51:06 INFO Epoch 087/150 | train=0.0051 | val=0.0073 | lr=3.82e-05 | 590s
+08:51:06 INFO 
+--- Epoch 88/150 ---
+09:00:54 INFO Epoch 088/150 | train=0.0051 | val=0.0072 | lr=3.72e-05 | 588s
+09:00:54 INFO 
+--- Epoch 89/150 ---
+09:10:42 INFO Epoch 089/150 | train=0.0051 | val=0.0071 | lr=3.62e-05 | 587s
+09:10:42 INFO   Checkpoint saved: epoch_089_val0.0071.pt
+09:10:42 INFO   *** New best model: 0.007073
+09:10:42 WARNING   Drive sync failed: [Errno 13] Permission denied: '/content'
+09:10:42 INFO 
+--- Epoch 90/150 ---
+09:20:32 INFO Epoch 090/150 | train=0.0051 | val=0.0069 | lr=3.52e-05 | 590s
+09:20:32 INFO   Checkpoint saved: epoch_090_val0.0069.pt
+09:20:32 INFO   *** New best model: 0.006912
+09:20:32 WARNING   Drive sync failed: [Errno 13] Permission denied: '/content'
+09:20:32 INFO   Checkpoint saved: epoch_090_val0.0069.pt
+09:20:32 WARNING   Drive sync failed: [Errno 13] Permission denied: '/content'
+09:20:32 INFO 
+--- Epoch 91/150 ---
+09:30:22 INFO Epoch 091/150 | train=0.0051 | val=0.0068 | lr=3.42e-05 | 589s
+09:30:22 INFO   Checkpoint saved: epoch_091_val0.0068.pt
+09:30:22 INFO   *** New best model: 0.006814
+09:30:22 WARNING   Drive sync failed: [Errno 13] Permission denied: '/content'
+09:30:22 INFO 
+--- Epoch 92/150 ---
+09:40:12 INFO Epoch 092/150 | train=0.0051 | val=0.0070 | lr=3.32e-05 | 590s
+09:40:12 INFO 
+--- Epoch 93/150 ---
+09:49:58 INFO Epoch 093/150 | train=0.0051 | val=0.0071 | lr=3.23e-05 | 587s
+09:49:58 INFO 
+--- Epoch 94/150 ---
+09:59:47 INFO Epoch 094/150 | train=0.0051 | val=0.0069 | lr=3.13e-05 | 588s
+09:59:47 INFO 
+--- Epoch 95/150 ---
+10:09:34 INFO Epoch 095/150 | train=0.0050 | val=0.0070 | lr=3.04e-05 | 588s
+10:09:35 INFO   Checkpoint saved: epoch_095_val0.0070.pt
+10:09:35 WARNING   Drive sync failed: [Errno 13] Permission denied: '/content'
+10:09:35 INFO 
+--- Epoch 96/150 ---
+10:19:25 INFO Epoch 096/150 | train=0.0050 | val=0.0074 | lr=2.94e-05 | 591s
+10:19:25 INFO 
+--- Epoch 97/150 ---
+10:29:14 INFO Epoch 097/150 | train=0.0051 | val=0.0070 | lr=2.85e-05 | 589s
+10:29:14 INFO 
+--- Epoch 98/150 ---
+10:39:02 INFO Epoch 098/150 | train=0.0051 | val=0.0071 | lr=2.76e-05 | 588s
+10:39:02 INFO 
+--- Epoch 99/150 ---
+10:48:51 INFO Epoch 099/150 | train=0.0050 | val=0.0073 | lr=2.67e-05 | 589s
+10:48:51 INFO 
+--- Epoch 100/150 ---
+10:58:40 INFO Epoch 100/150 | train=0.0050 | val=0.0069 | lr=2.57e-05 | 589s
+10:58:40 INFO   Checkpoint saved: epoch_100_val0.0069.pt
+10:58:40 WARNING   Drive sync failed: [Errno 13] Permission denied: '/content'
+10:58:40 INFO 
+--- Epoch 101/150 ---
+11:08:29 INFO Epoch 101/150 | train=0.0050 | val=0.0068 | lr=2.49e-05 | 589s
+11:08:29 INFO   Checkpoint saved: epoch_101_val0.0068.pt
+11:08:29 INFO   *** New best model: 0.006810
+11:08:29 WARNING   Drive sync failed: [Errno 13] Permission denied: '/content'
+11:08:29 INFO 
+--- Epoch 102/150 ---
+11:18:17 INFO Epoch 102/150 | train=0.0050 | val=0.0069 | lr=2.40e-05 | 587s
+11:18:17 INFO 
+--- Epoch 103/150 ---
+11:28:05 INFO Epoch 103/150 | train=0.0049 | val=0.0069 | lr=2.31e-05 | 588s
+11:28:05 INFO 
+--- Epoch 104/150 ---
+11:37:54 INFO Epoch 104/150 | train=0.0050 | val=0.0069 | lr=2.22e-05 | 589s
+11:37:54 INFO 
+--- Epoch 105/150 ---
+11:47:44 INFO Epoch 105/150 | train=0.0050 | val=0.0068 | lr=2.14e-05 | 590s
+11:47:44 INFO   Checkpoint saved: epoch_105_val0.0068.pt
+11:47:44 INFO   *** New best model: 0.006769
+11:47:44 WARNING   Drive sync failed: [Errno 13] Permission denied: '/content'
+11:47:44 INFO   Checkpoint saved: epoch_105_val0.0068.pt
+11:47:44 WARNING   Drive sync failed: [Errno 13] Permission denied: '/content'
+11:47:44 INFO 
+--- Epoch 106/150 ---
+11:57:32 INFO Epoch 106/150 | train=0.0050 | val=0.0069 | lr=2.06e-05 | 588s
+11:57:32 INFO 
+--- Epoch 107/150 ---
+12:07:20 INFO Epoch 107/150 | train=0.0049 | val=0.0066 | lr=1.98e-05 | 588s
+12:07:20 INFO   Checkpoint saved: epoch_107_val0.0066.pt
+12:07:20 INFO   *** New best model: 0.006577
+12:07:20 WARNING   Drive sync failed: [Errno 13] Permission denied: '/content'
+12:07:20 INFO 
+--- Epoch 108/150 ---
+12:17:08 INFO Epoch 108/150 | train=0.0049 | val=0.0064 | lr=1.89e-05 | 588s
+12:17:09 INFO   Checkpoint saved: epoch_108_val0.0064.pt
+12:17:09 INFO   *** New best model: 0.006403
+12:17:09 WARNING   Drive sync failed: [Errno 13] Permission denied: '/content'
+12:17:09 INFO 
+--- Epoch 109/150 ---
+12:26:58 INFO Epoch 109/150 | train=0.0048 | val=0.0068 | lr=1.82e-05 | 590s
+12:26:58 INFO 
+--- Epoch 110/150 ---
+12:36:47 INFO Epoch 110/150 | train=0.0049 | val=0.0066 | lr=1.74e-05 | 589s
+12:36:47 INFO   Checkpoint saved: epoch_110_val0.0066.pt
+12:36:47 WARNING   Drive sync failed: [Errno 13] Permission denied: '/content'
+12:36:47 INFO 
+--- Epoch 111/150 ---
+12:46:37 INFO Epoch 111/150 | train=0.0049 | val=0.0067 | lr=1.66e-05 | 590s
+12:46:37 INFO 
+--- Epoch 112/150 ---
+12:56:25 INFO Epoch 112/150 | train=0.0048 | val=0.0065 | lr=1.59e-05 | 588s
+12:56:25 INFO 
+--- Epoch 113/150 ---
+13:06:14 INFO Epoch 113/150 | train=0.0049 | val=0.0066 | lr=1.51e-05 | 589s
+13:06:14 INFO 
+--- Epoch 114/150 ---
+13:16:01 INFO Epoch 114/150 | train=0.0049 | val=0.0068 | lr=1.44e-05 | 587s
+13:16:01 INFO 
+--- Epoch 115/150 ---
+13:25:51 INFO Epoch 115/150 | train=0.0048 | val=0.0064 | lr=1.37e-05 | 590s
+13:25:51 INFO   Checkpoint saved: epoch_115_val0.0064.pt
+13:25:51 INFO   *** New best model: 0.006362
+13:25:51 WARNING   Drive sync failed: [Errno 13] Permission denied: '/content'
+13:25:51 INFO   Checkpoint saved: epoch_115_val0.0064.pt
+13:25:51 WARNING   Drive sync failed: [Errno 13] Permission denied: '/content'
+13:25:51 INFO 
+--- Epoch 116/150 ---
+13:35:42 INFO Epoch 116/150 | train=0.0048 | val=0.0064 | lr=1.30e-05 | 591s
+13:35:42 INFO 
+--- Epoch 117/150 ---
+13:45:32 INFO Epoch 117/150 | train=0.0048 | val=0.0064 | lr=1.24e-05 | 590s
+13:45:32 INFO 
+--- Epoch 118/150 ---
+13:55:21 INFO Epoch 118/150 | train=0.0048 | val=0.0065 | lr=1.17e-05 | 589s
+13:55:21 INFO 
+--- Epoch 119/150 ---
+14:05:07 INFO Epoch 119/150 | train=0.0049 | val=0.0068 | lr=1.11e-05 | 586s
+14:05:07 INFO 
+--- Epoch 120/150 ---
+14:14:56 INFO Epoch 120/150 | train=0.0048 | val=0.0063 | lr=1.05e-05 | 588s
+14:14:56 INFO   Checkpoint saved: epoch_120_val0.0063.pt
+14:14:56 INFO   *** New best model: 0.006303
+14:14:56 WARNING   Drive sync failed: [Errno 13] Permission denied: '/content'
+14:14:56 INFO   Checkpoint saved: epoch_120_val0.0063.pt
+14:14:56 WARNING   Drive sync failed: [Errno 13] Permission denied: '/content'
+14:14:56 INFO 
+--- Epoch 121/150 ---
+14:24:44 INFO Epoch 121/150 | train=0.0049 | val=0.0066 | lr=9.85e-06 | 588s
+14:24:44 INFO 
+--- Epoch 122/150 ---
+14:34:33 INFO Epoch 122/150 | train=0.0048 | val=0.0064 | lr=9.27e-06 | 590s
+14:34:33 INFO 
+--- Epoch 123/150 ---
+14:44:20 INFO Epoch 123/150 | train=0.0048 | val=0.0063 | lr=8.71e-06 | 587s
+14:44:20 INFO   Checkpoint saved: epoch_123_val0.0063.pt
+14:44:20 INFO   *** New best model: 0.006264
+14:44:20 WARNING   Drive sync failed: [Errno 13] Permission denied: '/content'
+14:44:20 INFO 
+--- Epoch 124/150 ---
+14:54:07 INFO Epoch 124/150 | train=0.0048 | val=0.0064 | lr=8.16e-06 | 587s
+14:54:07 INFO 
+--- Epoch 125/150 ---
+15:03:58 INFO Epoch 125/150 | train=0.0048 | val=0.0062 | lr=7.63e-06 | 591s
+15:03:58 INFO   Checkpoint saved: epoch_125_val0.0062.pt
+15:03:58 INFO   *** New best model: 0.006218
+15:03:58 WARNING   Drive sync failed: [Errno 13] Permission denied: '/content'
+15:03:58 INFO   Checkpoint saved: epoch_125_val0.0062.pt
+15:03:58 WARNING   Drive sync failed: [Errno 13] Permission denied: '/content'
+15:03:58 INFO 
+--- Epoch 126/150 ---
+15:13:46 INFO Epoch 126/150 | train=0.0048 | val=0.0064 | lr=7.12e-06 | 588s
+15:13:46 INFO 
+--- Epoch 127/150 ---
+15:23:37 INFO Epoch 127/150 | train=0.0048 | val=0.0066 | lr=6.63e-06 | 591s
+15:23:37 INFO 
+--- Epoch 128/150 ---
+15:33:24 INFO Epoch 128/150 | train=0.0048 | val=0.0065 | lr=6.16e-06 | 587s
+15:33:24 INFO 
+--- Epoch 129/150 ---
+15:43:13 INFO Epoch 129/150 | train=0.0048 | val=0.0062 | lr=5.71e-06 | 589s
+15:43:13 INFO   Checkpoint saved: epoch_129_val0.0062.pt
+15:43:14 INFO   *** New best model: 0.006184
+15:43:14 WARNING   Drive sync failed: [Errno 13] Permission denied: '/content'
+15:43:14 INFO 
+--- Epoch 130/150 ---
+15:53:02 INFO Epoch 130/150 | train=0.0048 | val=0.0062 | lr=5.28e-06 | 588s
+15:53:02 INFO   Checkpoint saved: epoch_130_val0.0062.pt
+15:53:02 INFO   *** New best model: 0.006175
+15:53:02 WARNING   Drive sync failed: [Errno 13] Permission denied: '/content'
+15:53:02 INFO   Checkpoint saved: epoch_130_val0.0062.pt
+15:53:02 WARNING   Drive sync failed: [Errno 13] Permission denied: '/content'
+15:53:02 INFO 
+--- Epoch 131/150 ---
+16:02:52 INFO Epoch 131/150 | train=0.0048 | val=0.0069 | lr=4.87e-06 | 590s
+16:02:52 INFO 
+--- Epoch 132/150 ---
+16:12:43 INFO Epoch 132/150 | train=0.0048 | val=0.0062 | lr=4.48e-06 | 591s
+16:12:43 INFO 
+--- Epoch 133/150 ---
+16:22:30 INFO Epoch 133/150 | train=0.0048 | val=0.0062 | lr=4.10e-06 | 587s
+16:22:30 INFO   Checkpoint saved: epoch_133_val0.0062.pt
+16:22:30 INFO   *** New best model: 0.006173
+16:22:30 WARNING   Drive sync failed: [Errno 13] Permission denied: '/content'
+16:22:30 INFO 
+--- Epoch 134/150 ---
+16:32:17 INFO Epoch 134/150 | train=0.0048 | val=0.0065 | lr=3.75e-06 | 586s
+16:32:17 INFO 
+--- Epoch 135/150 ---
+16:42:05 INFO Epoch 135/150 | train=0.0048 | val=0.0063 | lr=3.42e-06 | 589s
+16:42:05 INFO   Checkpoint saved: epoch_135_val0.0063.pt
+16:42:05 WARNING   Drive sync failed: [Errno 13] Permission denied: '/content'
+16:42:05 INFO 
+--- Epoch 136/150 ---
+16:51:56 INFO Epoch 136/150 | train=0.0047 | val=0.0060 | lr=3.11e-06 | 590s
+16:51:56 INFO   Checkpoint saved: epoch_136_val0.0060.pt
+16:51:56 INFO   *** New best model: 0.006019
+16:51:56 WARNING   Drive sync failed: [Errno 13] Permission denied: '/content'
+16:51:56 INFO 
+--- Epoch 137/150 ---
+17:01:45 INFO Epoch 137/150 | train=0.0048 | val=0.0063 | lr=2.82e-06 | 589s
+17:01:45 INFO 
+--- Epoch 138/150 ---
+17:11:32 INFO Epoch 138/150 | train=0.0048 | val=0.0063 | lr=2.56e-06 | 587s
+17:11:32 INFO 
+--- Epoch 139/150 ---
+17:21:23 INFO Epoch 139/150 | train=0.0048 | val=0.0062 | lr=2.31e-06 | 591s
+17:21:23 INFO 
+--- Epoch 140/150 ---
+17:31:12 INFO Epoch 140/150 | train=0.0048 | val=0.0062 | lr=2.08e-06 | 588s
+17:31:12 INFO   Checkpoint saved: epoch_140_val0.0062.pt
+17:31:12 WARNING   Drive sync failed: [Errno 13] Permission denied: '/content'
+17:31:12 INFO 
+--- Epoch 141/150 ---
+17:41:02 INFO Epoch 141/150 | train=0.0048 | val=0.0063 | lr=1.88e-06 | 590s
+17:41:02 INFO 
+--- Epoch 142/150 ---
+17:50:51 INFO Epoch 142/150 | train=0.0048 | val=0.0061 | lr=1.69e-06 | 589s
+17:50:51 INFO 
+--- Epoch 143/150 ---
+18:00:38 INFO Epoch 143/150 | train=0.0048 | val=0.0064 | lr=1.53e-06 | 588s
+18:00:38 INFO 
+--- Epoch 144/150 ---
+18:10:29 INFO Epoch 144/150 | train=0.0048 | val=0.0060 | lr=1.39e-06 | 590s
+18:10:29 INFO 
+--- Epoch 145/150 ---
+18:20:17 INFO Epoch 145/150 | train=0.0048 | val=0.0063 | lr=1.27e-06 | 588s
+18:20:17 INFO   Checkpoint saved: epoch_145_val0.0063.pt
+18:20:17 WARNING   Drive sync failed: [Errno 13] Permission denied: '/content'
+18:20:17 INFO 
+--- Epoch 146/150 ---
+18:30:06 INFO Epoch 146/150 | train=0.0048 | val=0.0063 | lr=1.17e-06 | 589s
+18:30:06 INFO 
+--- Epoch 147/150 ---
+18:39:55 INFO Epoch 147/150 | train=0.0048 | val=0.0062 | lr=1.10e-06 | 589s
+18:39:55 INFO 
+--- Epoch 148/150 ---
+18:49:45 INFO Epoch 148/150 | train=0.0048 | val=0.0061 | lr=1.04e-06 | 590s
+18:49:45 INFO 
+--- Epoch 149/150 ---
+18:59:35 INFO Epoch 149/150 | train=0.0048 | val=0.0062 | lr=1.01e-06 | 590s
+18:59:35 INFO 
+--- Epoch 150/150 ---
+19:09:26 INFO Epoch 150/150 | train=0.0047 | val=0.0063 | lr=1.00e-06 | 591s
+19:09:26 INFO   Checkpoint saved: epoch_150_val0.0063.pt
+19:09:26 WARNING   Drive sync failed: [Errno 13] Permission denied: '/content'
+wandb: uploading data; updating run metadata
+wandb: uploading data
+wandb: uploading history steps 14-149, summary, console lines 90-635
+wandb: 
+wandb: Run history:
+wandb:         epoch ▁▁▁▂▂▂▂▂▂▂▃▃▃▃▄▄▄▄▄▅▅▅▅▅▅▆▆▆▆▆▇▇▇▇▇█████
+wandb: learning_rate █████▇▇▇▇▇▇▇▇▇▆▆▆▅▅▅▅▅▄▄▃▂▂▂▂▂▂▂▂▂▁▁▁▁▁▁
+wandb:    train/loss █▇▅▅▅▄▅▄▄▄▄▄▃▃▃▃▃▂▃▂▂▂▂▂▂▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁
+wandb:      val/loss █▄▅▄▄▄▄▄▄▄▄▄▃▃▃▂▃▃▃▃▂▂▂▂▂▂▂▂▂▂▂▁▁▁▁▁▁▁▁▁
+wandb: 
+wandb: Run summary:
+wandb:         epoch 150
+wandb: learning_rate 0.0
+wandb:    train/loss 0.00475
+wandb:      val/loss 0.00629
+wandb: 
+wandb: 🚀 View run unet_temporal_joint at: https://wandb.ai/kunalajgaonkar31682-symbiosis-institute-of-technology/eco-rewind/runs/6an2epjj
+wandb: ⭐️ View project at: https://wandb.ai/kunalajgaonkar31682-symbiosis-institute-of-technology/eco-rewind
+wandb: Synced 2 W&B file(s), 0 media file(s), 0 artifact file(s) and 0 other file(s)
+wandb: Find logs at: ./wandb/run-20260314_153151-6an2epjj/logs
+12:30:13 INFO Training complete. Best val loss: 0.006019
+12:30:13 INFO Best checkpoint: outputs/checkpoints/unet_temporal_joint/best_model.pt
+12:30:13 INFO 
+--- Final evaluation on validation set ---
+12:32:44 INFO 
+==================================================
+12:32:44 INFO   Model Evaluation Results
+12:32:44 INFO ==================================================
+12:32:44 INFO   Overall RMSE: 0.295545
+12:32:44 INFO 
+        Band         MSE        R²
+12:32:44 INFO   --------------------------------
+12:32:44 INFO         Blue    0.000993   -0.1574
+12:32:44 INFO        Green    0.001333   -0.0490
+12:32:44 INFO          Red    0.001589    0.0863
+12:32:44 INFO          NIR    0.006778    0.5410
+12:32:44 INFO         NDVI    0.018582    0.6655
+12:32:44 INFO         NDWI    0.011569    0.7723
+12:32:44 INFO       SAR_VV    0.570583   -3.1470
+12:32:44 INFO ==================================================
+
+12:32:44 INFO 
+Metrics saved → outputs/metrics/unet_temporal_joint_eval.json
+12:32:44 INFO Best checkpoint: outputs/checkpoints/unet_temporal_joint/best_model.pt
+12:32:44 INFO 
+Next step: python scripts/04_generate_counterfactual.py

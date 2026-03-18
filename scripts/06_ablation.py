@@ -206,6 +206,13 @@ def _build_modified_patches(cfg, mods, processed_dir, exp_name):
     For no_sar/ndvi_only experiments, extract patches from a band-sliced tensor.
     Saves to processed/<eco>/patches_<exp_name>/.
     """
+    """
+    IMPORTANT: sampler.build_patches() always writes to the shared
+    processed/<eco>/patches/ directory. We backup that directory before
+    building, copy results to the experiment-specific dir, then restore
+    the backup so subsequent experiments see the original full-band patches.
+    """
+    import shutil
     from data.preprocessing.patch_sampler import PatchSampler
     from data.preprocessing.normalizer import EcoNormalizer
  
@@ -239,27 +246,37 @@ def _build_modified_patches(cfg, mods, processed_dir, exp_name):
  
         norm_tensor = norm.transform(tensor)
  
-        # Use experiment-specific patch directory
-        patch_dir_name = f"patches_{exp_name}"
-        out_dir = processed_dir / eco / patch_dir_name
+        default_dir = processed_dir / eco / "patches"
+        backup_dir  = processed_dir / eco / "patches_orig_backup"
+        custom_dir  = processed_dir / eco / f"patches_{exp_name}"
  
-        patch_path = sampler.build_patches(
+        # --- Backup the shared patches/ dir before build_patches clobbers it ---
+        if default_dir.exists():
+            if backup_dir.exists():
+                shutil.rmtree(str(backup_dir))
+            shutil.copytree(str(default_dir), str(backup_dir))
+ 
+        # Build modified patches (writes into default_dir / patches/)
+        sampler.build_patches(
             ecosystem=eco,
             tensor=norm_tensor,
             validity=validity,
             normalizer=norm,
             force_rebuild=True,
         )
-        # Override the output directory name in sampler
-        # (hack: rebuild with custom dir)
-        import shutil
-        custom_dir = processed_dir / eco / patch_dir_name
+ 
+        # Copy freshly-built modified patches to experiment-specific dir
         custom_dir.mkdir(parents=True, exist_ok=True)
-        default_dir = processed_dir / eco / "patches"
-        if default_dir.exists() and default_dir != custom_dir:
-            # Move patches to custom dir
+        if default_dir.exists():
             for f in default_dir.glob("*"):
                 shutil.copy(str(f), str(custom_dir / f.name))
+ 
+        # --- Restore the original patches so later experiments are unaffected ---
+        if backup_dir.exists():
+            if default_dir.exists():
+                shutil.rmtree(str(default_dir))
+            shutil.copytree(str(backup_dir), str(default_dir))
+            shutil.rmtree(str(backup_dir))  # cleanup
  
         ecosystem_patches[eco] = str(custom_dir)
  
