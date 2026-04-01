@@ -5,7 +5,7 @@
  
 project:
   name: "eco-rewind"
-  version: "1.0.0"
+  version: "1.1.0"
  
 # =============================================================================
 # DATA PATHS — set mode to "gdrive" or "local"
@@ -31,7 +31,7 @@ data:
   metadata_file: "pipeline_metadata_v2.json"
  
   # File pattern — your GEE export filenames
-  # The loader will try to parse year/quarter from filepip install rasterio numpy pandas matplotlib seaborn scikit-learn tqdm wandb pyyaml einops scipy Pillow geopandas shapelynames automatically
+  # The loader will try to parse year/quarter from filenames automatically
   # Common patterns: "Everglades_2017_Q3.tif", "everglades_2017_q3.tif"
   file_extension: ".tif"
  
@@ -48,8 +48,6 @@ ecosystems:
  
     # t_event: 0-indexed position of the hurricane quarter in the time series
     # 2016Q1=0, 2016Q2=1, 2016Q3=2, 2016Q4=3, 2017Q1=4, 2017Q2=5(interp), 2017Q3=6
-    # Note: project doc says t=5 — if your files start from 2016 Q2, change to 5
-    # tensor_builder.py will print the full index→date mapping for you to verify
     t_event: 6                    # Hurricane Irma, Q3 2017
  
     hurricane: "Irma"
@@ -141,7 +139,7 @@ bands:
 patches:
   size: 128                   # 128×128 pixels
   stride: 64                  # 50% overlap
-  nan_threshold: 0.85         # Reject patches with >10% NaN
+  nan_threshold: 0.85         # Reject patches with >85% NaN
   use_validity_mask: true     # Add 8th channel for POOR quality files
  
 # =============================================================================
@@ -149,14 +147,16 @@ patches:
 # =============================================================================
 model:
   # "convlstm" or "unet_temporal"
-  architecture: "convlstm"
+  architecture: "unet_temporal"
  
   # Number of past quarters fed as input
-  t_input: 4                  # 4 quarters = 1 years of context
+  t_input: 4                  # 4 quarters = 1 year of context
  
   # Number of future quarters to predict
-  t_output: 4                 # 2 quarters = 6 months ahead
-
+  t_output: 4                 # 4 quarters = 1 year ahead
+                              # Doubles native prediction horizon → halves
+                              # autoregressive rollout steps for 10-quarter CF
+                              # (5 steps → 3 steps), cutting drift compounding.
  
   convlstm:
     hidden_channels: [64, 64, 64]    # 3 ConvLSTM layers
@@ -173,9 +173,11 @@ model:
 # LOSS FUNCTION
 # =============================================================================
 loss:
-  lambda_temporal: 0.2        # Weight for L_temporal_smooth
-  lambda_ecological: 0.05     # Weight for L_ecological constraints
-  # L_total = L_recon + lambda_temporal * L_temporal + lambda_ecological * L_eco
+  lambda_temporal:   0.2      # Penalise unrealistic quarter-to-quarter NDVI/NDWI jumps
+  lambda_ecological: 0.08     # Soft constraint for physically valid value ranges
+  lambda_ssim:       0.15     # SSIM structural similarity — rewards spatial texture realism
+  lambda_spectral:   0.05     # NDVI consistency with independently predicted NIR and Red
+  # L_total = L_recon + λ_t*L_temporal + λ_e*L_eco + λ_s*L_ssim + λ_sp*L_spectral
  
 # =============================================================================
 # TRAINING
@@ -187,26 +189,32 @@ training:
   weight_decay: 0.00001
   patience: 25                # Early stopping patience (epochs)
   grad_clip: 1.0
+ 
+  # LR warmup: LinearLR for warmup_epochs, then CosineAnnealingLR for remainder
+  # Prevents early-epoch instability from large gradients on random initialisation
+  warmup_epochs: 10
+ 
+  # Gradient accumulation: effective batch = batch_size * gradient_accumulation_steps
+  # Simulates larger batch size without extra VRAM (4 × 4 = effective batch 16)
+  gradient_accumulation_steps: 4
+ 
+  # Data augmentation (applied to training split only, spatially consistent across T)
+  use_augmentation: true
+ 
   train_on: joint
  
-    # Which ecosystem patches to include in training.
+  # Which ecosystem patches to include in training.
   # Set false to exclude an ecosystem without deleting its tensors/patches.
-  # Mississippi v1 (wrong AOI, open water) is excluded until v2 re-export.
-  # When v2 arrives: set mississippi: true → automatic balanced joint training.
   ecosystems_for_training:
     everglades: true
-    mississippi: true        # ← flip to true after Barataria Bay v2 re-export
+    mississippi: true
  
   # Window sampling mode:
-  #   "pre_only" → windows restricted to pre-disturbance [0, t_event)  [old behaviour]
+  #   "pre_only" → windows restricted to pre-disturbance [0, t_event)
   #   "all"      → windows across FULL time series (all 32 quarters usable)
-  # "all" gives Everglades ~28 windows/patch (29k samples) instead of 1 (1k samples).
-  # Scientifically valid: model learns general vegetation dynamics; counterfactual
-  # inference always uses pre-event context regardless of what the model trained on.
   window_mode: "all"
  
-  # When multiple ecosystems are active, sample equal batches from each so neither
-  # dominates training (important when Mississippi v2 is enabled).
+  # When multiple ecosystems are active, sample equal batches from each
   balanced_sampling: true
  
   # Checkpoint saving
@@ -214,7 +222,6 @@ training:
   keep_best_n: 3
  
   # Sync checkpoints back to Google Drive after saving
-  # Useful on RunPod to survive pod restarts
   sync_checkpoints_to_drive: true
   checkpoint_drive_path: "/content/drive/MyDrive/EcoRewind/checkpoints"
  
@@ -250,3 +257,14 @@ inference:
  
   # Confidence interval for time-to-convergence
   convergence_ci: 0.95        # 95% CI of counterfactual trajectory
+ 
+  # MC Dropout: run N stochastic forward passes to estimate model uncertainty.
+  # Set to 1 to disable (deterministic, faster).
+  # 50 samples gives stable CI bands; 30 is a reasonable compromise.
+  mc_dropout_samples: 50
+ 
+  # Seasonal climatology floor: clamp CF predictions to
+  # (seasonal_mean - climatology_sigma * seasonal_std) per pixel per quarter.
+  # Prevents compounding winter-dip drift across autoregressive rollout.
+  climatology_anchor: true
+  climatology_sigma: 2.0      # How many std below seasonal mean before clamping

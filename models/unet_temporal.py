@@ -10,6 +10,11 @@ Design:
   3. Temporal cross-attention: decoder queries temporal context from encoder
   4. Spatial decoder: upsamples back to (B, T_out, C, H, W) with skip connections
  
+Improvements over v1:
+  - Dropout2d in every DoubleConv block (enables MC Dropout at inference)
+  - spatial_dropout param wired through all encoder/decoder blocks
+  - temporal mean skip aggregation (critical fix retained)
+ 
 ~50M parameters at default config.
 Fits on RTX A4000 16GB at batch=4, 128×128 patches (~8–10 GB VRAM).
 """
@@ -27,9 +32,17 @@ from typing import List, Tuple, Dict, Any, Optional
 # ---------------------------------------------------------------------------
  
 class DoubleConv(nn.Module):
-    """Two conv-BN-ReLU blocks (standard U-Net unit)."""
+    """
+    Two conv-BN-ReLU blocks (standard U-Net unit) with spatial dropout.
  
-    def __init__(self, in_ch: int, out_ch: int, mid_ch: Optional[int] = None):
+    Dropout2d drops entire feature-map channels, which is more appropriate
+    for spatial data than element-wise dropout and enables MC Dropout at
+    inference: keep dropout active during inference and run N forward passes
+    to get a distribution of predictions (model uncertainty estimate).
+    """
+ 
+    def __init__(self, in_ch: int, out_ch: int, mid_ch: Optional[int] = None,
+                 dropout: float = 0.1):
         super().__init__()
         mid_ch = mid_ch or out_ch
         self.net = nn.Sequential(
@@ -39,6 +52,7 @@ class DoubleConv(nn.Module):
             nn.Conv2d(mid_ch, out_ch, 3, padding=1, bias=False),
             nn.BatchNorm2d(out_ch),
             nn.ReLU(inplace=True),
+            nn.Dropout2d(p=dropout),   # channel-wise spatial dropout
         )
  
     def forward(self, x: torch.Tensor) -> torch.Tensor:
@@ -48,9 +62,12 @@ class DoubleConv(nn.Module):
 class Down(nn.Module):
     """MaxPool + DoubleConv."""
  
-    def __init__(self, in_ch: int, out_ch: int):
+    def __init__(self, in_ch: int, out_ch: int, dropout: float = 0.1):
         super().__init__()
-        self.net = nn.Sequential(nn.MaxPool2d(2), DoubleConv(in_ch, out_ch))
+        self.net = nn.Sequential(
+            nn.MaxPool2d(2),
+            DoubleConv(in_ch, out_ch, dropout=dropout),
+        )
  
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         return self.net(x)
@@ -59,10 +76,10 @@ class Down(nn.Module):
 class Up(nn.Module):
     """Bilinear upsample + skip connection + DoubleConv."""
  
-    def __init__(self, in_ch: int, skip_ch: int, out_ch: int):
+    def __init__(self, in_ch: int, skip_ch: int, out_ch: int, dropout: float = 0.1):
         super().__init__()
         self.up = nn.Upsample(scale_factor=2, mode="bilinear", align_corners=True)
-        self.conv = DoubleConv(in_ch + skip_ch, out_ch)
+        self.conv = DoubleConv(in_ch + skip_ch, out_ch, dropout=dropout)
  
     def forward(self, x: torch.Tensor, skip: torch.Tensor) -> torch.Tensor:
         x = self.up(x)
@@ -146,13 +163,13 @@ class UNetEncoder(nn.Module):
     by folding T into the batch dimension.
     """
  
-    def __init__(self, in_ch: int, encoder_channels: List[int]):
+    def __init__(self, in_ch: int, encoder_channels: List[int], dropout: float = 0.1):
         super().__init__()
         # encoder_channels: e.g. [32, 64, 128, 256]
-        self.inc = DoubleConv(in_ch, encoder_channels[0])
+        self.inc = DoubleConv(in_ch, encoder_channels[0], dropout=dropout)
         self.downs = nn.ModuleList()
         for i in range(1, len(encoder_channels)):
-            self.downs.append(Down(encoder_channels[i-1], encoder_channels[i]))
+            self.downs.append(Down(encoder_channels[i-1], encoder_channels[i], dropout=dropout))
  
     def forward(self, x: torch.Tensor) -> List[torch.Tensor]:
         """
@@ -174,6 +191,9 @@ class UNetEncoder(nn.Module):
 class UNetTemporalModel(nn.Module):
     """
     U-Net + Temporal Attention model for counterfactual trajectory prediction.
+ 
+    MC Dropout support: call enable_mc_dropout() before inference to keep
+    Dropout2d layers active, then run N forward passes to estimate uncertainty.
     """
  
     def __init__(self, config: Dict[str, Any]):
@@ -194,8 +214,8 @@ class UNetTemporalModel(nn.Module):
  
         self.bottleneck_ch = enc_channels[-1]
  
-        # Spatial encoder
-        self.encoder = UNetEncoder(self.in_channels, enc_channels)
+        # Spatial encoder — Dropout2d in every DoubleConv
+        self.encoder = UNetEncoder(self.in_channels, enc_channels, dropout=dropout)
  
         # Temporal LSTM at bottleneck
         # Bottleneck features are spatially average-pooled → (B, T, C_bn)
@@ -214,13 +234,12 @@ class UNetTemporalModel(nn.Module):
  
         # Decoder — one Up block per encoder level (reversed)
         # Skip channels: enc_channels in reverse (excluding bottleneck)
-        # Decoder channels: mirror of encoder
         dec_channels = list(reversed(enc_channels[:-1]))  # [128, 64, 32]
         self.decoder_ups = nn.ModuleList()
         in_ch = self.bottleneck_ch
         for i, out_ch in enumerate(dec_channels):
             skip_ch = enc_channels[-(i+2)]  # matching encoder skip
-            self.decoder_ups.append(Up(in_ch, skip_ch, out_ch))
+            self.decoder_ups.append(Up(in_ch, skip_ch, out_ch, dropout=dropout))
             in_ch = out_ch
  
         # Final output head
@@ -238,6 +257,20 @@ class UNetTemporalModel(nn.Module):
                 nn.init.xavier_uniform_(m.weight)
                 if hasattr(m, "bias") and m.bias is not None:
                     nn.init.zeros_(m.bias)
+ 
+    def enable_mc_dropout(self):
+        """
+        Set all Dropout and Dropout2d layers to training mode while keeping
+        BatchNorm in eval mode (uses running statistics, not batch statistics).
+ 
+        Call this before MC Dropout inference:
+            model.eval()
+            model.enable_mc_dropout()
+            preds = [model(x) for _ in range(50)]
+        """
+        for module in self.modules():
+            if isinstance(module, (nn.Dropout, nn.Dropout2d)):
+                module.train()
  
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         """
@@ -293,16 +326,13 @@ class UNetTemporalModel(nn.Module):
             attended = self.temporal_attn(query, temporal_context)  # (B, C_bn)
  
             # Reshape attended back to spatial bottleneck
-            # Broadcast to spatial dims of bottleneck
             spatial_bn = attended.unsqueeze(-1).unsqueeze(-1).expand(
                 B, C_bn, H_bn, W_bn
             )   # (B, C_bn, H_bn, W_bn)
  
             # Decode with skip connections
             feat = spatial_bn
-            skip_idx = len(self.decoder_ups)
             for i, up in enumerate(self.decoder_ups):
-                # Skip from encoder: index from bottleneck backwards
                 skip = skips_last[-(i+2)]   # coarser → finer
                 feat = up(feat, skip)
  
@@ -310,10 +340,11 @@ class UNetTemporalModel(nn.Module):
             pred = self.output_head(feat)   # (B, C_out, H, W)
             preds.append(pred)
  
-            # Update decoder bottleneck (append prediction to context implicitly)
+            # Update decoder bottleneck
             dec_bottleneck = attended
  
         return torch.stack(preds, dim=1)   # (B, T_out, C_out, H, W)
  
     def count_parameters(self) -> int:
         return sum(p.numel() for p in self.parameters() if p.requires_grad)
+ 
