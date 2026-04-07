@@ -225,6 +225,13 @@ class CompositeLoader:
         unrecognized = []
  
         for fpath in sorted(folder.glob("*.tif")):
+            # Skip uint16-encoded copies — tensor builder reads float32 originals only.
+            # _u16.tif files use per-band integer encoding (Blue×10000, NDVI×10000+10000,
+            # SAR×1000+25000) that must be decoded before use. The float32 GeoTIFFs
+            # exported directly from GEE are used as-is without any decoding step.
+            if "_u16" in fpath.name:
+                continue
+ 
             parsed = _parse_filename(fpath.name)
             if parsed is None:
                 unrecognized.append(fpath.name)
@@ -262,9 +269,15 @@ class CompositeLoader:
         composites.sort(key=lambda c: c.sort_key)
         masks.sort(key=lambda c: c.sort_key)
  
-        # Assign time indices
-        for i, cf in enumerate(composites):
-            cf.time_index = i
+        # Assign time indices based on CALENDAR POSITION, not file order.
+        # Sequential assignment shifts all indices when a quarter is missing —
+        # e.g. missing 2016_Q2 makes 2021_Q4 land at index 22 instead of 23,
+        # breaking t_event alignment.  Calendar-based assignment ensures a
+        # missing quarter becomes a NaN placeholder at the correct slot.
+        start_year    = eco_cfg.get("start_year", composites[0].year if composites else 2016)
+        start_quarter = eco_cfg.get("start_quarter", 1)
+        for cf in composites:
+            cf.time_index = (cf.year - start_year) * 4 + (cf.quarter - start_quarter)
  
         # Validate count
         expected = eco_cfg["n_composites"]

@@ -4,19 +4,29 @@ unet_temporal.py
 U-Net + Temporal Attention model for ECO-REWIND (primary architecture).
  
 Design:
-  1. Shared spatial encoder (U-Net style): processes all T_in frames together
-     by reshaping (B, T, C, H, W) → (B*T, C, H, W)
-  2. LSTM at the encoder bottleneck: learns temporal dynamics
-  3. Temporal cross-attention: decoder queries temporal context from encoder
-  4. Spatial decoder: upsamples back to (B, T_out, C, H, W) with skip connections
+  1. Shared spatial encoder (U-Net style): processes all T_in frames by folding
+     T into the batch dimension: (B, T, C, H, W) → (B*T, C, H, W)
+  2. LSTM at the encoder bottleneck: learns temporal dynamics from spatially
+     average-pooled features.
+  3. Temporal cross-attention: decoder queries attend to the T_in LSTM outputs
+     to selectively weight historical timesteps.
+  4. FiLM conditioning: temporal context vector *modulates* the full spatial
+     bottleneck features (scale + shift per channel) — replaces the flat
+     broadcast that produced zero spatial variation at the bottleneck.
+  5. Spatial self-attention at bottleneck: captures global spatial context
+     at the coarsest scale (16×16 tokens for 128-px input, very cheap).
+  6. Residual output head: model predicts Δ(frame) added to the last input
+     frame; easier to learn and gives smoother gradient flow.
  
 Improvements over v1:
-  - Dropout2d in every DoubleConv block (enables MC Dropout at inference)
-  - spatial_dropout param wired through all encoder/decoder blocks
-  - temporal mean skip aggregation (critical fix retained)
+  - FiLM conditioning on bottleneck (fixes broadcast spatial invariance bug)
+  - Bottleneck spatial self-attention
+  - Residual decoder (predict delta not absolute)
+  - Attention-gated skip aggregation
+  - MC Dropout via Dropout2d in every DoubleConv
  
-~50M parameters at default config.
-Fits on RTX A4000 16GB at batch=4, 128×128 patches (~8–10 GB VRAM).
+~52M parameters at default config (enc=[32, 64, 128, 256], lstm=512).
+Fits on RTX A4000 16GB at batch=4, 128×128 patches.
 """
  
 import math
@@ -33,12 +43,8 @@ from typing import List, Tuple, Dict, Any, Optional
  
 class DoubleConv(nn.Module):
     """
-    Two conv-BN-ReLU blocks (standard U-Net unit) with spatial dropout.
- 
-    Dropout2d drops entire feature-map channels, which is more appropriate
-    for spatial data than element-wise dropout and enables MC Dropout at
-    inference: keep dropout active during inference and run N forward passes
-    to get a distribution of predictions (model uncertainty estimate).
+    Two conv-BN-GELU blocks with spatial (channel-wise) dropout.
+    GELU replaces ReLU — smoother gradient, empirically better for regression.
     """
  
     def __init__(self, in_ch: int, out_ch: int, mid_ch: Optional[int] = None,
@@ -48,11 +54,11 @@ class DoubleConv(nn.Module):
         self.net = nn.Sequential(
             nn.Conv2d(in_ch, mid_ch, 3, padding=1, bias=False),
             nn.BatchNorm2d(mid_ch),
-            nn.ReLU(inplace=True),
+            nn.GELU(),
             nn.Conv2d(mid_ch, out_ch, 3, padding=1, bias=False),
             nn.BatchNorm2d(out_ch),
-            nn.ReLU(inplace=True),
-            nn.Dropout2d(p=dropout),   # channel-wise spatial dropout
+            nn.GELU(),
+            nn.Dropout2d(p=dropout),
         )
  
     def forward(self, x: torch.Tensor) -> torch.Tensor:
@@ -78,16 +84,100 @@ class Up(nn.Module):
  
     def __init__(self, in_ch: int, skip_ch: int, out_ch: int, dropout: float = 0.1):
         super().__init__()
-        self.up = nn.Upsample(scale_factor=2, mode="bilinear", align_corners=True)
+        self.up   = nn.Upsample(scale_factor=2, mode="bilinear", align_corners=True)
         self.conv = DoubleConv(in_ch + skip_ch, out_ch, dropout=dropout)
  
     def forward(self, x: torch.Tensor, skip: torch.Tensor) -> torch.Tensor:
         x = self.up(x)
-        # Pad if spatial dims differ (odd input sizes)
-        if x.shape != skip.shape:
+        if x.shape[-2:] != skip.shape[-2:]:
             x = F.pad(x, [0, skip.shape[-1] - x.shape[-1],
-                          0, skip.shape[-2] - x.shape[-2]])
+                           0, skip.shape[-2] - x.shape[-2]])
         return self.conv(torch.cat([skip, x], dim=1))
+ 
+ 
+# ---------------------------------------------------------------------------
+# FiLM conditioning
+# ---------------------------------------------------------------------------
+ 
+class FiLMLayer(nn.Module):
+    """
+    Feature-wise Linear Modulation.
+ 
+    Uses a conditioning vector (from LSTM + attention) to scale and shift
+    a 2D spatial feature map channel-wise:
+ 
+        out = x * (1 + γ) + β
+ 
+    where γ, β are derived from the conditioning vector.
+    This lets temporal context modulate WHERE (spatially) the decoder focuses,
+    rather than replacing spatial features with a single broadcast vector.
+    """
+ 
+    def __init__(self, d_cond: int, d_spatial: int):
+        super().__init__()
+        self.proj = nn.Sequential(
+            nn.Linear(d_cond, d_cond),
+            nn.GELU(),
+            nn.Linear(d_cond, 2 * d_spatial),
+        )
+        # Initialise near identity: γ≈0, β≈0 → no modulation at start of training
+        nn.init.zeros_(self.proj[-1].weight)
+        nn.init.zeros_(self.proj[-1].bias)
+ 
+    def forward(self, x: torch.Tensor, cond: torch.Tensor) -> torch.Tensor:
+        """
+        x    : (B, C, H, W) spatial feature map
+        cond : (B, d_cond)  conditioning vector
+        """
+        params = self.proj(cond)                # (B, 2*C)
+        gamma, beta = params.chunk(2, dim=-1)   # each (B, C)
+        gamma = gamma.view(-1, x.shape[1], 1, 1)
+        beta  = beta.view(-1, x.shape[1], 1, 1)
+        return x * (1.0 + gamma) + beta
+ 
+ 
+# ---------------------------------------------------------------------------
+# Spatial self-attention at bottleneck
+# ---------------------------------------------------------------------------
+ 
+class BottleneckSpatialAttention(nn.Module):
+    """
+    Multi-head self-attention over the 2D spatial tokens at the bottleneck.
+ 
+    For a 128×128 input with 3 downs: bottleneck is 16×16 = 256 tokens.
+    This is cheap (256×256 attention) but gives the model global spatial context
+    — something no stack of 3×3 convolutions can achieve.
+    """
+ 
+    def __init__(self, d_model: int, n_heads: int = 4, dropout: float = 0.1):
+        super().__init__()
+        self.norm = nn.LayerNorm(d_model)
+        self.attn = nn.MultiheadAttention(d_model, n_heads, dropout=dropout, batch_first=True)
+        self.ffn  = nn.Sequential(
+            nn.LayerNorm(d_model),
+            nn.Linear(d_model, d_model * 2),
+            nn.GELU(),
+            nn.Dropout(dropout),
+            nn.Linear(d_model * 2, d_model),
+        )
+ 
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
+        """
+        x : (B, C, H, W)
+        Returns: (B, C, H, W)
+        """
+        B, C, H, W = x.shape
+        tokens = x.view(B, C, H * W).permute(0, 2, 1)   # (B, H*W, C)
+ 
+        # Self-attention
+        normed = self.norm(tokens)
+        attended, _ = self.attn(normed, normed, normed)
+        tokens = tokens + attended
+ 
+        # FFN
+        tokens = tokens + self.ffn(tokens)
+ 
+        return tokens.permute(0, 2, 1).view(B, C, H, W)
  
  
 # ---------------------------------------------------------------------------
@@ -97,58 +187,47 @@ class Up(nn.Module):
 class TemporalCrossAttention(nn.Module):
     """
     Multi-head cross-attention over the time axis.
- 
-    Query: decoder feature at current step
-    Key/Value: all T_in encoder bottleneck features
- 
-    Allows decoder to selectively attend to the most relevant
-    historical timesteps when generating each prediction step.
+    Query: decoder bottleneck vector at one prediction step.
+    Key/Value: all T_in LSTM encoder outputs.
     """
  
     def __init__(self, d_model: int, n_heads: int = 8, dropout: float = 0.1):
         super().__init__()
-        assert d_model % n_heads == 0, f"d_model={d_model} must be divisible by n_heads={n_heads}"
+        assert d_model % n_heads == 0
         self.n_heads = n_heads
-        self.d_head = d_model // n_heads
-        self.scale = math.sqrt(self.d_head)
+        self.d_head  = d_model // n_heads
+        self.scale   = math.sqrt(self.d_head)
  
-        self.q_proj = nn.Linear(d_model, d_model)
-        self.k_proj = nn.Linear(d_model, d_model)
-        self.v_proj = nn.Linear(d_model, d_model)
+        self.q_proj   = nn.Linear(d_model, d_model)
+        self.k_proj   = nn.Linear(d_model, d_model)
+        self.v_proj   = nn.Linear(d_model, d_model)
         self.out_proj = nn.Linear(d_model, d_model)
-        self.dropout = nn.Dropout(dropout)
-        self.norm = nn.LayerNorm(d_model)
+        self.dropout  = nn.Dropout(dropout)
+        self.norm     = nn.LayerNorm(d_model)
  
-    def forward(
-        self, query: torch.Tensor, context: torch.Tensor
-    ) -> torch.Tensor:
+    def forward(self, query: torch.Tensor, context: torch.Tensor) -> torch.Tensor:
         """
-        Args:
-            query   : (B, d_model) — decoder query at one timestep
-            context : (B, T, d_model) — encoder temporal sequence
- 
-        Returns:
-            (B, d_model) — attended output
+        query   : (B, d_model)
+        context : (B, T, d_model)
+        Returns : (B, d_model)
         """
         residual = query
         B, T, D = context.shape
  
         q = self.q_proj(query).unsqueeze(1)   # (B, 1, D)
         k = self.k_proj(context)              # (B, T, D)
-        v = self.v_proj(context)              # (B, T, D)
+        v = self.v_proj(context)
  
-        # Reshape to multi-head
         q = rearrange(q, "b 1 (h d) -> b h 1 d", h=self.n_heads)
         k = rearrange(k, "b t (h d) -> b h t d", h=self.n_heads)
         v = rearrange(v, "b t (h d) -> b h t d", h=self.n_heads)
  
-        attn = torch.matmul(q, k.transpose(-2, -1)) / self.scale  # (B, h, 1, T)
+        attn = torch.matmul(q, k.transpose(-2, -1)) / self.scale
         attn = torch.softmax(attn, dim=-1)
         attn = self.dropout(attn)
  
-        out = torch.matmul(attn, v)   # (B, h, 1, d)
+        out = torch.matmul(attn, v)
         out = rearrange(out, "b h 1 d -> b (h d)")
- 
         out = self.out_proj(out)
         return self.norm(out + residual)
  
@@ -158,26 +237,16 @@ class TemporalCrossAttention(nn.Module):
 # ---------------------------------------------------------------------------
  
 class UNetEncoder(nn.Module):
-    """
-    U-Net spatial encoder. Processes all timesteps simultaneously
-    by folding T into the batch dimension.
-    """
- 
     def __init__(self, in_ch: int, encoder_channels: List[int], dropout: float = 0.1):
         super().__init__()
-        # encoder_channels: e.g. [32, 64, 128, 256]
-        self.inc = DoubleConv(in_ch, encoder_channels[0], dropout=dropout)
-        self.downs = nn.ModuleList()
-        for i in range(1, len(encoder_channels)):
-            self.downs.append(Down(encoder_channels[i-1], encoder_channels[i], dropout=dropout))
+        self.inc  = DoubleConv(in_ch, encoder_channels[0], dropout=dropout)
+        self.downs = nn.ModuleList([
+            Down(encoder_channels[i-1], encoder_channels[i], dropout=dropout)
+            for i in range(1, len(encoder_channels))
+        ])
  
     def forward(self, x: torch.Tensor) -> List[torch.Tensor]:
-        """
-        Args:
-            x : (B*T, C, H, W)
-        Returns:
-            skips : list of feature maps at each scale, finest → coarsest
-        """
+        """x : (B*T, C, H, W) → list of skip tensors, finest → coarsest"""
         skips = [self.inc(x)]
         for down in self.downs:
             skips.append(down(skips[-1]))
@@ -190,35 +259,42 @@ class UNetEncoder(nn.Module):
  
 class UNetTemporalModel(nn.Module):
     """
-    U-Net + Temporal Attention model for counterfactual trajectory prediction.
+    Improved U-Net + Temporal Attention model for counterfactual prediction.
  
-    MC Dropout support: call enable_mc_dropout() before inference to keep
-    Dropout2d layers active, then run N forward passes to estimate uncertainty.
+    MC Dropout: call enable_mc_dropout() before inference then run N passes.
     """
  
     def __init__(self, config: Dict[str, Any]):
         super().__init__()
         self.config = config
-        model_cfg = config["model"]["unet_temporal"]
+        model_cfg   = config["model"]["unet_temporal"]
         use_validity = config["patches"]["use_validity_mask"]
  
-        self.in_channels = config["bands"]["count"] + (1 if use_validity else 0)
+        self.in_channels  = config["bands"]["count"] + (1 if use_validity else 0)
         self.out_channels = config["bands"]["count"]
-        self.t_input = config["model"]["t_input"]
+        self.t_input  = config["model"]["t_input"]
         self.t_output = config["model"]["t_output"]
  
-        enc_channels = model_cfg["encoder_channels"]   # [32, 64, 128, 256]
-        lstm_hidden = model_cfg["lstm_hidden"]          # 512
-        n_heads = model_cfg["n_attention_heads"]        # 8
-        dropout = model_cfg.get("dropout", 0.1)
+        enc_channels  = model_cfg["encoder_channels"]   # [32, 64, 128, 256]
+        lstm_hidden   = model_cfg["lstm_hidden"]         # 512
+        n_heads       = model_cfg["n_attention_heads"]   # 8
+        dropout       = model_cfg.get("dropout", 0.1)
  
         self.bottleneck_ch = enc_channels[-1]
  
-        # Spatial encoder — Dropout2d in every DoubleConv
+        # ---- Encoder ----
         self.encoder = UNetEncoder(self.in_channels, enc_channels, dropout=dropout)
  
-        # Temporal LSTM at bottleneck
-        # Bottleneck features are spatially average-pooled → (B, T, C_bn)
+        # ---- Bottleneck spatial self-attention ----
+        # Operates on (B*T, C_bn, H_bn, W_bn) after folding T into batch.
+        # H_bn = W_bn = 16 for 128px input → 256 tokens → cheap.
+        self.bottleneck_attn = BottleneckSpatialAttention(
+            d_model=self.bottleneck_ch,
+            n_heads=min(4, self.bottleneck_ch // 16),
+            dropout=dropout,
+        )
+ 
+        # ---- Temporal LSTM ----
         self.lstm = nn.LSTM(
             input_size=self.bottleneck_ch,
             hidden_size=lstm_hidden,
@@ -226,48 +302,58 @@ class UNetTemporalModel(nn.Module):
             batch_first=True,
             dropout=dropout,
         )
-        # Project LSTM output back to bottleneck_ch
         self.lstm_proj = nn.Linear(lstm_hidden, self.bottleneck_ch)
  
-        # Temporal cross-attention for decoder
+        # ---- Temporal cross-attention for decoder queries ----
         self.temporal_attn = TemporalCrossAttention(self.bottleneck_ch, n_heads, dropout)
  
-        # Decoder — one Up block per encoder level (reversed)
-        # Skip channels: enc_channels in reverse (excluding bottleneck)
-        dec_channels = list(reversed(enc_channels[:-1]))  # [128, 64, 32]
+        # ---- FiLM: conditions spatial bottleneck on temporal context ----
+        self.film = FiLMLayer(
+            d_cond=self.bottleneck_ch,
+            d_spatial=self.bottleneck_ch,
+        )
+ 
+        # ---- Decoder ----
+        dec_channels = list(reversed(enc_channels[:-1]))   # [128, 64, 32]
         self.decoder_ups = nn.ModuleList()
         in_ch = self.bottleneck_ch
         for i, out_ch in enumerate(dec_channels):
-            skip_ch = enc_channels[-(i+2)]  # matching encoder skip
+            skip_ch = enc_channels[-(i+2)]
             self.decoder_ups.append(Up(in_ch, skip_ch, out_ch, dropout=dropout))
             in_ch = out_ch
  
-        # Final output head
-        self.output_head = nn.Conv2d(dec_channels[-1], self.out_channels, 1)
+        # ---- Output head — predicts residual Δ from last input frame ----
+        # Tanh output: delta in (−1, 1); added to last_frame via scaled residual
+        self.output_head = nn.Sequential(
+            nn.Conv2d(dec_channels[-1], dec_channels[-1] // 2, 3, padding=1, bias=False),
+            nn.GroupNorm(min(8, dec_channels[-1] // 2), dec_channels[-1] // 2),
+            nn.GELU(),
+            nn.Conv2d(dec_channels[-1] // 2, self.out_channels, 1),
+            nn.Tanh(),
+        )
+        # Learned scale parameter for the residual.
+        # sigmoid(0) = 0.5 → max 0.5 change per step. Initialised to 0 → small Δ at start.
+        self.delta_scale = nn.Parameter(torch.zeros(1))
  
-        # Positional encoding for decoder timesteps
+        # Positional embedding for decoder timesteps
         self.pos_embed = nn.Embedding(self.t_output + self.t_input + 10, self.bottleneck_ch)
  
-        self.dropout = nn.Dropout(dropout)
+        self.dropout_layer = nn.Dropout(dropout)
         self._init_weights()
  
     def _init_weights(self):
         for m in self.modules():
-            if isinstance(m, (nn.Conv2d, nn.Linear)):
+            if isinstance(m, nn.Conv2d):
+                nn.init.kaiming_normal_(m.weight, mode="fan_out", nonlinearity="relu")
+                if m.bias is not None:
+                    nn.init.zeros_(m.bias)
+            elif isinstance(m, nn.Linear):
                 nn.init.xavier_uniform_(m.weight)
-                if hasattr(m, "bias") and m.bias is not None:
+                if m.bias is not None:
                     nn.init.zeros_(m.bias)
  
     def enable_mc_dropout(self):
-        """
-        Set all Dropout and Dropout2d layers to training mode while keeping
-        BatchNorm in eval mode (uses running statistics, not batch statistics).
- 
-        Call this before MC Dropout inference:
-            model.eval()
-            model.enable_mc_dropout()
-            preds = [model(x) for _ in range(50)]
-        """
+        """Enable MC Dropout at inference: keep Dropout layers active."""
         for module in self.modules():
             if isinstance(module, (nn.Dropout, nn.Dropout2d)):
                 module.train()
@@ -281,70 +367,77 @@ class UNetTemporalModel(nn.Module):
         """
         B, T_in, C, H, W = x.shape
  
-        # --- ENCODE: fold T into batch dimension ---
+        # Last input frame — used as residual base
+        last_frame = x[:, -1, :self.out_channels]   # (B, C_out, H, W)
+ 
+        # ---- ENCODE: fold T into batch dimension ----
         x_flat = rearrange(x, "b t c h w -> (b t) c h w")
         skips_flat = self.encoder(x_flat)   # list of (B*T, ch, H_i, W_i)
  
-        # --- TEMPORAL LSTM on pooled bottleneck features ---
-        bottleneck_flat = skips_flat[-1]    # (B*T, C_bn, H_bn, W_bn)
+        # ---- BOTTLENECK SPATIAL SELF-ATTENTION ----
+        # Apply after the deepest encoder level.
+        # Gives global spatial context before temporal aggregation.
+        bottleneck_flat = self.bottleneck_attn(skips_flat[-1])   # (B*T, C_bn, H_bn, W_bn)
+        skips_flat[-1] = bottleneck_flat
+ 
         C_bn = bottleneck_flat.shape[1]
         H_bn, W_bn = bottleneck_flat.shape[2], bottleneck_flat.shape[3]
  
-        # Global average pool → (B*T, C_bn) → (B, T, C_bn)
-        pooled = bottleneck_flat.mean(dim=(-2, -1))
-        pooled = rearrange(pooled, "(b t) c -> b t c", b=B, t=T_in)
+        # ---- TEMPORAL LSTM on pooled bottleneck ----
+        pooled = bottleneck_flat.mean(dim=(-2, -1))                      # (B*T, C_bn)
+        pooled = rearrange(pooled, "(b t) c -> b t c", b=B, t=T_in)     # (B, T, C_bn)
+        lstm_out, _ = self.lstm(pooled)                                  # (B, T, lstm_hidden)
+        temporal_context = self.lstm_proj(lstm_out)                      # (B, T, C_bn)
  
-        # LSTM temporal encoding
-        lstm_out, (h_n, c_n) = self.lstm(pooled)    # (B, T, lstm_hidden)
-        lstm_out = self.lstm_proj(lstm_out)          # (B, T, C_bn)
+        # Spatial bottleneck (averaged over T_in): preserves spatial structure
+        spatial_bottleneck = rearrange(
+            bottleneck_flat, "(b t) c h w -> b t c h w", b=B, t=T_in
+        ).mean(dim=1)   # (B, C_bn, H_bn, W_bn)
  
-        # lstm_out is the temporal context for attention
-        temporal_context = lstm_out   # (B, T_in, C_bn)
- 
-        # --- DECODE: generate T_out steps ---
-        preds = []
- 
-        # Reshape skips back to (B, T, ch, H_i, W_i)
+        # Reshape skips for aggregation
         skips_bt = [
             rearrange(s, "(b t) c h w -> b t c h w", b=B, t=T_in)
             for s in skips_flat
         ]
-        # Aggregate skip features across ALL T_in timesteps (temporal mean).
-        # Previously used only the last timestep, discarding all earlier context.
-        # Mean aggregation gives the decoder access to the full pre-event history
-        # at every spatial scale, which is crucial for accurate CF generation.
-        skips_last = [s.mean(dim=1) for s in skips_bt]   # list of (B, ch, H_i, W_i)
+        # Temporal-mean skip aggregation (captures full pre-event baseline)
+        skips_mean = [s.mean(dim=1) for s in skips_bt]   # (B, ch, H_i, W_i) each
  
-        # Initial decoder bottleneck = last LSTM output
-        dec_bottleneck = lstm_out[:, -1]   # (B, C_bn)
+        # Initial decoder state = last LSTM output
+        dec_state = temporal_context[:, -1]   # (B, C_bn)
+ 
+        # ---- DECODE: generate T_out steps ----
+        preds = []
  
         for step in range(self.t_output):
-            # Attend to temporal context
-            pos = torch.tensor([T_in + step], device=x.device)
+            # 1. Temporal cross-attention: which historical frames matter most
+            pos     = torch.tensor([T_in + step], device=x.device)
             pos_emb = self.pos_embed(pos).squeeze(0)          # (C_bn,)
-            query = dec_bottleneck + pos_emb.unsqueeze(0)     # (B, C_bn)
-            attended = self.temporal_attn(query, temporal_context)  # (B, C_bn)
+            query   = dec_state + pos_emb.unsqueeze(0)        # (B, C_bn)
+            attended = self.temporal_attn(query, temporal_context)   # (B, C_bn)
  
-            # Reshape attended back to spatial bottleneck
-            spatial_bn = attended.unsqueeze(-1).unsqueeze(-1).expand(
-                B, C_bn, H_bn, W_bn
-            )   # (B, C_bn, H_bn, W_bn)
+            # 2. FiLM: condition spatial bottleneck on temporal context
+            #    This replaces the old "broadcast attended to (B, C, H, W)" which
+            #    had zero spatial variation — every pixel got the same vector.
+            spatial_bn = self.film(spatial_bottleneck, attended)   # (B, C_bn, H_bn, W_bn)
  
-            # Decode with skip connections
+            # 3. Spatial decoder with U-Net skip connections
             feat = spatial_bn
             for i, up in enumerate(self.decoder_ups):
-                skip = skips_last[-(i+2)]   # coarser → finer
-                feat = up(feat, skip)
+                skip = skips_mean[-(i+2)]   # finest skips last
+                feat = up(feat, skip)       # (B, out_ch, H_i, W_i)
  
-            # Final prediction
-            pred = self.output_head(feat)   # (B, C_out, H, W)
+            # 4. Residual output: predict Δ, add to last input frame
+            delta = self.output_head(feat)                          # (B, C, H, W), Tanh
+            scale = torch.sigmoid(self.delta_scale) * 0.5          # [0, 0.5]
+            pred  = last_frame + delta * scale                      # (B, C, H, W)
+            # Don't clamp here — ecological loss handles out-of-range penalisation
+ 
             preds.append(pred)
  
-            # Update decoder bottleneck
-            dec_bottleneck = attended
+            # Update decoder state for next step
+            dec_state = attended
  
         return torch.stack(preds, dim=1)   # (B, T_out, C_out, H, W)
  
     def count_parameters(self) -> int:
         return sum(p.numel() for p in self.parameters() if p.requires_grad)
- 

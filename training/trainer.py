@@ -85,6 +85,7 @@ class Trainer:
             logger.info(f"  VRAM: {torch.cuda.get_device_properties(0).total_memory / 1e9:.1f} GB")
  
         self.model = self.model.to(self.device)
+        self.loss_fn = self.loss_fn.to(self.device)  # move band_weights + SSIM kernel to GPU
  
         train_cfg = config["training"]
  

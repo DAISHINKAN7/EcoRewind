@@ -168,10 +168,16 @@ class EcoRewindLoss(nn.Module):
         l_eco = self._ecological_loss(pred, mask)
  
         # 4. SSIM structural loss
-        # Only on valid (non-cloud) target pixels — zero masked values first
-        pred_m   = pred   * mask
-        target_m = target * mask
-        l_ssim = self.ssim_module(pred_m, target_m)
+        # Compute on raw pred/target — do NOT multiply by mask before passing to SSIM.
+        # Zeroing masked pixels with pred*mask creates large uniform regions that push
+        # the 11×11 kernel's SSIM above 1 (numerically impossible), giving negative loss.
+        l_ssim = self.ssim_module(pred, target)
+ 
+        # 5. Spectral consistency (disabled by default via lambda_spectral=0)
+        # The formula requires physical-space NIR/Red values but the model works in
+        # normalised space where NIR_max ≠ Red_max, so the consistency check
+        # is not directly comparable. Only enable if you pass inverse-normalised tensors.
+        l_spectral = torch.tensor(0.0, device=pred.device)
  
         # 5. Spectral consistency: NDVI_pred should match (NIR_pred - Red_pred) / (NIR_pred + Red_pred)
         l_spectral = self._spectral_consistency_loss(pred, mask)

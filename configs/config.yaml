@@ -146,7 +146,7 @@ patches:
 # MODEL SETTINGS
 # =============================================================================
 model:
-  # "convlstm" or "unet_temporal"
+  # "convlstm", "unet_temporal", or "eco_transformer"
   architecture: "unet_temporal"
  
   # Number of past quarters fed as input
@@ -158,8 +158,10 @@ model:
                               # autoregressive rollout steps for 10-quarter CF
                               # (5 steps → 3 steps), cutting drift compounding.
  
+
+  # Improved ConvLSTM: temporal attention bottleneck + residual decoder
   convlstm:
-    hidden_channels: [64, 64, 64]    # 3 ConvLSTM layers
+    hidden_channels: [96, 96, 64]    # 3 layers; was [64,64,64]
     kernel_size: 3
     dropout: 0.1
  
@@ -169,14 +171,22 @@ model:
     n_attention_heads: 8
     dropout: 0.1
  
+  eco_transformer:
+    embed_dim: 128              # Token dimension D
+    depth: 4                    # Number of FactorizedSTBlock encoder layers
+    n_heads: 8                  # Attention heads (embed_dim must be divisible)
+    mlp_ratio: 4.0              # FFN hidden = embed_dim * mlp_ratio
+    dropout: 0.1
+    # Note: spatial scale is fixed at 8× (128→16 token grid, 256 tokens/frame)
+ 
 # =============================================================================
 # LOSS FUNCTION
 # =============================================================================
 loss:
   lambda_temporal:   0.2      # Penalise unrealistic quarter-to-quarter NDVI/NDWI jumps
   lambda_ecological: 0.08     # Soft constraint for physically valid value ranges
-  lambda_ssim:       0.15     # SSIM structural similarity — rewards spatial texture realism
-  lambda_spectral:   0.05     # NDVI consistency with independently predicted NIR and Red
+  lambda_ssim:       0.05     # SSIM structural similarity — rewards spatial texture realism
+  lambda_spectral:   0.00     # NDVI consistency with independently predicted NIR and Red
   # L_total = L_recon + λ_t*L_temporal + λ_e*L_eco + λ_s*L_ssim + λ_sp*L_spectral
  
 # =============================================================================
