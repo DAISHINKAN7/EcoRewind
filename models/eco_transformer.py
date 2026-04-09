@@ -327,11 +327,13 @@ class EcoTransformer(nn.Module):
         # Add spatial position encoding
         tokens = self.spatial_pos(tokens)   # (B*T, N, D)
  
-        # Add temporal embedding
+        # Add temporal embedding (out-of-place — avoids in-place mutation of tensors
+        # that may be views, which breaks torch.compile / autograd)
         tokens = tokens.reshape(B, T, self.n_patches, D)
-        for t in range(T):
-            t_emb = self.temporal_emb(t, tokens.device)   # (1, 1, D)
-            tokens[:, t] = tokens[:, t] + t_emb
+        t_indices = torch.arange(T, device=tokens.device)
+        t_embs = self.temporal_emb.embedding(t_indices)       # (T, D)
+        t_embs = t_embs.unsqueeze(0).unsqueeze(2)             # (1, T, 1, D)
+        tokens = tokens + t_embs                               # broadcast → (B, T, N, D)
  
         return tokens   # (B, T, N, D)
  
@@ -357,13 +359,16 @@ class EcoTransformer(nn.Module):
         """
         B = enc_out.shape[0]
  
-        # Expand learned query tokens
-        queries = self.query_tokens.expand(B, -1, -1, -1)   # (B, T_out, N, D)
- 
-        # Add temporal embeddings to queries
-        for t in range(self.t_output):
-            t_emb = self.temporal_emb(self.t_input + t, enc_out.device)
-            queries[:, t] = queries[:, t] + t_emb
+        # Expand learned query tokens and add temporal embeddings (out-of-place).
+        # Never mutate an .expand() view — it's a view of the nn.Parameter and
+        # in-place writes on Parameter views crash torch.compile (Dynamo).
+        t_indices = torch.arange(
+            self.t_input, self.t_input + self.t_output, device=enc_out.device
+        )
+        t_embs = self.temporal_emb.embedding(t_indices)      # (T_out, D)
+        t_embs = t_embs.unsqueeze(0).unsqueeze(2)            # (1, T_out, 1, D)
+        queries = self.query_tokens + t_embs                 # (1, T_out, N, D) → expand below
+        queries = queries.expand(B, -1, -1, -1)             # (B, T_out, N, D)
  
         # Key / value: flatten enc_out from (B, T_in, N, D) → (B, T_in*N, D)
         B, T_in, N, D = enc_out.shape

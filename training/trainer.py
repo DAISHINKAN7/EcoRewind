@@ -165,6 +165,10 @@ class Trainer:
     def _init_wandb(self):
         try:
             import wandb
+
+            # Finish any active run first (happens when sequential models share one process)
+            if wandb.run is not None:
+                wandb.finish()
  
             wandb_cfg = self.config["wandb"]
  
@@ -195,38 +199,26 @@ class Trainer:
 
             ckpt = torch.load(latest, map_location=self.device)
 
-            state_dict = ckpt["model_state"]
-
-            # 🔥 FIX: handle torch.compile / DDP prefixes
-            cleaned_state_dict = {}
-            for k, v in state_dict.items():
-                if k.startswith("_orig_mod."):
-                    cleaned_state_dict[k.replace("_orig_mod.", "")] = v
-                elif k.startswith("module."):  # DDP safety
-                    cleaned_state_dict[k.replace("module.", "")] = v
-                else:
-                    cleaned_state_dict[k] = v
-
-            self.model.load_state_dict(cleaned_state_dict)
-
-            self.optimizer.load_state_dict(ckpt["optimizer_state"])
-            if "scheduler_state" in ckpt:
-                try:
-                    self.scheduler.load_state_dict(ckpt["scheduler_state"])
-                except Exception as e:
-                    logger.warning(f"Could not load scheduler state: {e}")
-                    logger.warning("Reinitializing scheduler from scratch")
-            else:
-                logger.warning("No scheduler state found in checkpoint")
-
-            self.start_epoch = ckpt["epoch"] + 1
-            self.best_val_loss = ckpt.get("best_val_loss", float("inf"))
-            self.early_stop.best_loss = self.best_val_loss
-
-            logger.info(
-                f"Resumed at epoch {self.start_epoch}, best val loss: {self.best_val_loss:.6f}"
-            )
- 
+            try:
+                self.model.load_state_dict(ckpt["model_state"])
+                self.optimizer.load_state_dict(ckpt["optimizer_state"])
+                self.scheduler.load_state_dict(ckpt["scheduler_state"])
+                self.start_epoch = ckpt["epoch"] + 1
+                self.best_val_loss = ckpt.get("best_val_loss", float("inf"))
+                self.early_stop.best_loss = self.best_val_loss
+                logger.info(
+                    f"Resumed at epoch {self.start_epoch}, "
+                    f"best val loss: {self.best_val_loss:.6f}"
+                )
+            except (RuntimeError, KeyError) as e:
+                # Architecture changed — checkpoint is incompatible. Start fresh.
+                logger.warning(
+                    f"Checkpoint incompatible with current architecture "
+                    f"(model was updated). Starting from scratch.\n"
+                    f"  Checkpoint: {latest}\n"
+                    f"  Reason: {e}"
+                )
+            
     def _find_latest_checkpoint(self) -> Optional[str]:
         ckpts = sorted(self.ckpt_dir.glob("epoch_*.pt"))
         return str(ckpts[-1]) if ckpts else None
