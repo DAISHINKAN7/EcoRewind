@@ -178,17 +178,33 @@ model:
     mlp_ratio: 4.0              # FFN hidden = embed_dim * mlp_ratio
     dropout: 0.1
     # Note: spatial scale is fixed at 8× (128→16 token grid, 256 tokens/frame)
+
+  # In the model: section, add after eco_transformer:
+  unet_mamba:
+    encoder_channels: [32, 64, 128, 256]
+    mamba_d_state: 16
+    mamba_expand: 2
+    n_mamba_layers: 2
+    dropout: 0.1
+
+  unet_patchtst:
+    encoder_channels: [32, 64, 128, 256]
+    patch_len: 2
+    stride: 1
+    n_transformer_layers: 2
+    n_heads: 4
+    mlp_ratio: 2.0
+    dropout: 0.1
  
 # =============================================================================
 # LOSS FUNCTION
 # =============================================================================
 loss:
-  lambda_temporal:   0.2      # Penalise unrealistic quarter-to-quarter NDVI/NDWI jumps
-  lambda_ecological: 0.08     # Soft constraint for physically valid value ranges
-  lambda_ssim:       0.05     # SSIM structural similarity — rewards spatial texture realism
-  lambda_spectral:   0.00     # NDVI consistency with independently predicted NIR and Red
-  # L_total = L_recon + λ_t*L_temporal + λ_e*L_eco + λ_s*L_ssim + λ_sp*L_spectral
- 
+  lambda_temporal:    0.15
+  lambda_ecological:  0.05
+  lambda_ssim:        0.10
+  lambda_spectral:    0.00     # permanently disabled
+  ssim_warmup_epochs: 20
 # =============================================================================
 # TRAINING
 # =============================================================================

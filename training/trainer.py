@@ -530,6 +530,13 @@ def load_model(config: Dict[str, Any], checkpoint_path: str, device: str = "cpu"
     elif arch == "eco_transformer":
         from models.eco_transformer import EcoTransformer
         model = EcoTransformer(config)
+    elif arch == "unet_mamba":
+        from models.unet_mamba import UNetMambaModel
+        model = UNetMambaModel(config)
+
+    elif arch == "unet_patchtst":
+        from models.unet_patchtst import UNetPatchTSTModel
+        model = UNetPatchTSTModel(config)
  
     else:
         raise ValueError(f"Unknown architecture: {arch}")
