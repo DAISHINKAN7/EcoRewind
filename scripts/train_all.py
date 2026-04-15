@@ -291,6 +291,9 @@ def main(args):
         config["training"]["batch_size"] = args.batch_size
     if args.lr:
         config["training"]["learning_rate"] = args.lr
+    if args.no_wandb:
+        config["wandb"]["enabled"] = False
+        logger.info("  W&B logging disabled (--no-wandb)")
  
     ecosystem = args.ecosystem or config["training"].get("train_on", "joint")
     config["training"]["train_on"] = ecosystem
@@ -431,6 +434,10 @@ Examples:
     parser.add_argument(
         "--resume", action="store_true",
         help="Each trainer auto-resumes from its latest checkpoint if present",
+    )
+    parser.add_argument(
+        "--no-wandb", action="store_true", dest="no_wandb",
+        help="Disable Weights & Biases logging (faster startup, no network needed)",
     )
  
     main(parser.parse_args())

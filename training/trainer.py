@@ -379,6 +379,18 @@ class Trainer:
                     if training:
                         loss_scaled = loss / self.accumulate_steps
  
+                # Skip NaN/Inf batches — a single bad sample can poison the
+                # whole run if allowed to backprop.  Reset accumulated grads
+                # so the bad gradients don't carry over to the next step.
+                if not torch.isfinite(loss):
+                    if training:
+                        self.optimizer.zero_grad()
+                    if batch_idx % 200 == 0:
+                        logger.warning(
+                            f"  NaN/Inf loss at batch {batch_idx} — skipping"
+                        )
+                    continue
+ 
                 if training:
  
                     self.scaler.scale(loss_scaled).backward()
@@ -390,7 +402,15 @@ class Trainer:
                     if should_step:
                         # Unscale before clip so clip operates on true gradients
                         self.scaler.unscale_(self.optimizer)
-                        nn.utils.clip_grad_norm_(self.model.parameters(), self.grad_clip)
+                        grad_norm = nn.utils.clip_grad_norm_(
+                            self.model.parameters(), self.grad_clip
+                        )
+                        # Warn when gradients are large (pre-explosion signal)
+                        if torch.isfinite(grad_norm) and grad_norm > self.grad_clip * 5:
+                            logger.warning(
+                                f"  Large gradient norm {grad_norm:.2f} at "
+                                f"batch {batch_idx} (clipped to {self.grad_clip})"
+                            )
                         self.scaler.step(self.optimizer)
                         self.scaler.update()
                         self.optimizer.zero_grad()
@@ -430,6 +450,9 @@ class Trainer:
         }
  
     def _save_checkpoint(self, epoch: int, val_loss: float, is_best: bool):
+        # Ensure directory exists (can be missing if old checkpoints were renamed)
+        self.ckpt_dir.mkdir(parents=True, exist_ok=True)
+ 
  
         ckpt = {
             "epoch": epoch,
@@ -504,6 +527,9 @@ def load_model(config: Dict[str, Any], checkpoint_path: str, device: str = "cpu"
     elif arch == "unet_temporal":
         from models.unet_temporal import UNetTemporalModel
         model = UNetTemporalModel(config)
+    elif arch == "eco_transformer":
+        from models.eco_transformer import EcoTransformer
+        model = EcoTransformer(config)
  
     else:
         raise ValueError(f"Unknown architecture: {arch}")

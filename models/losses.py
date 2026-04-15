@@ -77,7 +77,11 @@ class _SSIMModule(nn.Module):
             ssim_map = num / den
             ssim_vals.append(ssim_map.mean())
  
-        return 1.0 - torch.stack(ssim_vals).mean()   # scalar, lower = better
+        # Clamp to [0, 2]: SSIM ∈ [-1, 1] → loss ∈ [0, 2].
+        # Without the clamp, numerical precision can produce SSIM > 1 (e.g. when
+        # pred ≈ target) giving a *negative* loss that rewards making predictions
+        # worse — the opposite of what we want.
+        return (1.0 - torch.stack(ssim_vals).mean()).clamp(0.0, 2.0)
  
  
 # ---------------------------------------------------------------------------
