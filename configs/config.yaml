@@ -188,13 +188,13 @@ model:
     dropout: 0.1
 
   unet_patchtst:
-    encoder_channels: [32, 64, 128, 256]
-    patch_len: 2
-    stride: 1
-    n_transformer_layers: 2
-    n_heads: 4
-    mlp_ratio: 2.0
-    dropout: 0.1
+      encoder_channels: [32, 64, 128, 256]
+      patch_len: 2        # kept for back-compat but no longer used
+      stride: 1
+      n_transformer_layers: 3    # was 2
+      n_heads: 4
+      mlp_ratio: 2.0
+      dropout: 0.1
  
 # =============================================================================
 # LOSS FUNCTION
@@ -204,7 +204,7 @@ loss:
   lambda_ecological:  0.05
   lambda_ssim:        0.10
   lambda_spectral:    0.00     # permanently disabled
-  ssim_warmup_epochs: 20
+  ssim_warmup_epochs: 5
 # =============================================================================
 # TRAINING
 # =============================================================================

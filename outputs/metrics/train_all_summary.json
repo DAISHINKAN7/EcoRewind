@@ -1,12 +1,22 @@
 [
   {
-    "model": "UNet-Temporal",
-    "run_name": "unet_temporal_joint",
+    "model": "UNet-Mamba",
+    "run_name": "unet_mamba_joint",
     "status": "completed",
-    "best_val": 0.0,
-    "duration": 45069.676221847534,
+    "best_val": 0.12018793582738865,
+    "duration": 28817.442267417908,
     "error": null,
-    "best_ckpt": "outputs/checkpoints/unet_temporal_joint/best_model.pt",
-    "metrics_path": "outputs/metrics/unet_temporal_joint_eval.json"
+    "best_ckpt": "outputs/checkpoints/unet_mamba_joint/best_model.pt",
+    "metrics_path": "outputs/metrics/unet_mamba_joint_eval.json"
+  },
+  {
+    "model": "UNet-PatchTST",
+    "run_name": "unet_patchtst_joint",
+    "status": "completed",
+    "best_val": 0.1127560728273931,
+    "duration": 19185.225027799606,
+    "error": null,
+    "best_ckpt": "outputs/checkpoints/unet_patchtst_joint/best_model.pt",
+    "metrics_path": "outputs/metrics/unet_patchtst_joint_eval.json"
   }
 ]
