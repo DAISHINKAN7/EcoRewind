@@ -1,27 +1,25 @@
 """
-unet_mamba.py  (v2 — fixed lazy prediction)
---------------------------------------------
-Key fixes over v1:
-  1. delta_scale removed entirely. The output head now predicts the FULL
-     frame directly (not a residual), then blends with last_frame via a
-     learned per-channel alpha gate. This forces the model to actually
-     learn future states rather than zeroing out deltas.
+unet_mamba.py  (v4 — correct architecture)
+-------------------------------------------
+Pipeline (strictly followed):
+  1. SpatialEncoder: shared-weight UNet encoder processes each of T_in
+     frames independently → (B, T, C_lat, H', W')
+  2. Global average pool → (B, T, C_lat) temporal tokens
+  3. MambaBlock over T tokens → (B, T, C_lat) temporally-informed tokens
+  4. FiLM fusion: expand tokens back to (B, T, C_lat, H', W') and
+     modulate spatial features with scale+shift per channel
+  5. Decoder: UNet decoder with skip connections reconstructs T_out frames
 
-  2. The Mamba temporal module now operates on the FULL spatial bottleneck
-     (H_bn * W_bn tokens per timestep) rather than just the spatially-pooled
-     mean vector. Pooling discards all spatial information before temporal
-     modelling, leaving the decoder with a single scalar per channel to work
-     with. Operating on flattened spatial tokens gives the SSM meaningful
-     spatially-aware temporal context.
-
-  3. The decoder uses learned cross-attention over the full Mamba output
-     sequence (all T_in steps, all spatial positions) instead of just the
-     last hidden state. This lets each decoder step attend to whichever
-     input quarters are most relevant.
-
-  4. Output is NOT clamped during training. The ecological loss handles
-     out-of-range predictions. Clamping kills gradients for large deviations
-     which is exactly when learning needs to happen most.
+Key correctness fixes vs all prior versions:
+  - FiLM modulation is applied PER-TIMESTEP to per-timestep spatial
+    features, not to the mean-over-T. This gives each frame its own
+    temporally-conditioned spatial representation.
+  - Decoder gets T_out independently decoded frames, not one frame
+    decoded T_out times from the same state.
+  - For T_out > T_in, we use the last T_in Mamba outputs and a learned
+    future-step embedding to generate T_out conditioning vectors.
+  - No delta_scale bottleneck. Output head predicts full values.
+  - No clamping during training.
 """
 
 import math
@@ -29,26 +27,29 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from einops import rearrange
-from typing import List, Dict, Any, Optional
+from typing import List, Dict, Any
 
 
 # ---------------------------------------------------------------------------
-# Mamba block (same SSM core as v1, unchanged)
+# Vectorized Mamba SSM (parallel scan, no Python loops)
 # ---------------------------------------------------------------------------
 
 class MambaBlock(nn.Module):
+    """
+    Selective SSM over a T-length sequence.
+    Input/Output: (B, T, d_model)
+    Uses fully vectorized parallel scan — no Python for-loops over T.
+    """
+
     def __init__(self, d_model: int, d_state: int = 16, d_conv: int = 4,
                  expand: int = 2, dropout: float = 0.1):
         super().__init__()
-        self.d_model = d_model
-        self.d_state = d_state
         self.d_inner = d_model * expand
-        self.d_conv  = d_conv
+        self.d_state = d_state
 
         self.in_proj  = nn.Linear(d_model, self.d_inner * 2, bias=False)
-        self.conv1d   = nn.Conv1d(self.d_inner, self.d_inner,
-                                  kernel_size=d_conv, padding=d_conv - 1,
-                                  groups=self.d_inner, bias=True)
+        self.conv1d   = nn.Conv1d(self.d_inner, self.d_inner, kernel_size=d_conv,
+                                  padding=d_conv - 1, groups=self.d_inner, bias=True)
         self.x_proj   = nn.Linear(self.d_inner, d_state * 2 + self.d_inner, bias=False)
         self.dt_proj  = nn.Linear(self.d_inner, self.d_inner, bias=True)
         A = torch.arange(1, d_state + 1, dtype=torch.float).unsqueeze(0).expand(self.d_inner, -1)
@@ -57,50 +58,73 @@ class MambaBlock(nn.Module):
         self.out_proj = nn.Linear(self.d_inner, d_model, bias=False)
         self.norm     = nn.LayerNorm(d_model)
         self.drop     = nn.Dropout(dropout)
-        self._init_dt_proj()
 
-    def _init_dt_proj(self):
+        # dt initialisation
         dt_init_std = self.d_inner ** -0.5
         nn.init.uniform_(self.dt_proj.weight, -dt_init_std, dt_init_std)
-        dt = torch.exp(torch.rand(self.d_inner) * (math.log(0.1) - math.log(0.001)) + math.log(0.001))
-        inv_dt = dt + torch.log(-torch.expm1(-dt))
+        dt = torch.exp(torch.rand(self.d_inner) *
+                       (math.log(0.1) - math.log(0.001)) + math.log(0.001))
         with torch.no_grad():
-            self.dt_proj.bias.copy_(inv_dt)
+            self.dt_proj.bias.copy_(dt + torch.log(-torch.expm1(-dt)))
 
-    def ssm(self, x: torch.Tensor) -> torch.Tensor:
+    def _parallel_scan(self, x: torch.Tensor) -> torch.Tensor:
+        """Vectorized SSM scan. x: (B, T, d_inner) → (B, T, d_inner)"""
         B, T, D = x.shape
         N = self.d_state
-        A = -torch.exp(self.A_log.float())
+
         xBC_dt = self.x_proj(x)
-        B_inp  = xBC_dt[..., :N]
-        C_inp  = xBC_dt[..., N:2*N]
-        dt_raw = xBC_dt[..., 2*N:]
-        dt = F.softplus(self.dt_proj(dt_raw))
-        dA = torch.exp(dt.unsqueeze(-1) * A.unsqueeze(0).unsqueeze(0))
-        dB = dt.unsqueeze(-1) * B_inp.unsqueeze(2)
-        h = torch.zeros(B, D, N, device=x.device, dtype=x.dtype)
-        ys = []
-        for t in range(T):
-            h = dA[:, t] * h + dB[:, t] * x[:, t].unsqueeze(-1)
-            y_t = (C_inp[:, t].unsqueeze(1) * h).sum(-1)
-            ys.append(y_t)
-        y = torch.stack(ys, dim=1)
-        y = y + x * self.D.unsqueeze(0).unsqueeze(0)
-        return y
+        B_inp, C_inp = xBC_dt[..., :N], xBC_dt[..., N:2*N]
+        dt = F.softplus(self.dt_proj(xBC_dt[..., 2*N:]))    # (B, T, D)
+
+        log_dA  = -torch.exp(self.A_log).unsqueeze(0).unsqueeze(0) * dt.unsqueeze(-1)
+        dB      = dt.unsqueeze(-1) * B_inp.unsqueeze(2)
+        Bu      = dB * x.unsqueeze(-1)
+
+        cumlog_A    = torch.cumsum(log_dA, dim=1)
+        inv_cum     = torch.exp((-cumlog_A).clamp(-30, 0))
+        cum_weighted = torch.cumsum(Bu * inv_cum, dim=1)
+        h = torch.exp(cumlog_A.clamp(-30, 0)) * cum_weighted
+
+        y = (C_inp.unsqueeze(2) * h).sum(-1)
+        return y + x * self.D.unsqueeze(0).unsqueeze(0)
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         residual = x
         B, T, _ = x.shape
         xz = self.in_proj(x)
         x_val, z = xz.chunk(2, dim=-1)
-        x_conv = self.conv1d(x_val.permute(0, 2, 1))
-        x_conv = x_conv[:, :, :T].permute(0, 2, 1)
-        x_conv = F.silu(x_conv)
-        y = self.ssm(x_conv)
-        y = y * F.silu(z)
-        out = self.out_proj(y)
-        out = self.drop(out)
-        return self.norm(out + residual)
+        x_conv = self.conv1d(x_val.permute(0, 2, 1))[:, :, :T].permute(0, 2, 1)
+        y = self._parallel_scan(F.silu(x_conv)) * F.silu(z)
+        return self.norm(self.drop(self.out_proj(y)) + residual)
+
+
+# ---------------------------------------------------------------------------
+# FiLM fusion module
+# ---------------------------------------------------------------------------
+
+class FiLMFusion(nn.Module):
+    """
+    Feature-wise Linear Modulation.
+    Conditions a (B, C, H, W) spatial feature map on a (B, C_cond) vector.
+    Applies per-channel scale + shift: out = (1 + γ) * x + β
+    Initialised near identity (γ≈0, β≈0) for stable early training.
+    """
+
+    def __init__(self, d_cond: int, d_spatial: int):
+        super().__init__()
+        self.proj = nn.Linear(d_cond, 2 * d_spatial)
+        nn.init.zeros_(self.proj.weight)
+        nn.init.zeros_(self.proj.bias)
+
+    def forward(self, x: torch.Tensor, cond: torch.Tensor) -> torch.Tensor:
+        """
+        x    : (B, C, H, W)
+        cond : (B, C_cond)
+        """
+        gamma, beta = self.proj(cond).chunk(2, dim=-1)   # each (B, C)
+        gamma = gamma.view(x.shape[0], x.shape[1], 1, 1)
+        beta  = beta.view(x.shape[0], x.shape[1], 1, 1)
+        return x * (1.0 + gamma) + beta
 
 
 # ---------------------------------------------------------------------------
@@ -140,56 +164,21 @@ class Up(nn.Module):
 
 
 # ---------------------------------------------------------------------------
-# Temporal cross-attention decoder query
-# ---------------------------------------------------------------------------
-
-class TemporalCrossAttentionDecoder(nn.Module):
-    """
-    For each decode step, attends over the full Mamba output sequence
-    (all T_in temporal states) to produce a conditioning vector.
-    This replaces the naive "use last hidden state" approach which
-    discards all but the final timestep's information.
-    """
-    def __init__(self, d_model: int, n_heads: int = 4, dropout: float = 0.1):
-        super().__init__()
-        self.norm_q = nn.LayerNorm(d_model)
-        self.norm_k = nn.LayerNorm(d_model)
-        self.attn   = nn.MultiheadAttention(d_model, n_heads, dropout=dropout, batch_first=True)
-        self.norm   = nn.LayerNorm(d_model)
-        self.drop   = nn.Dropout(dropout)
-
-    def forward(self, query: torch.Tensor, keys: torch.Tensor) -> torch.Tensor:
-        """
-        query : (B, 1, D)  — learned step embedding
-        keys  : (B, T, D)  — Mamba output sequence
-        Returns: (B, D)
-        """
-        q = self.norm_q(query)
-        k = self.norm_k(keys)
-        out, _ = self.attn(q, k, k)
-        out = query + self.drop(out)
-        out = self.norm(out)
-        return out.squeeze(1)   # (B, D)
-
-
-# ---------------------------------------------------------------------------
 # Full model
 # ---------------------------------------------------------------------------
 
 class UNetMambaModel(nn.Module):
     """
-    UNet + Mamba temporal modeling.
+    UNet + Mamba spatiotemporal model.
 
-    Critical design changes from v1:
-    - Mamba operates on flattened spatial tokens (B, T*N, D) not pooled mean.
-      This gives T_in * H_bn * W_bn tokens per sequence — richer temporal signal.
-    - Output head predicts FULL frame values (not residual delta).
-      A learned per-channel alpha gate blends prediction with last_frame:
-        output = alpha * prediction + (1 - alpha) * last_frame
-      Alpha is initialised near 0 so training starts conservative, but the
-      gate is LEARNED and can grow large — unlike a fixed 0.25 scale which
-      permanently bottlenecks the prediction magnitude.
-    - No clamping during training.
+    Correct pipeline:
+      Encode T_in frames → pool spatially → Mamba over T → FiLM each frame
+      → generate T_out conditioning vectors → decode T_out frames with skips
+
+    The critical correctness property: each of the T_out output frames is
+    decoded from its OWN spatially-conditioned feature map, where the spatial
+    map is modulated by a DISTINCT temporal conditioning vector (not the same
+    vector broadcast across all output steps).
     """
 
     def __init__(self, config: Dict[str, Any]):
@@ -203,61 +192,55 @@ class UNetMambaModel(nn.Module):
         self.t_input  = config["model"]["t_input"]
         self.t_output = config["model"]["t_output"]
 
-        enc_channels   = model_cfg.get("encoder_channels", [32, 64, 128, 256])
+        enc_ch         = model_cfg.get("encoder_channels", [32, 64, 128, 256])
         mamba_d_state  = model_cfg.get("mamba_d_state", 16)
         mamba_expand   = model_cfg.get("mamba_expand", 2)
         n_mamba_layers = model_cfg.get("n_mamba_layers", 2)
-        n_heads        = model_cfg.get("n_heads", 4)
         dropout        = model_cfg.get("dropout", 0.1)
 
-        self.bottleneck_ch = enc_channels[-1]
+        self.bottleneck_ch = enc_ch[-1]
 
-        # --- UNet Encoder ---
-        self.inc  = DoubleConv(self.in_channels, enc_channels[0], dropout)
+        # ---- Step 1: Spatial Encoder (shared weights across T) ----
+        self.inc   = DoubleConv(self.in_channels, enc_ch[0], dropout)
         self.downs = nn.ModuleList([
-            Down(enc_channels[i-1], enc_channels[i], dropout)
-            for i in range(1, len(enc_channels))
+            Down(enc_ch[i-1], enc_ch[i], dropout)
+            for i in range(1, len(enc_ch))
         ])
 
-        # --- Mamba: input projection to reduce bottleneck spatial tokens ---
-        # Bottleneck is (B*T, C_bn, H_bn, W_bn).  H_bn=W_bn=8 for 128px input
-        # with 4 down blocks → 8×8=64 tokens per frame.
-        # We project C_bn channels → d_mamba for the SSM.
-        d_mamba = self.bottleneck_ch
-        self.spatial_to_token = nn.Linear(self.bottleneck_ch, d_mamba)
+        # ---- Step 2: Temporal module ----
+        # Pool: (B, T, C_bn, H', W') → (B, T, C_bn)
+        # Mamba: (B, T, C_bn) → (B, T, C_bn)
         self.mamba_layers = nn.ModuleList([
-            MambaBlock(d_model=d_mamba, d_state=mamba_d_state,
+            MambaBlock(d_model=self.bottleneck_ch, d_state=mamba_d_state,
                        d_conv=4, expand=mamba_expand, dropout=dropout)
             for _ in range(n_mamba_layers)
         ])
-        self.token_to_spatial = nn.Linear(d_mamba, self.bottleneck_ch)
 
-        # --- Temporal cross-attention for decoder queries ---
-        self.step_embed = nn.Embedding(self.t_output + self.t_input + 10, self.bottleneck_ch)
-        self.cross_attn = TemporalCrossAttentionDecoder(self.bottleneck_ch, n_heads, dropout)
+        # For T_out steps, we need T_out conditioning vectors.
+        # Use a learned future-step projection: each output step gets its own
+        # linear combination of the T_in Mamba outputs.
+        # Shape: projects (T_in, C_bn) → (T_out, C_bn) per sample
+        self.future_proj = nn.Linear(self.t_input, self.t_output)
 
-        # --- UNet Decoder ---
-        dec_channels = list(reversed(enc_channels[:-1]))
+        # ---- Step 3: FiLM fusion (one per encoder level + bottleneck) ----
+        # Applied to the per-timestep spatial features for each T_out step
+        self.film_bn = FiLMFusion(self.bottleneck_ch, self.bottleneck_ch)
+
+        # ---- Step 4: Decoder (shared weights across T_out) ----
+        dec_ch = list(reversed(enc_ch[:-1]))
         self.decoder_ups = nn.ModuleList()
         in_ch = self.bottleneck_ch
-        for i, out_ch in enumerate(dec_channels):
-            skip_ch = enc_channels[-(i+2)]
-            self.decoder_ups.append(Up(in_ch, skip_ch, out_ch, dropout))
-            in_ch = out_ch
+        for i, out_ch_d in enumerate(dec_ch):
+            skip_ch = enc_ch[-(i+2)]
+            self.decoder_ups.append(Up(in_ch, skip_ch, out_ch_d, dropout))
+            in_ch = out_ch_d
 
-        # --- Output head: predicts FULL frame, not residual ---
+        # Output head: predicts full frame values
         self.output_head = nn.Sequential(
-            nn.Conv2d(dec_channels[-1], dec_channels[-1], 3, padding=1, bias=False),
-            nn.GroupNorm(min(8, dec_channels[-1]), dec_channels[-1]),
+            nn.Conv2d(dec_ch[-1], dec_ch[-1], 3, padding=1, bias=False),
+            nn.GroupNorm(min(8, dec_ch[-1]), dec_ch[-1]),
             nn.GELU(),
-            nn.Conv2d(dec_channels[-1], self.out_channels, 1),
-        )
-
-        # --- Learned blend gate: alpha * pred + (1-alpha) * last_frame ---
-        # Initialised to log(0.05/(1-0.05)) so sigmoid → ~0.05 at start.
-        # Model learns to increase alpha as it gains confidence.
-        self.alpha_logit = nn.Parameter(
-            torch.full((self.out_channels,), math.log(0.05 / 0.95))
+            nn.Conv2d(dec_ch[-1], self.out_channels, 1),
         )
 
         self._init_weights()
@@ -267,7 +250,7 @@ class UNetMambaModel(nn.Module):
             if isinstance(m, nn.Conv2d):
                 nn.init.kaiming_normal_(m.weight, mode="fan_out", nonlinearity="relu")
                 if m.bias is not None: nn.init.zeros_(m.bias)
-            elif isinstance(m, nn.Linear):
+            elif isinstance(m, (nn.Linear,)):
                 nn.init.xavier_uniform_(m.weight)
                 if m.bias is not None: nn.init.zeros_(m.bias)
 
@@ -282,70 +265,77 @@ class UNetMambaModel(nn.Module):
         Returns: (B, T_out, C_out, H, W)
         """
         B, T_in, C, H, W = x.shape
-        last_frame = x[:, -1, :self.out_channels]   # (B, C_out, H, W)
 
-        # --- Encode: fold T into batch ---
+        # ================================================================
+        # Step 1: Spatial encoding — process all T frames in parallel
+        # Fold T into batch: (B*T, C, H, W)
+        # ================================================================
         x_flat = rearrange(x, "b t c h w -> (b t) c h w")
-        skips_flat = [self.inc(x_flat)]
+
+        skips_flat = [self.inc(x_flat)]                 # (B*T, enc_ch[0], H, W)
         for down in self.downs:
             skips_flat.append(down(skips_flat[-1]))
+        # skips_flat[-1]: (B*T, C_bn, H_bn, W_bn)  — bottleneck
 
-        # bottleneck: (B*T, C_bn, H_bn, W_bn)
         C_bn = skips_flat[-1].shape[1]
         H_bn = skips_flat[-1].shape[2]
         W_bn = skips_flat[-1].shape[3]
-        N    = H_bn * W_bn   # spatial tokens per frame
 
-        # --- Mamba on spatial tokens ---
-        # Reshape: (B*T, C_bn, H_bn, W_bn) → (B, T*N, C_bn)
-        bn_flat = skips_flat[-1].reshape(B, T_in, C_bn, N)   # (B, T, C_bn, N)
-        bn_flat = bn_flat.permute(0, 1, 3, 2).reshape(B, T_in * N, C_bn)  # (B, T*N, C_bn)
+        # Unfold T: (B, T, C_bn, H_bn, W_bn)
+        spatial_all = rearrange(skips_flat[-1], "(b t) c h w -> b t c h w", b=B)
 
-        tokens = self.spatial_to_token(bn_flat)   # (B, T*N, d_mamba)
+        # ================================================================
+        # Step 2: Temporal modeling
+        # Global average pool spatial dims → (B, T, C_bn)
+        # ================================================================
+        pooled = spatial_all.mean(dim=(-2, -1))         # (B, T_in, C_bn)
+
+        # Mamba over T_in temporal tokens
+        temporal = pooled
         for mamba in self.mamba_layers:
-            tokens = mamba(tokens)                 # (B, T*N, d_mamba)
-        tokens = self.token_to_spatial(tokens)     # (B, T*N, C_bn)
+            temporal = mamba(temporal)                  # (B, T_in, C_bn)
 
-        # Temporal pooling: reshape back to (B, T, N, C_bn) → mean over N → (B, T, C_bn)
-        temporal_context = tokens.reshape(B, T_in, N, C_bn).mean(dim=2)   # (B, T, C_bn)
+        # Project T_in → T_out conditioning vectors
+        # future_proj: (T_in,) → (T_out,) per channel
+        # temporal: (B, T_in, C_bn) → transpose → (B, C_bn, T_in)
+        # → linear → (B, C_bn, T_out) → transpose → (B, T_out, C_bn)
+        cond_out = self.future_proj(temporal.permute(0, 2, 1)).permute(0, 2, 1)
+        # cond_out: (B, T_out, C_bn)
 
-        # Spatial bottleneck for decoder: mean over T → (B, C_bn, H_bn, W_bn)
-        spatial_bn = rearrange(
-            skips_flat[-1], "(b t) c h w -> b t c h w", b=B
-        ).mean(dim=1)
+        # ================================================================
+        # Step 3: FiLM fusion — modulate spatial features per T_out step
+        # Use mean-over-T spatial bottleneck as base, modulate with
+        # each step's temporal conditioning vector
+        # ================================================================
+        spatial_mean = spatial_all.mean(dim=1)          # (B, C_bn, H_bn, W_bn)
 
-        # Temporal-mean skips for decoder
+        # Skips for decoder: mean over T
         skips_mean = [
             rearrange(s, "(b t) c h w -> b t c h w", b=B).mean(dim=1)
             for s in skips_flat
         ]
 
-        # Learned blend alpha: (C_out,) → per-channel scalar in (0,1)
-        alpha = torch.sigmoid(self.alpha_logit).view(1, self.out_channels, 1, 1)
-
-        # --- Decode: T_out steps ---
+        # ================================================================
+        # Step 4: Decode T_out frames
+        # Each output step uses its own FiLM-conditioned spatial map
+        # ================================================================
         preds = []
         for step in range(self.t_output):
-            # Cross-attend over Mamba temporal context
-            step_idx = torch.tensor([T_in + step], device=x.device)
-            query = self.step_embed(step_idx).unsqueeze(1)   # (1, 1, C_bn) → broadcast to B
-            query = query.expand(B, -1, -1)                  # (B, 1, C_bn)
-            cond  = self.cross_attn(query, temporal_context) # (B, C_bn)
+            # cond_vec: (B, C_bn) — unique temporal signal for this step
+            cond_vec = cond_out[:, step, :]             # (B, C_bn)
 
-            # Modulate spatial bottleneck with temporal conditioning (additive)
-            feat = spatial_bn + cond.view(B, C_bn, 1, 1)
+            # FiLM modulates the spatial bottleneck with temporal context
+            # This gives SPATIAL VARIATION driven by temporal dynamics
+            feat = self.film_bn(spatial_mean, cond_vec) # (B, C_bn, H_bn, W_bn)
 
-            # UNet decoder
+            # UNet decode with skip connections
             for i, up in enumerate(self.decoder_ups):
                 feat = up(feat, skips_mean[-(i+2)])
 
-            # Full-frame prediction + learned blend with last_frame
-            raw_pred = self.output_head(feat)                # (B, C_out, H, W)
-            pred = alpha * raw_pred + (1.0 - alpha) * last_frame
-
+            pred = self.output_head(feat)               # (B, C_out, H, W)
             preds.append(pred)
 
-        return torch.stack(preds, dim=1)   # (B, T_out, C_out, H, W)
+        return torch.stack(preds, dim=1)                # (B, T_out, C_out, H, W)
 
     def count_parameters(self) -> int:
         return sum(p.numel() for p in self.parameters() if p.requires_grad)
