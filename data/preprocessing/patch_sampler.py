@@ -111,9 +111,13 @@ class PatchSampler:
         for r in row_starts:
             for c_pos in col_starts:
                 patch_data = tensor[:, :, r:r+p, c_pos:c_pos+p]   # (T, C, p, p)
-                nan_pct = np.mean(~np.isfinite(patch_data))
-                if nan_pct <= self.nan_threshold:
-                    accepted_positions.append((r, c_pos, float(nan_pct)))
+                n_bands = patch_data.shape[1]
+                n_optical = min(n_bands - 1, 6)   # all bands except last (SAR_VV)
+                optical_data = patch_data[:, :n_optical]
+                nan_pct_optical = np.mean(~np.isfinite(optical_data))
+                nan_pct_all     = np.mean(~np.isfinite(patch_data))
+                if nan_pct_optical <= self.nan_threshold:
+                    accepted_positions.append((r, c_pos, float(nan_pct_all)))
  
         n_accepted = len(accepted_positions)
         n_rejected = len(row_starts) * len(col_starts) - n_accepted

@@ -139,7 +139,7 @@ bands:
 patches:
   size: 128                   # 128×128 pixels
   stride: 64                  # 50% overlap
-  nan_threshold: 0.85         # Reject patches with >85% NaN
+  nan_threshold: 0.15         # Reject patches with >85% NaN
   use_validity_mask: true     # Add 8th channel for POOR quality files
  
 # =============================================================================
@@ -200,18 +200,18 @@ model:
 # LOSS FUNCTION
 # =============================================================================
 loss:
-  lambda_temporal:    0.15
+  lambda_temporal:    0.05
   lambda_ecological:  0.05
   lambda_ssim:        0.10
   lambda_spectral:    0.00     # permanently disabled
-  ssim_warmup_epochs: 5
+  ssim_warmup_epochs: 20
 # =============================================================================
 # TRAINING
 # =============================================================================
 training:
   epochs: 150
   batch_size: 4
-  learning_rate: 0.0001
+  learning_rate: 0.00003
   weight_decay: 0.00001
   patience: 25                # Early stopping patience (epochs)
   grad_clip: 1.0
