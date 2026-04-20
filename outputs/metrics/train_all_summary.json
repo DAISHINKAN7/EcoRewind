@@ -3,8 +3,8 @@
     "model": "UNet-Mamba",
     "run_name": "unet_mamba_joint",
     "status": "completed",
-    "best_val": 0.0,
-    "duration": 9667.369688510895,
+    "best_val": 0.5334277332928787,
+    "duration": 21852.338047027588,
     "error": null,
     "best_ckpt": "outputs/checkpoints/unet_mamba_joint/best_model.pt"
   },
@@ -12,8 +12,8 @@
     "model": "UNet-PatchTST",
     "run_name": "unet_patchtst_joint",
     "status": "completed",
-    "best_val": 0.2451035264013438,
-    "duration": 12166.104714870453,
+    "best_val": 0.3219559178691069,
+    "duration": 20830.846223831177,
     "error": null,
     "best_ckpt": "outputs/checkpoints/unet_patchtst_joint/best_model.pt"
   }

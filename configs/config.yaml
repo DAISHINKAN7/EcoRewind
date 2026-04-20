@@ -202,7 +202,7 @@ model:
 loss:
   lambda_temporal:    0.05
   lambda_ecological:  0.05
-  lambda_ssim:        0.10
+  lambda_ssim:        0.00
   lambda_spectral:    0.00     # permanently disabled
   ssim_warmup_epochs: 20
 # =============================================================================
