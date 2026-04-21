@@ -1,40 +1,13 @@
 """
-trainer.py  (v6 — gradient diagnostic + canonical AMP pattern)
----------------------------------------------------------------
-What changed vs v5:
+trainer.py  (v7 — NaN-aware gradient diagnostic)
+-------------------------------------------------
+v6 diagnostic falsely reported "✅ Gradient flow verified" when total
+|grad|=nan because the check didn't screen for NaN explicitly. v7 flags
+NaN/Inf gradients loudly and counts NaN-grad batches per epoch.
 
-The v5 run showed per-band losses frozen to 4 decimal places across 13 epochs
-and grad_norm=0.000e+00 throughout. Train loss drifted upward only because
-SSIM warmup weight was increasing; the underlying reconstruction loss was
-*exactly* constant, proving the model's parameters were not being updated.
-
-v6 fixes the gradient-flow issue by:
-
-D1 — Removing the dummy optimizer.step() + scheduler.step() from __init__.
-  The scheduler warning is harmless (only a one-step LR offset) and the
-  dummy step may have been interacting badly with GradScaler's internal
-  state tracking on the first real step.
-
-D2 — Removing torch.compile from the trainer entirely.
-  torch.compile on RTX A4000 (compute capability 8.6) with AMP + GradScaler
-  can silently fail to populate .grad attributes. Re-enable only once
-  gradient flow is verified, via training.use_torch_compile=true.
-
-D3 — Adding first-batch gradient diagnostics.
-  On the very first training batch, prints:
-    - pred.requires_grad, pred.grad_fn (confirms autograd graph is intact)
-    - loss.requires_grad, loss.grad_fn
-    - number of parameters with .grad set AFTER backward
-    - sum of absolute grad values AFTER backward
-  If any of these are wrong, the issue becomes immediately visible.
-
-D4 — Canonical AMP pattern, no interleaved .item() calls before backward.
-  Checks DEGENERATE_LOSS_SENTINEL via tensor comparison, not .item().
-
-D5 — Explicit optimizer.zero_grad(set_to_none=True).
-  Lets the diagnostic distinguish "never computed" from "computed zero".
-
-D6 — scheduler.step() only when n_opt_steps > 0 that epoch.
+Other changes: identical to v6 (no dummy optimizer.step(), torch.compile
+opt-in only, canonical AMP pattern, set_to_none=True, scheduler advances
+only on real opt_steps).
 """
 
 import os
@@ -42,6 +15,7 @@ import json
 import shutil
 import logging
 import time
+import math
 from pathlib import Path
 from typing import Dict, Any, Optional, List, Tuple
 
@@ -188,8 +162,6 @@ class Trainer:
             milestones=[warmup_epochs],
         )
 
-        # D1: NO dummy optimizer.step(). The scheduler warning is harmless.
-
         logger.info(
             f"LR schedule: LinearWarmup ({warmup_epochs} ep) → "
             f"CosineAnnealing ({cosine_epochs} ep), peak lr={max_lr:.1e}"
@@ -208,7 +180,6 @@ class Trainer:
         self.start_epoch    = 0
         self._try_resume()
 
-        # D2: torch.compile opt-in only. Default is OFF.
         use_compile = train_cfg.get("use_torch_compile", False)
         if use_compile and self.device.type == "cuda":
             try:
@@ -226,6 +197,7 @@ class Trainer:
         self._nan_skip_count        = 0
         self._nan_sanitize_count    = 0
         self._degenerate_skip_count = 0
+        self._nan_grad_skip_count   = 0
 
         self._grad_norms: List[float] = []
         self._first_batch_diag_done = False
@@ -276,7 +248,7 @@ class Trainer:
         return str(ckpts[-1]) if ckpts else None
 
     # ------------------------------------------------------------------
-    # D3: Gradient-flow diagnostic (runs once, first training batch)
+    # Gradient-flow diagnostic (NaN-aware)
     # ------------------------------------------------------------------
 
     def _log_gradient_diagnostic_pre(
@@ -288,6 +260,7 @@ class Trainer:
         logger.info(f"  pred.requires_grad : {pred.requires_grad}")
         logger.info(f"  pred.grad_fn       : {pred.grad_fn}")
         logger.info(f"  pred.dtype         : {pred.dtype}")
+        logger.info(f"  pred range         : [{pred.min().item():.4f}, {pred.max().item():.4f}]")
         logger.info(f"  loss.requires_grad : {loss.requires_grad}")
         logger.info(f"  loss.grad_fn       : {loss.grad_fn}")
         logger.info(f"  loss.value         : {loss.item():.6f}")
@@ -306,29 +279,53 @@ class Trainer:
         n_with_grad    = 0
         total_abs_grad = 0.0
         n_zero_grad    = 0
+        n_nan_grad     = 0
+        n_inf_grad     = 0
 
         for p in self.model.parameters():
             if p.grad is not None:
                 n_with_grad += 1
+                if torch.isnan(p.grad).any():
+                    n_nan_grad += 1
+                    continue
+                if torch.isinf(p.grad).any():
+                    n_inf_grad += 1
+                    continue
                 g_abs = p.grad.abs().sum().item()
                 total_abs_grad += g_abs
                 if g_abs == 0.0:
                     n_zero_grad += 1
 
         logger.info(f"  Params with .grad AFTER backward : {n_with_grad}")
-        logger.info(f"  Params with ZERO .grad           : {n_zero_grad}")
-        logger.info(f"  Sum of |grad| across all params  : {total_abs_grad:.6f}")
+        logger.info(f"  Params with NaN grad             : {n_nan_grad}")
+        logger.info(f"  Params with Inf grad             : {n_inf_grad}")
+        logger.info(f"  Params with ZERO grad            : {n_zero_grad}")
+        logger.info(f"  Sum of |grad| (finite params)    : {total_abs_grad:.6f}")
 
         if n_with_grad == 0:
             logger.error(
                 "  ❌ CRITICAL: No parameters received gradients from backward().\n"
-                "     The autograd graph is BROKEN between loss and parameters.\n"
-                "     Check: autocast scope, detach calls, model forward."
+                "     The autograd graph is BROKEN between loss and parameters."
+            )
+        elif n_nan_grad > 0:
+            logger.error(
+                f"  ❌ CRITICAL: {n_nan_grad}/{n_with_grad} params have NaN gradients.\n"
+                f"     GradScaler will skip optimizer.step() → no learning.\n"
+                f"     Root cause is typically fp16 overflow in the loss function."
+            )
+        elif n_inf_grad > 0:
+            logger.error(
+                f"  ⚠ {n_inf_grad}/{n_with_grad} params have Inf gradients.\n"
+                f"     GradScaler will reduce scale and retry."
             )
         elif total_abs_grad == 0.0:
             logger.error(
                 "  ❌ CRITICAL: Gradients exist but all are ZERO.\n"
                 "     The loss has no useful signal."
+            )
+        elif not math.isfinite(total_abs_grad):
+            logger.error(
+                f"  ❌ CRITICAL: total |grad| is non-finite ({total_abs_grad})."
             )
         else:
             logger.info(
@@ -368,7 +365,6 @@ class Trainer:
                 self.val_loader,   training=False, grad_clip=clip
             )
 
-            # D6: only advance scheduler when real optimizer steps occurred
             if n_opt_steps > 0:
                 self.scheduler.step()
 
@@ -377,6 +373,7 @@ class Trainer:
 
             gn_mean = sum(self._grad_norms) / max(len(self._grad_norms), 1)
             gn_max  = max(self._grad_norms) if self._grad_norms else 0.0
+            n_grad_samples = len(self._grad_norms)
             self._grad_norms = []
 
             best_marker = " ★" if val_m["loss"] <= self.best_val_loss else ""
@@ -395,7 +392,7 @@ class Trainer:
             logger.info(
                 f"  valid_pct={train_m.get('valid_pct', 0)*100:.1f}% | "
                 f"opt_steps={n_opt_steps} | "
-                f"grad_norm mean={gn_mean:.3e} max={gn_max:.3e}"
+                f"grad_norm (n={n_grad_samples}) mean={gn_mean:.3e} max={gn_max:.3e}"
             )
 
             band_losses = {k: v for k, v in train_m.items() if k.startswith("loss_")}
@@ -405,15 +402,17 @@ class Trainer:
                 logger.info(f"  per-band: {band_str}")
 
             if any([self._nan_skip_count, self._nan_sanitize_count,
-                    self._degenerate_skip_count]):
+                    self._degenerate_skip_count, self._nan_grad_skip_count]):
                 logger.warning(
                     f"  Skips — NaN_pred={self._nan_skip_count} | "
                     f"sanitized={self._nan_sanitize_count} | "
-                    f"degenerate={self._degenerate_skip_count}"
+                    f"degenerate={self._degenerate_skip_count} | "
+                    f"NaN_grad={self._nan_grad_skip_count}"
                 )
             self._nan_skip_count        = 0
             self._nan_sanitize_count    = 0
             self._degenerate_skip_count = 0
+            self._nan_grad_skip_count   = 0
 
             history["train_loss"].append(train_m["loss"])
             history["val_loss"].append(val_m["loss"])
@@ -441,7 +440,7 @@ class Trainer:
         return history
 
     # ------------------------------------------------------------------
-    # Epoch runner — canonical AMP pattern
+    # Epoch runner
     # ------------------------------------------------------------------
 
     def _run_epoch(
@@ -505,8 +504,6 @@ class Trainer:
                 if sar_idx < loss_mask.shape[2]:
                     loss_mask[:, :, sar_idx] = 0.0
 
-                # D4: canonical AMP — forward + loss inside autocast,
-                # no .item() sync on loss before backward.
                 with autocast("cuda", enabled=self.device.type == "cuda"):
                     pred = self.model(inp)
                     if not torch.isfinite(pred).all():
@@ -516,7 +513,6 @@ class Trainer:
                         continue
                     loss, components = self.loss_fn(pred, target, loss_mask)
 
-                # Sentinel check without .item() sync
                 if torch.isclose(loss.detach(), sentinel_t).item():
                     self._degenerate_skip_count += 1
                     continue
@@ -526,7 +522,6 @@ class Trainer:
                     continue
 
                 if training:
-                    # D3: one-time gradient diagnostic
                     run_diag = (not self._first_batch_diag_done) and (accum_pos == 0)
                     if run_diag:
                         self._log_gradient_diagnostic_pre(pred, loss)
@@ -555,6 +550,8 @@ class Trainer:
                                     f"  [GradNorm] batch {batch_idx}: "
                                     f"norm={grad_norm:.3e} >> clip={grad_clip}"
                                 )
+                        else:
+                            self._nan_grad_skip_count += 1
 
                         self.scaler.step(self.optimizer)
                         self.scaler.update()
@@ -562,7 +559,6 @@ class Trainer:
                         n_opt_steps += 1
                         accum_pos = 0
 
-                # Metrics
                 totals["loss"] = totals.get("loss", 0.0) + loss.item()
                 for k, v in components.items():
                     v_float = v.item() if isinstance(v, torch.Tensor) else float(v)
@@ -598,8 +594,6 @@ class Trainer:
 
     def _save_checkpoint(self, epoch: int, val_loss: float, is_best: bool):
         self.ckpt_dir.mkdir(parents=True, exist_ok=True)
-
-        # When using torch.compile, strip the "_orig_mod." prefix for portability
         model_state = {
             k.replace("_orig_mod.", ""): v
             for k, v in self.model.state_dict().items()
