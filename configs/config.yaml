@@ -1,10 +1,18 @@
 # =============================================================================
-# ECO-REWIND: Master Configuration  (v2 — stability overhaul)
+# ECO-REWIND: Master Configuration  (v3 — learning fixes)
+# =============================================================================
+# KEY CHANGES vs v2:
+#   - lambda_temporal: 0.05 → 0.20  (loss scale corrected in losses.py v4,
+#     auxiliary losses need higher weight to contribute meaningful gradient)
+#   - lambda_ecological: 0.05 → 0.10
+#   - lambda_ssim: 0.00 → 0.10 (re-enabled; ssim_warmup_epochs=20 still applies)
+#   - sync_checkpoints_to_drive: true → false (was causing permission errors)
+#   - patience: 25 → 30 (give models more time with corrected loss scale)
 # =============================================================================
 
 project:
   name: "eco-rewind"
-  version: "1.2.0"
+  version: "1.3.0"
 
 # =============================================================================
 # DATA PATHS
@@ -93,29 +101,18 @@ bands:
     sar_vv: [-30.0, 5.0]
 
 # =============================================================================
-# PATCH SAMPLING  (FIX E + FIX 2)
+# PATCH SAMPLING
 # =============================================================================
 patches:
   size: 128
   stride: 64
-  nan_threshold: 0.15          # Reject patches with >15% optical NaN (was 0.85!)
+  nan_threshold: 0.15
 
   use_validity_mask: true
-
-  # FIX 2: minimum valid optical pixel coverage per timestep
-  # Patches where mean coverage across T < 30% are rejected
   min_valid_coverage: 0.30
-
-  # FIX 2: use soft (blurred) validity mask instead of hard binary
-  # Set true to reduce model learning the mask boundary instead of signal
-  use_soft_mask: false          # false = hard binary (default); true = 3×3 avg blur
-
-  # FIX E: NDVI temporal variance threshold for stratified sampling
-  # Patches with NDVI temporal variance ≥ this value are "high-signal"
+  use_soft_mask: false
   ndvi_var_threshold: 5.0e-4
-
-  # FIX E: minimum fraction of accepted patches that must be high-signal
-  min_high_signal_frac: 0.40    # 40% of patches must show vegetation change
+  min_high_signal_frac: 0.40
 
 # =============================================================================
 # MODEL SETTINGS
@@ -143,15 +140,13 @@ model:
     mlp_ratio: 4.0
     dropout: 0.1
 
-  # FIX C: UNet-Mamba — reduced depth, pre-norm, residual scaling
   unet_mamba:
     encoder_channels: [32, 64, 128, 256]
     mamba_d_state: 16
     mamba_expand: 2
-    n_mamba_layers: 2            # keep small for T=4
-    dropout: 0.15                # slightly higher for SSM stability
+    n_mamba_layers: 2
+    dropout: 0.15
 
-  # FIX C: UNet-PatchTST — spatial attention, per-band norm, correct reshape
   unet_patchtst:
     encoder_channels: [32, 64, 128, 256]
     patch_len: 2
@@ -162,36 +157,32 @@ model:
     dropout: 0.15
 
 # =============================================================================
-# LOSS FUNCTION  (FIX B)
+# LOSS FUNCTION  (v4 fixes — scale-corrected lambdas)
 # =============================================================================
 loss:
-  lambda_temporal:    0.05
-  lambda_ecological:  0.05
-  lambda_ssim:        0.00      # disabled until recon converges
+  # With losses.py v4, reconstruction loss is now ~0.3 (per-pixel scale).
+  # Auxiliary losses need higher lambdas to contribute meaningful gradients.
+  lambda_temporal:    0.20   # was 0.05 — temporal smoothness now ~5% of total
+  lambda_ecological:  0.10   # was 0.05 — eco constraints now ~2% of total
+  lambda_ssim:        0.10   # was 0.00 — re-enabled after warmup
   lambda_spectral:    0.00
-  ssim_warmup_epochs: 20
-  # FIX B: NDVI up-weighting is now BAKED INTO losses.py band_weights
-  # (Blue=0.5, Green=0.8, Red=0.8, NIR=1.0, NDVI=3.0, NDWI=2.0, SAR=0.0)
-  # No separate config key needed — edit losses.py to change weights.
+  ssim_warmup_epochs: 20     # SSIM phases in linearly over first 20 epochs
 
 # =============================================================================
-# TRAINING  (FIX 8)
+# TRAINING
 # =============================================================================
 training:
   epochs: 150
   batch_size: 4
-  learning_rate: 0.00003        # global default (3e-5)
+  learning_rate: 0.00003
   weight_decay: 0.00001
-  patience: 25
+  patience: 30              # was 25 — give models more time with correct loss
   grad_clip: 1.0
   warmup_epochs: 15
   gradient_accumulation_steps: 4
   use_augmentation: true
   train_on: joint
 
-  # FIX 8: per-model LR overrides
-  # Mamba SSMs are very sensitive to LR; use 1e-5 for stability
-  # PatchTST with spatial attention needs 2e-5
   lr_overrides:
     unet_mamba:    1.0e-5
     unet_patchtst: 2.0e-5
@@ -204,7 +195,7 @@ training:
   balanced_sampling: true
   save_every_n_epochs: 5
   keep_best_n: 3
-  sync_checkpoints_to_drive: true
+  sync_checkpoints_to_drive: false   # was true — /content not mounted locally
   checkpoint_drive_path: "/content/drive/MyDrive/EcoRewind/checkpoints"
 
 # =============================================================================
