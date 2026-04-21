@@ -1,40 +1,22 @@
 # =============================================================================
-# ECO-REWIND: Master Configuration
-# This is the ONLY file you need to edit between environments.
+# ECO-REWIND: Master Configuration  (v2 — stability overhaul)
 # =============================================================================
- 
+
 project:
   name: "eco-rewind"
-  version: "1.1.0"
- 
+  version: "1.2.0"
+
 # =============================================================================
-# DATA PATHS — set mode to "gdrive" or "local"
+# DATA PATHS
 # =============================================================================
 data:
-  # "gdrive" → reads from Google Drive (Colab or rclone-mounted RunPod)
-  # "local"  → reads from local filesystem
   mode: "local"
- 
-  # Google Drive path (Drive root after mounting)
-  # Colab:  /content/drive/MyDrive/EcoRewind
-  # RunPod: /content/drive/MyDrive/EcoRewind  (after rclone mount)
   gdrive_root: "/content/drive/MyDrive/EcoRewind"
- 
-  # Local path (if mode = "local")
   local_root: "/home/CL502-17/Desktop/Kunal_IDL_V1/EcoRewind_Data"
- 
-  # Where processed tensors and patches are saved
-  # These are small enough to keep local even in gdrive mode
   processed_dir: "./processed"
- 
-  # Pipeline metadata from GEE export
   metadata_file: "pipeline_metadata_v2.json"
- 
-  # File pattern — your GEE export filenames
-  # The loader will try to parse year/quarter from filenames automatically
-  # Common patterns: "Everglades_2017_Q3.tif", "everglades_2017_q3.tif"
   file_extension: ".tif"
- 
+
 # =============================================================================
 # ECOSYSTEM DEFINITIONS
 # =============================================================================
@@ -42,19 +24,13 @@ ecosystems:
   everglades:
     name: "Everglades"
     folder: "Everglades"
-    n_composites: 32              # Expected number of composites
+    n_composites: 32
     start_year: 2016
-    start_quarter: 1              # Q1 = 1, Q2 = 2, Q3 = 3, Q4 = 4
- 
-    # t_event: 0-indexed position of the hurricane quarter in the time series
-    # 2016Q1=0, 2016Q2=1, 2016Q3=2, 2016Q4=3, 2017Q1=4, 2017Q2=5(interp), 2017Q3=6
-    t_event: 6                    # Hurricane Irma, Q3 2017
- 
+    start_quarter: 1
+    t_event: 6
     hurricane: "Irma"
     hurricane_year: 2017
     hurricane_quarter: 3
- 
-    # Known POOR quality quarters (Florida summer cloud cover) — still usable
     poor_quarters:
       - {year: 2016, quarter: 3}
       - {year: 2018, quarter: 3}
@@ -63,43 +39,28 @@ ecosystems:
       - {year: 2021, quarter: 3}
     fair_quarters:
       - {year: 2016, quarter: 4}
- 
-    # Interpolated quarter
     interpolated_quarters:
       - {year: 2017, quarter: 2}
- 
+
   mississippi:
     name: "Mississippi"
-    folder: "Mississippi_v2"         # v2 re-export: Barataria Bay Spartina marsh
+    folder: "Mississippi_v2"
     n_composites: 32
     start_year: 2016
     start_quarter: 1
- 
-    # Ida made landfall Aug 29 2021 = last 3 days of Q3 (Jul-Sep).
-    # Q3 2021 median composite is pre-Ida dominated (NDVI=0.371, healthy).
-    # First visibly damaged quarter is Q4 2021 (NDVI=0.274) → t_event=23.
-    # 2016Q1=0 ... 2021Q2=21, 2021Q3=22, 2021Q4=23
-    t_event: 23                      # Q4 2021 — first quarter with Ida damage
- 
+    t_event: 23
     hurricane: "Ida"
     hurricane_year: 2021
-    hurricane_quarter: 4             # Q4 2021 is the first damaged quarter
- 
+    hurricane_quarter: 4
     poor_quarters: []
     fair_quarters: []
-    # 2016-Q2 missing from GEE export (cloud gap). tensor builder NaN-fills it.
     interpolated_quarters:
       - {year: 2016, quarter: 2}
- 
-    # v2 = Barataria Bay (29.45°N, -90.7°W) — NDVI 0.15–0.41, mean 0.293
-    # v1 = open water delta (NDVI ≈ -0.02, wrong AOI) — do not revert
     version: "v2"
-    # If NDVI mean < this threshold, warn that AOI may be wrong (v1 symptom)
     ndvi_mean_threshold: 0.10
- 
+
 # =============================================================================
 # BAND DEFINITIONS
-# Order MUST match your GeoTIFF band order from GEE export
 # =============================================================================
 bands:
   names: ["Blue", "Green", "Red", "NIR", "NDVI", "NDWI", "SAR_VV"]
@@ -112,18 +73,16 @@ bands:
     ndvi: 4
     ndwi: 5
     sar_vv: 6
- 
-  # Normalization method per band
+
   normalization:
-    blue:   "minmax"      # → [0, 1]
-    green:  "minmax"      # → [0, 1]
-    red:    "minmax"      # → [0, 1]
-    nir:    "minmax"      # → [0, 1]
-    ndvi:   "shift"       # add 1, divide 2 → [0, 1]
-    ndwi:   "shift"       # add 1, divide 2 → [0, 1]
-    sar_vv: "zscore"      # z-score (mean≈−12dB, std≈4dB)
- 
-  # Physical value ranges (used in ecological loss and validation)
+    blue:   "minmax"
+    green:  "minmax"
+    red:    "minmax"
+    nir:    "minmax"
+    ndvi:   "shift"
+    ndwi:   "shift"
+    sar_vv: "zscore"
+
   valid_ranges:
     blue:   [0.0, 1.0]
     green:  [0.0, 1.0]
@@ -132,134 +91,130 @@ bands:
     ndvi:   [-1.0, 1.0]
     ndwi:   [-1.0, 1.0]
     sar_vv: [-30.0, 5.0]
- 
+
 # =============================================================================
-# PATCH SAMPLING
+# PATCH SAMPLING  (FIX E + FIX 2)
 # =============================================================================
 patches:
-  size: 128                   # 128×128 pixels
-  stride: 64                  # 50% overlap
-  nan_threshold: 0.15         # Reject patches with >85% NaN
-  use_validity_mask: true     # Add 8th channel for POOR quality files
- 
+  size: 128
+  stride: 64
+  nan_threshold: 0.15          # Reject patches with >15% optical NaN (was 0.85!)
+
+  use_validity_mask: true
+
+  # FIX 2: minimum valid optical pixel coverage per timestep
+  # Patches where mean coverage across T < 30% are rejected
+  min_valid_coverage: 0.30
+
+  # FIX 2: use soft (blurred) validity mask instead of hard binary
+  # Set true to reduce model learning the mask boundary instead of signal
+  use_soft_mask: false          # false = hard binary (default); true = 3×3 avg blur
+
+  # FIX E: NDVI temporal variance threshold for stratified sampling
+  # Patches with NDVI temporal variance ≥ this value are "high-signal"
+  ndvi_var_threshold: 5.0e-4
+
+  # FIX E: minimum fraction of accepted patches that must be high-signal
+  min_high_signal_frac: 0.40    # 40% of patches must show vegetation change
+
 # =============================================================================
 # MODEL SETTINGS
 # =============================================================================
 model:
-  # "convlstm", "unet_temporal", or "eco_transformer"
   architecture: "unet_temporal"
- 
-  # Number of past quarters fed as input
-  t_input: 4                  # 4 quarters = 1 year of context
- 
-  # Number of future quarters to predict
-  t_output: 4                 # 4 quarters = 1 year ahead
-                              # Doubles native prediction horizon → halves
-                              # autoregressive rollout steps for 10-quarter CF
-                              # (5 steps → 3 steps), cutting drift compounding.
- 
+  t_input: 4
+  t_output: 4
 
-  # Improved ConvLSTM: temporal attention bottleneck + residual decoder
   convlstm:
-    hidden_channels: [96, 96, 64]    # 3 layers; was [64,64,64]
+    hidden_channels: [96, 96, 64]
     kernel_size: 3
     dropout: 0.1
- 
+
   unet_temporal:
     encoder_channels: [32, 64, 128, 256]
     lstm_hidden: 512
     n_attention_heads: 8
     dropout: 0.1
- 
-  eco_transformer:
-    embed_dim: 128              # Token dimension D
-    depth: 4                    # Number of FactorizedSTBlock encoder layers
-    n_heads: 8                  # Attention heads (embed_dim must be divisible)
-    mlp_ratio: 4.0              # FFN hidden = embed_dim * mlp_ratio
-    dropout: 0.1
-    # Note: spatial scale is fixed at 8× (128→16 token grid, 256 tokens/frame)
 
-  # In the model: section, add after eco_transformer:
+  eco_transformer:
+    embed_dim: 128
+    depth: 4
+    n_heads: 8
+    mlp_ratio: 4.0
+    dropout: 0.1
+
+  # FIX C: UNet-Mamba — reduced depth, pre-norm, residual scaling
   unet_mamba:
     encoder_channels: [32, 64, 128, 256]
     mamba_d_state: 16
     mamba_expand: 2
-    n_mamba_layers: 2
-    dropout: 0.1
+    n_mamba_layers: 2            # keep small for T=4
+    dropout: 0.15                # slightly higher for SSM stability
 
+  # FIX C: UNet-PatchTST — spatial attention, per-band norm, correct reshape
   unet_patchtst:
-      encoder_channels: [32, 64, 128, 256]
-      patch_len: 2        # kept for back-compat but no longer used
-      stride: 1
-      n_transformer_layers: 3    # was 2
-      n_heads: 4
-      mlp_ratio: 2.0
-      dropout: 0.1
- 
+    encoder_channels: [32, 64, 128, 256]
+    patch_len: 2
+    stride: 1
+    n_transformer_layers: 3
+    n_heads: 4
+    mlp_ratio: 2.0
+    dropout: 0.15
+
 # =============================================================================
-# LOSS FUNCTION
+# LOSS FUNCTION  (FIX B)
 # =============================================================================
 loss:
   lambda_temporal:    0.05
   lambda_ecological:  0.05
-  lambda_ssim:        0.00
-  lambda_spectral:    0.00     # permanently disabled
+  lambda_ssim:        0.00      # disabled until recon converges
+  lambda_spectral:    0.00
   ssim_warmup_epochs: 20
+  # FIX B: NDVI up-weighting is now BAKED INTO losses.py band_weights
+  # (Blue=0.5, Green=0.8, Red=0.8, NIR=1.0, NDVI=3.0, NDWI=2.0, SAR=0.0)
+  # No separate config key needed — edit losses.py to change weights.
+
 # =============================================================================
-# TRAINING
+# TRAINING  (FIX 8)
 # =============================================================================
 training:
   epochs: 150
   batch_size: 4
-  learning_rate: 0.00003
+  learning_rate: 0.00003        # global default (3e-5)
   weight_decay: 0.00001
-  patience: 25                # Early stopping patience (epochs)
+  patience: 25
   grad_clip: 1.0
- 
-  # LR warmup: LinearLR for warmup_epochs, then CosineAnnealingLR for remainder
-  # Prevents early-epoch instability from large gradients on random initialisation
-  warmup_epochs: 10
- 
-  # Gradient accumulation: effective batch = batch_size * gradient_accumulation_steps
-  # Simulates larger batch size without extra VRAM (4 × 4 = effective batch 16)
+  warmup_epochs: 15
   gradient_accumulation_steps: 4
- 
-  # Data augmentation (applied to training split only, spatially consistent across T)
   use_augmentation: true
- 
   train_on: joint
- 
-  # Which ecosystem patches to include in training.
-  # Set false to exclude an ecosystem without deleting its tensors/patches.
+
+  # FIX 8: per-model LR overrides
+  # Mamba SSMs are very sensitive to LR; use 1e-5 for stability
+  # PatchTST with spatial attention needs 2e-5
+  lr_overrides:
+    unet_mamba:    1.0e-5
+    unet_patchtst: 2.0e-5
+
   ecosystems_for_training:
     everglades: true
     mississippi: true
- 
-  # Window sampling mode:
-  #   "pre_only" → windows restricted to pre-disturbance [0, t_event)
-  #   "all"      → windows across FULL time series (all 32 quarters usable)
+
   window_mode: "all"
- 
-  # When multiple ecosystems are active, sample equal batches from each
   balanced_sampling: true
- 
-  # Checkpoint saving
   save_every_n_epochs: 5
   keep_best_n: 3
- 
-  # Sync checkpoints back to Google Drive after saving
   sync_checkpoints_to_drive: true
   checkpoint_drive_path: "/content/drive/MyDrive/EcoRewind/checkpoints"
- 
+
 # =============================================================================
 # WEIGHTS & BIASES
 # =============================================================================
 wandb:
   enabled: true
   project: "eco-rewind"
-  entity: null                # Your W&B username (null = uses default)
-  # Run: `wandb login` once before training
- 
+  entity: null
+
 # =============================================================================
 # OUTPUT PATHS
 # =============================================================================
@@ -269,28 +224,14 @@ outputs:
   logs: "./outputs/logs"
   maps: "./outputs/maps"
   metrics: "./outputs/metrics"
- 
+
 # =============================================================================
 # INFERENCE / COUNTERFACTUAL
 # =============================================================================
 inference:
-  # NDVI threshold for "impacted" pixel classification
-  impact_threshold: 0.05      # ΔNDVI > 0.05 = impacted
- 
-  # Carbon estimation (mangrove allometric, rough estimate)
-  # tCO2/ha per unit NDVI — conservative estimate for mangrove/wetland
-  carbon_factor: 85.0         # tCO₂-equivalent per hectare at full NDVI
- 
-  # Confidence interval for time-to-convergence
-  convergence_ci: 0.95        # 95% CI of counterfactual trajectory
- 
-  # MC Dropout: run N stochastic forward passes to estimate model uncertainty.
-  # Set to 1 to disable (deterministic, faster).
-  # 50 samples gives stable CI bands; 30 is a reasonable compromise.
+  impact_threshold: 0.05
+  carbon_factor: 85.0
+  convergence_ci: 0.95
   mc_dropout_samples: 50
- 
-  # Seasonal climatology floor: clamp CF predictions to
-  # (seasonal_mean - climatology_sigma * seasonal_std) per pixel per quarter.
-  # Prevents compounding winter-dip drift across autoregressive rollout.
   climatology_anchor: true
-  climatology_sigma: 2.0      # How many std below seasonal mean before clamping
+  climatology_sigma: 2.0
