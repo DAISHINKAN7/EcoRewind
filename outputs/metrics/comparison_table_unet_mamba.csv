@@ -1,0 +1,3 @@
+model,ecosystem,impacted_ha_max,impacted_ha_mean,carbon_loss_tco2_eq,actual_ndvi_slope,cf_ndvi_slope,gap_closing_rate,time_to_convergence_q,n_post_quarters
+unet_mamba,everglades,4089.21,2649.1490000000003,34112.65234375,0.007867533329761403,0.005590818145058384,0.0022767151847030162,0,10
+unet_mamba,mississippi,23417.31,14988.193333333333,149005.5625,0.005537123729785297,0.012552311271429068,-0.007015187541643775,0,9

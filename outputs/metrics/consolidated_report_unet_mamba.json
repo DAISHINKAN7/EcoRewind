@@ -1,0 +1,28 @@
+{
+  "project": "ECO-REWIND",
+  "model": "unet_mamba",
+  "ecosystems": {
+    "everglades": {
+      "hurricane": "Irma",
+      "hurricane_year": 2017,
+      "impacted_area_ha_max": 4089.21,
+      "impacted_area_ha_mean": 2649.1490000000003,
+      "carbon_loss_tco2_eq": 34112.65234375,
+      "recovery_rate_per_quarter": 0.0022767151847030162,
+      "time_to_convergence_quarters": 0,
+      "actual_ndvi_slope": 0.007867533329761403,
+      "delta_ndvi_first_quarter": -0.005315911490470171
+    },
+    "mississippi": {
+      "hurricane": "Ida",
+      "hurricane_year": 2021,
+      "impacted_area_ha_max": 23417.31,
+      "impacted_area_ha_mean": 14988.193333333333,
+      "carbon_loss_tco2_eq": 149005.5625,
+      "recovery_rate_per_quarter": -0.007015187541643775,
+      "time_to_convergence_quarters": 0,
+      "actual_ndvi_slope": 0.005537123729785297,
+      "delta_ndvi_first_quarter": 0.01257672905921936
+    }
+  }
+}

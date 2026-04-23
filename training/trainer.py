@@ -664,7 +664,7 @@ def load_model(
         k.replace("_orig_mod.", "").replace("module.", ""): v
         for k, v in ckpt["model_state"].items()
     }
-    model.load_state_dict(state)
+    model.load_state_dict(state, strict=False)
     model.to(device).eval()
     logger.info(f"Loaded {arch} from {checkpoint_path} (epoch {ckpt['epoch']+1})")
     return model
