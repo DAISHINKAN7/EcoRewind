@@ -1,0 +1,3 @@
+model,ecosystem,impacted_ha_max,impacted_ha_mean,carbon_loss_tco2_eq,actual_ndvi_slope,cf_ndvi_slope,gap_closing_rate,time_to_convergence_q,n_post_quarters
+eco_transformer,everglades,6116.2,3153.37,50332.1171875,0.007867533329761403,0.002378854968331065,0.0054886783614303105,0,10
+eco_transformer,mississippi,21611.82,14131.586666666668,146457.84375,0.005537123729785297,0.006793373947342246,-0.0012562502175569518,0,9
