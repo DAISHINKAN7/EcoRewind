@@ -660,23 +660,3 @@ Built with Sentinel-1/2 imagery via Google Earth Engine. Copernicus data © ESA.
 <sub>Research prototype. Results are not validated for operational or policy use — see <a href="#known-limitations">Known Limitations</a>.</sub>
 
 </div>
-READMEEOF
-for p in $(grep -o 'src="[^"]*"' README.md | sed 's/src="//;s/"//'); do [ -f "$p" ] && echo "OK   $p" || echo "MISS $p"; done; echo "--- images: $(grep -c '<img src' README.md) | git: ---"; git status --short
-
-OK   outputs/maps/publication/fig5_dashboard/everglades_health_dashboard.png
-OK   outputs/maps/publication/fig3_model_comparison/everglades_mississippi_model_comparison.png
-OK   outputs/maps/publication/fig1_damage_comparison/everglades_eco_transformer_Q01_damage.png
-OK   outputs/maps/publication/fig1_damage_comparison/mississippi_eco_transformer_Q01_damage.png
-OK   outputs/maps/publication/fig1_damage_comparison/everglades_unet_mamba_Q01_damage.png
-OK   outputs/maps/publication/fig1_damage_comparison/mississippi_unet_mamba_Q01_damage.png
-OK   outputs/maps/publication/fig4_temporal_evolution/mississippi_eco_transformer_temporal_grid.png
-OK   outputs/maps/publication/fig4_temporal_evolution/everglades_eco_transformer_temporal_grid.png
-OK   outputs/maps/publication/fig4_temporal_evolution/everglades_unet_mamba_temporal_grid.png
-OK   outputs/maps/publication/fig4_temporal_evolution/mississippi_unet_mamba_temporal_grid.png
-OK   outputs/maps/publication/fig5_dashboard/mississippi_health_dashboard.png
-OK   outputs/maps/publication/fig2_trajectories/everglades_recovery_trajectories.png
-OK   outputs/maps/publication/fig2_trajectories/mississippi_recovery_trajectories.png
-OK   outputs/maps/everglades/trajectory_comparison.png
-OK   outputs/maps/ablation_comparison.png
---- images: 15 | git: ---
-?? README.md
