@@ -1,0 +1,113 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 440" width="1200" height="440" role="img" aria-label="The counterfactual: what the ecosystem would have done without the storm">
+<title>The counterfactual: what the ecosystem would have done without the storm</title>
+<defs>
+<linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+  <stop offset="0" stop-color="#0B1020"/><stop offset="1" stop-color="#0E1628"/>
+</linearGradient>
+<linearGradient id="panel" x1="0" y1="0" x2="0" y2="1">
+  <stop offset="0" stop-color="#131C33"/><stop offset="1" stop-color="#0F1830"/>
+</linearGradient>
+<pattern id="grid" width="32" height="32" patternUnits="userSpaceOnUse">
+  <path d="M32 0H0V32" fill="none" stroke="#22304F" stroke-width="1" opacity=".38"/>
+</pattern>
+<filter id="glow" x="-60%" y="-60%" width="220%" height="220%">
+  <feGaussianBlur stdDeviation="7" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+</filter>
+<filter id="soft" x="-40%" y="-40%" width="180%" height="180%">
+  <feGaussianBlur stdDeviation="3" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+</filter>
+
+<linearGradient id="gapg" x1="0" y1="0" x2="0" y2="1">
+ <stop offset="0" stop-color="#e66767" stop-opacity=".42"/><stop offset="1" stop-color="#e66767" stop-opacity=".06"/>
+</linearGradient>
+</defs>
+<style>
+  text { font-family:system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif; }
+  .mono { font-family:ui-monospace,SFMono-Regular,'SF Mono',Menlo,Consolas,monospace; }
+  .h1 { fill:#E8EEF9; font-weight:700; }
+  .h2 { fill:#E8EEF9; font-weight:650; }
+  .lb { fill:#A9BAD8; font-weight:500; }
+  .mu { fill:#7286AB; font-weight:500; }
+  .kicker { fill:#7286AB; font-weight:600; letter-spacing:.16em; }
+  @media (prefers-reduced-motion: reduce) { * { animation:none !important; } }
+
+ .draw { stroke-dasharray:1400; stroke-dashoffset:1400; animation:dw 3.2s ease-out forwards; }
+ @keyframes dw { to { stroke-dashoffset:0; } }
+ .fadein { opacity:0; animation:fi .9s ease-out 2.4s forwards; }
+ @keyframes fi { to { opacity:1; } }
+ .blip { animation:bp 2.6s ease-in-out infinite; }
+ @keyframes bp { 0%,100%{r:5;opacity:1} 50%{r:9;opacity:.45} }
+</style>
+<rect width="1200" height="440" rx="18" fill="url(#bg)"/>
+<rect width="1200" height="440" rx="18" fill="url(#grid)"/>
+<rect x=".5" y=".5" width="1199" height="439" rx="18" fill="none" stroke="#2E3F66"/>
+<text x="40" y="46" class="kicker" font-size="12">THE CORE IDEA</text>
+<text x="38" y="80" class="h1" font-size="23">Subtracting the hurricane</text>
+<circle cx="54" cy="119" r="13" fill="none" stroke="#3987e5" stroke-width="1.6"/>
+<text x="54" y="124" class="h2 mono" font-size="13" fill="#3987e5" text-anchor="middle">1</text>
+<text x="80" y="116" class="lb" font-size="13.5">Feed the model only the 4 quarters</text>
+<text x="80" y="133" class="mu" font-size="13">before the storm — t−4 … t−1.</text>
+<circle cx="54" cy="181" r="13" fill="none" stroke="#9085e9" stroke-width="1.6"/>
+<text x="54" y="186" class="h2 mono" font-size="13" fill="#9085e9" text-anchor="middle">2</text>
+<text x="80" y="178" class="lb" font-size="13.5">Roll it forward autoregressively</text>
+<text x="80" y="195" class="mu" font-size="13">through the event. It never sees the storm.</text>
+<circle cx="54" cy="243" r="13" fill="none" stroke="#e66767" stroke-width="1.6"/>
+<text x="54" y="248" class="h2 mono" font-size="13" fill="#e66767" text-anchor="middle">3</text>
+<text x="80" y="240" class="lb" font-size="13.5">The gap between that counterfactual</text>
+<text x="80" y="257" class="mu" font-size="13">and reality is the attributed damage.</text>
+<rect x="38" y="308" width="372" height="96" rx="12" fill="url(#panel)" stroke="#2E3F66" stroke-width="1"/>
+<text x="56" y="334" class="kicker" font-size="10">ATTRIBUTED IMPACT · EVERGLADES · IRMA</text>
+<text x="58" y="367" class="h2 mono" font-size="20" fill="#e66767">+0.081</text>
+<text x="58" y="386" class="mu" font-size="10.5">peak ΔNDVI</text>
+<text x="180" y="367" class="h2 mono" font-size="20" fill="#c98500">6,116</text>
+<text x="180" y="386" class="mu" font-size="10.5">ha impacted</text>
+<text x="302" y="367" class="h2 mono" font-size="20" fill="#d55181">23.7%</text>
+<text x="302" y="386" class="mu" font-size="10.5">pixels damaged</text>
+<rect x="452" y="44" width="726" height="376" rx="14" fill="url(#panel)" stroke="#2E3F66" stroke-width="1"/>
+<text x="470" y="72" class="h2" font-size="14">Mean NDVI · Everglades · EcoTransformer</text>
+<line x1="486" y1="295.7" x2="1142" y2="295.7" stroke="#22304F" stroke-width="1" opacity=".55"/>
+<text x="476" y="299.7" class="mu mono" font-size="10" text-anchor="end">0.40</text>
+<line x1="486" y1="250.3" x2="1142" y2="250.3" stroke="#22304F" stroke-width="1" opacity=".55"/>
+<text x="476" y="254.3" class="mu mono" font-size="10" text-anchor="end">0.45</text>
+<line x1="486" y1="204.9" x2="1142" y2="204.9" stroke="#22304F" stroke-width="1" opacity=".55"/>
+<text x="476" y="208.9" class="mu mono" font-size="10" text-anchor="end">0.50</text>
+<line x1="486" y1="159.5" x2="1142" y2="159.5" stroke="#22304F" stroke-width="1" opacity=".55"/>
+<text x="476" y="163.5" class="mu mono" font-size="10" text-anchor="end">0.55</text>
+<line x1="486" y1="114.2" x2="1142" y2="114.2" stroke="#22304F" stroke-width="1" opacity=".55"/>
+<text x="476" y="118.2" class="mu mono" font-size="10" text-anchor="end">0.60</text>
+<rect x="486" y="96" width="164.0" height="236" fill="#3987e5" opacity=".07"/>
+<text x="568" y="112" class="mu" font-size="10.5" text-anchor="middle">context fed to model</text>
+<polygon class="fadein" points="704.7,217.1 759.3,166.3 814.0,184.0 868.7,202.6 923.3,202.7 978.0,146.9 1032.7,154.9 1087.3,224.7 1142.0,208.1 1142.0,230.5 1087.3,233.8 1032.7,188.1 978.0,162.9 923.3,252.6 868.7,276.1 814.0,222.9 759.3,183.0 704.7,273.3" fill="url(#gapg)"/>
+<polyline points="486.0,232.2 540.7,200.4 595.3,216.7 650.0,185.9" fill="none" stroke="#A9BAD8" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" class="draw"/>
+<polyline points="650.0,185.9 704.7,217.1 759.3,166.3 814.0,184.0 868.7,202.6 923.3,202.7 978.0,146.9 1032.7,154.9 1087.3,224.7 1142.0,208.1" fill="none" stroke="#199e70" stroke-width="2.6" stroke-dasharray="7 5" stroke-linecap="round" filter="url(#soft)"/>
+<polyline points="650.0,185.9 704.7,273.3 759.3,183.0 814.0,222.9 868.7,276.1 923.3,252.6 978.0,162.9 1032.7,188.1 1087.3,233.8 1142.0,230.5" fill="none" stroke="#e66767" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" class="draw"/>
+<circle cx="704.7" cy="217.1" r="3.2" fill="#199e70"/>
+<circle cx="759.3" cy="166.3" r="3.2" fill="#199e70"/>
+<circle cx="814.0" cy="184.0" r="3.2" fill="#199e70"/>
+<circle cx="868.7" cy="202.6" r="3.2" fill="#199e70"/>
+<circle cx="923.3" cy="202.7" r="3.2" fill="#199e70"/>
+<circle cx="978.0" cy="146.9" r="3.2" fill="#199e70"/>
+<circle cx="1032.7" cy="154.9" r="3.2" fill="#199e70"/>
+<circle cx="1087.3" cy="224.7" r="3.2" fill="#199e70"/>
+<circle cx="1142.0" cy="208.1" r="3.2" fill="#199e70"/>
+<circle cx="704.7" cy="273.3" r="3.2" fill="#e66767"/>
+<circle cx="759.3" cy="183.0" r="3.2" fill="#e66767"/>
+<circle cx="814.0" cy="222.9" r="3.2" fill="#e66767"/>
+<circle cx="868.7" cy="276.1" r="3.2" fill="#e66767"/>
+<circle cx="923.3" cy="252.6" r="3.2" fill="#e66767"/>
+<circle cx="978.0" cy="162.9" r="3.2" fill="#e66767"/>
+<circle cx="1032.7" cy="188.1" r="3.2" fill="#e66767"/>
+<circle cx="1087.3" cy="233.8" r="3.2" fill="#e66767"/>
+<circle cx="1142.0" cy="230.5" r="3.2" fill="#e66767"/>
+<line x1="677.3" y1="90" x2="677.3" y2="340" stroke="#e66767" stroke-width="1.6" stroke-dasharray="5 4" opacity=".9"/>
+<circle cx="677.3" cy="134" r="6" fill="#e66767" class="blip"/>
+<text x="688" y="138" class="h2" font-size="11.5" fill="#e66767">Hurricane Irma · Q3 2017</text>
+<line x1="486" y1="376" x2="510" y2="376" stroke="#e66767" stroke-width="2.6" stroke-linecap="round"/>
+<text x="518" y="380" class="lb" font-size="11.5">observed</text>
+<line x1="604.8" y1="376" x2="628.8" y2="376" stroke="#199e70" stroke-width="2.6" stroke-dasharray="7 5" stroke-linecap="round"/>
+<text x="636.8" y="380" class="lb" font-size="11.5">counterfactual (no storm)</text>
+<line x1="835.8" y1="376" x2="859.8" y2="376" stroke="#A9BAD8" stroke-width="2.6" stroke-linecap="round"/>
+<text x="867.8" y="380" class="lb" font-size="11.5">pre-event context</text>
+<text x="486" y="354" class="mu" font-size="10.5">2016 Q3</text>
+<text x="1142" y="354" class="mu" font-size="10.5" text-anchor="end">2019 Q4</text>
+</svg>

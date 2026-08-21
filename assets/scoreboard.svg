@@ -1,0 +1,207 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 508" width="1200" height="508" role="img" aria-label="Per-band R² scoreboard across five architectures">
+<title>Per-band R² scoreboard across five architectures</title>
+<defs>
+<linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+  <stop offset="0" stop-color="#0B1020"/><stop offset="1" stop-color="#0E1628"/>
+</linearGradient>
+<linearGradient id="panel" x1="0" y1="0" x2="0" y2="1">
+  <stop offset="0" stop-color="#131C33"/><stop offset="1" stop-color="#0F1830"/>
+</linearGradient>
+<pattern id="grid" width="32" height="32" patternUnits="userSpaceOnUse">
+  <path d="M32 0H0V32" fill="none" stroke="#22304F" stroke-width="1" opacity=".38"/>
+</pattern>
+<filter id="glow" x="-60%" y="-60%" width="220%" height="220%">
+  <feGaussianBlur stdDeviation="7" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+</filter>
+<filter id="soft" x="-40%" y="-40%" width="180%" height="180%">
+  <feGaussianBlur stdDeviation="3" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+</filter>
+<pattern id="hatch" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+ <rect width="7" height="7" fill="#4a1c1c"/><line x1="0" y1="0" x2="0" y2="7" stroke="#e66767" stroke-width="2.2" opacity=".75"/></pattern>
+<pattern id="nan" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+ <rect width="7" height="7" fill="#0F1830"/><line x1="0" y1="0" x2="0" y2="7" stroke="#7286AB" stroke-width="1.4" opacity=".45"/></pattern>
+</defs>
+<style>
+  text { font-family:system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif; }
+  .mono { font-family:ui-monospace,SFMono-Regular,'SF Mono',Menlo,Consolas,monospace; }
+  .h1 { fill:#E8EEF9; font-weight:700; }
+  .h2 { fill:#E8EEF9; font-weight:650; }
+  .lb { fill:#A9BAD8; font-weight:500; }
+  .mu { fill:#7286AB; font-weight:500; }
+  .kicker { fill:#7286AB; font-weight:600; letter-spacing:.16em; }
+  @media (prefers-reduced-motion: reduce) { * { animation:none !important; } }
+.rise{opacity:0;animation:rs .5s ease-out forwards}@keyframes rs{to{opacity:1}}
+</style>
+<rect width="1200" height="508" rx="18" fill="url(#bg)"/>
+<rect width="1200" height="508" rx="18" fill="url(#grid)"/>
+<rect x=".5" y=".5" width="1199" height="507" rx="18" fill="none" stroke="#2E3F66"/>
+<text x="38" y="44" class="kicker" font-size="12">FORECAST SKILL · HELD-OUT PATCHES · BOTH ECOSYSTEMS</text>
+<text x="36" y="76" class="h1" font-size="23">Per-band R² — one architecture worked, three collapsed</text>
+<text x="38" y="99" class="mu" font-size="12">Diverging scale clipped to ±1. Cells beyond −1 are off-scale and hatched, with the true value printed. 347,677,067 optical pixels · 44,348,305 SAR.</text>
+<text x="302.0" y="118" class="lb" font-size="11.5" text-anchor="middle">Blue</text>
+<text x="413.0" y="118" class="lb" font-size="11.5" text-anchor="middle">Green</text>
+<text x="524.0" y="118" class="lb" font-size="11.5" text-anchor="middle">Red</text>
+<text x="635.0" y="118" class="lb" font-size="11.5" text-anchor="middle">NIR</text>
+<text x="746.0" y="118" class="lb" font-size="11.5" text-anchor="middle">NDVI</text>
+<text x="857.0" y="118" class="lb" font-size="11.5" text-anchor="middle">NDWI</text>
+<text x="968.0" y="118" class="lb" font-size="11.5" text-anchor="middle">SAR_VV</text>
+<text x="1061" y="118" class="lb" font-size="11.5" text-anchor="middle">train</text>
+<text x="234" y="150" class="h2" font-size="12.5" text-anchor="end">EcoTransformer</text>
+<text x="234" y="166" font-size="10" text-anchor="end" fill="#199e70" font-weight="600">converged</text>
+<rect x="242" y="134" width="3" height="38" rx="1.5" fill="#199e70"/>
+<rect x="250" y="128" width="104" height="50" rx="7" fill="#607ea4" stroke="#2E3F66" stroke-width=".8"/>
+<text x="302.0" y="159" class="mono h2" font-size="15" fill="#08111f" text-anchor="middle">+0.559</text>
+<rect x="361" y="128" width="104" height="50" rx="7" fill="#86aad5" stroke="#2E3F66" stroke-width=".8"/>
+<text x="413.0" y="159" class="mono h2" font-size="15" fill="#08111f" text-anchor="middle">+0.833</text>
+<rect x="472" y="128" width="104" height="50" rx="7" fill="#87aad6" stroke="#2E3F66" stroke-width=".8"/>
+<text x="524.0" y="159" class="mono h2" font-size="15" fill="#08111f" text-anchor="middle">+0.836</text>
+<rect x="583" y="128" width="104" height="50" rx="7" fill="#8cb1dd" stroke="#2E3F66" stroke-width=".8"/>
+<text x="635.0" y="159" class="mono h2" font-size="15" fill="#08111f" text-anchor="middle">+0.877</text>
+<rect x="694" y="128" width="104" height="50" rx="7" fill="#90b5e2" stroke="#2E3F66" stroke-width=".8"/>
+<text x="746.0" y="159" class="mono h2" font-size="15" fill="#08111f" text-anchor="middle">+0.901</text>
+<rect x="805" y="128" width="104" height="50" rx="7" fill="#92b7e4" stroke="#2E3F66" stroke-width=".8"/>
+<text x="857.0" y="159" class="mono h2" font-size="15" fill="#08111f" text-anchor="middle">+0.917</text>
+<rect x="916" y="128" width="104" height="50" rx="7" fill="#3c1d1d" stroke="#2E3F66" stroke-width=".8"/>
+<text x="968.0" y="159" class="mono h2" font-size="15" fill="#E8EEF9" text-anchor="middle">-0.097</text>
+<text x="1061" y="159" class="mono lb" font-size="11.5" text-anchor="middle">6h 10m</text>
+<text x="234" y="207" class="h2" font-size="12.5" text-anchor="end">ConvLSTM  (baseline)</text>
+<text x="234" y="223" font-size="10" text-anchor="end" fill="#c98500" font-weight="600">partial</text>
+<rect x="242" y="191" width="3" height="38" rx="1.5" fill="#c98500"/>
+<rect x="250" y="185" width="104" height="50" rx="7" fill="#7192ba" stroke="#2E3F66" stroke-width=".8"/>
+<text x="302.0" y="216" class="mono h2" font-size="15" fill="#08111f" text-anchor="middle">+0.684</text>
+<rect x="361" y="185" width="104" height="50" rx="7" fill="#80a3cd" stroke="#2E3F66" stroke-width=".8"/>
+<text x="413.0" y="216" class="mono h2" font-size="15" fill="#08111f" text-anchor="middle">+0.790</text>
+<rect x="472" y="185" width="104" height="50" rx="7" fill="#84a8d3" stroke="#2E3F66" stroke-width=".8"/>
+<text x="524.0" y="216" class="mono h2" font-size="15" fill="#08111f" text-anchor="middle">+0.818</text>
+<rect x="583" y="185" width="104" height="50" rx="7" fill="#8bafdb" stroke="#2E3F66" stroke-width=".8"/>
+<text x="635.0" y="216" class="mono h2" font-size="15" fill="#08111f" text-anchor="middle">+0.865</text>
+<rect x="694" y="185" width="104" height="50" rx="7" fill="#2a425f" stroke="#2E3F66" stroke-width=".8"/>
+<text x="746.0" y="216" class="mono h2" font-size="15" fill="#E8EEF9" text-anchor="middle">+0.177</text>
+<rect x="805" y="185" width="104" height="50" rx="7" fill="#7ea0ca" stroke="#2E3F66" stroke-width=".8"/>
+<text x="857.0" y="216" class="mono h2" font-size="15" fill="#08111f" text-anchor="middle">+0.772</text>
+<rect x="916" y="185" width="104" height="50" rx="7" fill="#2a415e" stroke="#2E3F66" stroke-width=".8"/>
+<text x="968.0" y="216" class="mono h2" font-size="15" fill="#E8EEF9" text-anchor="middle">+0.173</text>
+<text x="1061" y="216" class="mono lb" font-size="11.5" text-anchor="middle">—</text>
+<text x="234" y="264" class="h2" font-size="12.5" text-anchor="end">UNet-Temporal</text>
+<text x="234" y="280" font-size="10" text-anchor="end" fill="#7286AB" font-weight="600">no metrics</text>
+<rect x="242" y="248" width="3" height="38" rx="1.5" fill="#7286AB"/>
+<rect x="250" y="242" width="104" height="50" rx="7" fill="url(#nan)" stroke="#2E3F66" stroke-dasharray="4 3"/>
+<text x="302.0" y="272" class="mono" font-size="13" fill="#7286AB" text-anchor="middle">NaN</text>
+<rect x="361" y="242" width="104" height="50" rx="7" fill="url(#nan)" stroke="#2E3F66" stroke-dasharray="4 3"/>
+<text x="413.0" y="272" class="mono" font-size="13" fill="#7286AB" text-anchor="middle">NaN</text>
+<rect x="472" y="242" width="104" height="50" rx="7" fill="url(#nan)" stroke="#2E3F66" stroke-dasharray="4 3"/>
+<text x="524.0" y="272" class="mono" font-size="13" fill="#7286AB" text-anchor="middle">NaN</text>
+<rect x="583" y="242" width="104" height="50" rx="7" fill="url(#nan)" stroke="#2E3F66" stroke-dasharray="4 3"/>
+<text x="635.0" y="272" class="mono" font-size="13" fill="#7286AB" text-anchor="middle">NaN</text>
+<rect x="694" y="242" width="104" height="50" rx="7" fill="url(#nan)" stroke="#2E3F66" stroke-dasharray="4 3"/>
+<text x="746.0" y="272" class="mono" font-size="13" fill="#7286AB" text-anchor="middle">NaN</text>
+<rect x="805" y="242" width="104" height="50" rx="7" fill="url(#nan)" stroke="#2E3F66" stroke-dasharray="4 3"/>
+<text x="857.0" y="272" class="mono" font-size="13" fill="#7286AB" text-anchor="middle">NaN</text>
+<rect x="916" y="242" width="104" height="50" rx="7" fill="url(#nan)" stroke="#2E3F66" stroke-dasharray="4 3"/>
+<text x="968.0" y="272" class="mono" font-size="13" fill="#7286AB" text-anchor="middle">NaN</text>
+<text x="1061" y="273" class="mono lb" font-size="11.5" text-anchor="middle">—</text>
+<text x="234" y="321" class="h2" font-size="12.5" text-anchor="end">UNet-Mamba</text>
+<text x="234" y="337" font-size="10" text-anchor="end" fill="#e66767" font-weight="600">diverged</text>
+<rect x="242" y="305" width="3" height="38" rx="1.5" fill="#e66767"/>
+<rect x="250" y="299" width="104" height="50" rx="7" fill="url(#hatch)" stroke="#e66767" stroke-width="1.2"/>
+<text x="302.0" y="324" class="mono h2" font-size="13" fill="#ffe2e2" text-anchor="middle">-680.0</text>
+<text x="302.0" y="338" font-size="8.5" fill="#ffc9c9" text-anchor="middle" letter-spacing=".08em">OFF SCALE</text>
+<rect x="361" y="299" width="104" height="50" rx="7" fill="url(#hatch)" stroke="#e66767" stroke-width="1.2"/>
+<text x="413.0" y="324" class="mono h2" font-size="13" fill="#ffe2e2" text-anchor="middle">-346.9</text>
+<text x="413.0" y="338" font-size="8.5" fill="#ffc9c9" text-anchor="middle" letter-spacing=".08em">OFF SCALE</text>
+<rect x="472" y="299" width="104" height="50" rx="7" fill="url(#hatch)" stroke="#e66767" stroke-width="1.2"/>
+<text x="524.0" y="324" class="mono h2" font-size="13" fill="#ffe2e2" text-anchor="middle">-269.5</text>
+<text x="524.0" y="338" font-size="8.5" fill="#ffc9c9" text-anchor="middle" letter-spacing=".08em">OFF SCALE</text>
+<rect x="583" y="299" width="104" height="50" rx="7" fill="url(#hatch)" stroke="#e66767" stroke-width="1.2"/>
+<text x="635.0" y="324" class="mono h2" font-size="13" fill="#ffe2e2" text-anchor="middle">-23.1</text>
+<text x="635.0" y="338" font-size="8.5" fill="#ffc9c9" text-anchor="middle" letter-spacing=".08em">OFF SCALE</text>
+<rect x="694" y="299" width="104" height="50" rx="7" fill="url(#hatch)" stroke="#e66767" stroke-width="1.2"/>
+<text x="746.0" y="324" class="mono h2" font-size="13" fill="#ffe2e2" text-anchor="middle">-3.5</text>
+<text x="746.0" y="338" font-size="8.5" fill="#ffc9c9" text-anchor="middle" letter-spacing=".08em">OFF SCALE</text>
+<rect x="805" y="299" width="104" height="50" rx="7" fill="url(#hatch)" stroke="#e66767" stroke-width="1.2"/>
+<text x="857.0" y="324" class="mono h2" font-size="13" fill="#ffe2e2" text-anchor="middle">-1.2</text>
+<text x="857.0" y="338" font-size="8.5" fill="#ffc9c9" text-anchor="middle" letter-spacing=".08em">OFF SCALE</text>
+<rect x="916" y="299" width="104" height="50" rx="7" fill="url(#hatch)" stroke="#e66767" stroke-width="1.2"/>
+<text x="968.0" y="324" class="mono h2" font-size="13" fill="#ffe2e2" text-anchor="middle">-6.3</text>
+<text x="968.0" y="338" font-size="8.5" fill="#ffc9c9" text-anchor="middle" letter-spacing=".08em">OFF SCALE</text>
+<text x="1061" y="330" class="mono lb" font-size="11.5" text-anchor="middle">8h 57m</text>
+<text x="234" y="378" class="h2" font-size="12.5" text-anchor="end">UNet-PatchTST</text>
+<text x="234" y="394" font-size="10" text-anchor="end" fill="#e66767" font-weight="600">diverged</text>
+<rect x="242" y="362" width="3" height="38" rx="1.5" fill="#e66767"/>
+<rect x="250" y="356" width="104" height="50" rx="7" fill="url(#hatch)" stroke="#e66767" stroke-width="1.2"/>
+<text x="302.0" y="381" class="mono h2" font-size="13" fill="#ffe2e2" text-anchor="middle">-119.3</text>
+<text x="302.0" y="395" font-size="8.5" fill="#ffc9c9" text-anchor="middle" letter-spacing=".08em">OFF SCALE</text>
+<rect x="361" y="356" width="104" height="50" rx="7" fill="url(#hatch)" stroke="#e66767" stroke-width="1.2"/>
+<text x="413.0" y="381" class="mono h2" font-size="13" fill="#ffe2e2" text-anchor="middle">-202.8</text>
+<text x="413.0" y="395" font-size="8.5" fill="#ffc9c9" text-anchor="middle" letter-spacing=".08em">OFF SCALE</text>
+<rect x="472" y="356" width="104" height="50" rx="7" fill="url(#hatch)" stroke="#e66767" stroke-width="1.2"/>
+<text x="524.0" y="381" class="mono h2" font-size="13" fill="#ffe2e2" text-anchor="middle">-242.2</text>
+<text x="524.0" y="395" font-size="8.5" fill="#ffc9c9" text-anchor="middle" letter-spacing=".08em">OFF SCALE</text>
+<rect x="583" y="356" width="104" height="50" rx="7" fill="url(#hatch)" stroke="#e66767" stroke-width="1.2"/>
+<text x="635.0" y="381" class="mono h2" font-size="13" fill="#ffe2e2" text-anchor="middle">-11.2</text>
+<text x="635.0" y="395" font-size="8.5" fill="#ffc9c9" text-anchor="middle" letter-spacing=".08em">OFF SCALE</text>
+<rect x="694" y="356" width="104" height="50" rx="7" fill="url(#hatch)" stroke="#e66767" stroke-width="1.2"/>
+<text x="746.0" y="381" class="mono h2" font-size="13" fill="#ffe2e2" text-anchor="middle">-7.4</text>
+<text x="746.0" y="395" font-size="8.5" fill="#ffc9c9" text-anchor="middle" letter-spacing=".08em">OFF SCALE</text>
+<rect x="805" y="356" width="104" height="50" rx="7" fill="url(#hatch)" stroke="#e66767" stroke-width="1.2"/>
+<text x="857.0" y="381" class="mono h2" font-size="13" fill="#ffe2e2" text-anchor="middle">-3.8</text>
+<text x="857.0" y="395" font-size="8.5" fill="#ffc9c9" text-anchor="middle" letter-spacing=".08em">OFF SCALE</text>
+<rect x="916" y="356" width="104" height="50" rx="7" fill="url(#hatch)" stroke="#e66767" stroke-width="1.2"/>
+<text x="968.0" y="381" class="mono h2" font-size="13" fill="#ffe2e2" text-anchor="middle">-9.4</text>
+<text x="968.0" y="395" font-size="8.5" fill="#ffc9c9" text-anchor="middle" letter-spacing=".08em">OFF SCALE</text>
+<text x="1061" y="387" class="mono lb" font-size="11.5" text-anchor="middle">3h 49m</text>
+<line x1="38" y1="424" x2="1162" y2="424" stroke="#2E3F66" stroke-dasharray="3 6"/>
+<text x="38" y="461" class="mu" font-size="11">R²</text>
+<rect x="62" y="451" width="5" height="12" fill="#e66767"/>
+<rect x="67" y="451" width="5" height="12" fill="#dd6363"/>
+<rect x="72" y="451" width="5" height="12" fill="#d45f5f"/>
+<rect x="77" y="451" width="5" height="12" fill="#cb5b5b"/>
+<rect x="82" y="451" width="5" height="12" fill="#c35757"/>
+<rect x="87" y="451" width="5" height="12" fill="#ba5454"/>
+<rect x="92" y="451" width="5" height="12" fill="#b15050"/>
+<rect x="97" y="451" width="5" height="12" fill="#a84c4c"/>
+<rect x="102" y="451" width="5" height="12" fill="#a04848"/>
+<rect x="107" y="451" width="5" height="12" fill="#974545"/>
+<rect x="112" y="451" width="5" height="12" fill="#8e4141"/>
+<rect x="117" y="451" width="5" height="12" fill="#853d3d"/>
+<rect x="122" y="451" width="5" height="12" fill="#7d3939"/>
+<rect x="127" y="451" width="5" height="12" fill="#743636"/>
+<rect x="132" y="451" width="5" height="12" fill="#6b3232"/>
+<rect x="137" y="451" width="5" height="12" fill="#622e2e"/>
+<rect x="142" y="451" width="5" height="12" fill="#5a2a2a"/>
+<rect x="147" y="451" width="5" height="12" fill="#512626"/>
+<rect x="152" y="451" width="5" height="12" fill="#482323"/>
+<rect x="157" y="451" width="5" height="12" fill="#3f1f1f"/>
+<rect x="162" y="451" width="5" height="12" fill="#371b1b"/>
+<rect x="167" y="451" width="5" height="12" fill="#2e1717"/>
+<rect x="172" y="451" width="5" height="12" fill="#152943"/>
+<rect x="177" y="451" width="5" height="12" fill="#1b314b"/>
+<rect x="182" y="451" width="5" height="12" fill="#223854"/>
+<rect x="187" y="451" width="5" height="12" fill="#283f5c"/>
+<rect x="192" y="451" width="5" height="12" fill="#2f4764"/>
+<rect x="197" y="451" width="5" height="12" fill="#354e6d"/>
+<rect x="202" y="451" width="5" height="12" fill="#3c5675"/>
+<rect x="207" y="451" width="5" height="12" fill="#425d7e"/>
+<rect x="212" y="451" width="5" height="12" fill="#496486"/>
+<rect x="217" y="451" width="5" height="12" fill="#4f6c8e"/>
+<rect x="222" y="451" width="5" height="12" fill="#567397"/>
+<rect x="227" y="451" width="5" height="12" fill="#5c7b9f"/>
+<rect x="232" y="451" width="5" height="12" fill="#6382a8"/>
+<rect x="237" y="451" width="5" height="12" fill="#6989b0"/>
+<rect x="242" y="451" width="5" height="12" fill="#7091b9"/>
+<rect x="247" y="451" width="5" height="12" fill="#7698c1"/>
+<rect x="252" y="451" width="5" height="12" fill="#7da0c9"/>
+<rect x="257" y="451" width="5" height="12" fill="#83a7d2"/>
+<rect x="262" y="451" width="5" height="12" fill="#8aaeda"/>
+<rect x="267" y="451" width="5" height="12" fill="#90b6e3"/>
+<rect x="272" y="451" width="5" height="12" fill="#97bdeb"/>
+<rect x="277" y="451" width="5" height="12" fill="#9ec5f4"/>
+<text x="62" y="476" class="mu mono" font-size="9.5" text-anchor="middle">−1</text>
+<text x="172" y="476" class="mu mono" font-size="9.5" text-anchor="middle">0</text>
+<text x="277" y="476" class="mu mono" font-size="9.5" text-anchor="middle">+1</text>
+<rect x="338" y="451" width="20" height="12" rx="3" fill="url(#hatch)"/>
+<text x="364" y="461" class="mu" font-size="11">off-scale (&lt; −1)</text>
+<rect x="490" y="451" width="20" height="12" rx="3" fill="url(#nan)"/>
+<text x="516" y="461" class="mu" font-size="11">no finite metric</text>
+<text x="1162" y="412" class="lb" font-size="11.5" text-anchor="end">Validation loss ranked these within 7% of each other. R² did not — loss alone is not a model-selection signal on this task.</text>
+</svg>

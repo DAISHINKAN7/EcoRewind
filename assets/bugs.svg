@@ -1,0 +1,90 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 436" width="1200" height="436" role="img" aria-label="Three bugs found by reading bad numbers">
+<title>Three bugs found by reading bad numbers</title>
+<defs>
+<linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+  <stop offset="0" stop-color="#0B1020"/><stop offset="1" stop-color="#0E1628"/>
+</linearGradient>
+<linearGradient id="panel" x1="0" y1="0" x2="0" y2="1">
+  <stop offset="0" stop-color="#131C33"/><stop offset="1" stop-color="#0F1830"/>
+</linearGradient>
+<pattern id="grid" width="32" height="32" patternUnits="userSpaceOnUse">
+  <path d="M32 0H0V32" fill="none" stroke="#22304F" stroke-width="1" opacity=".38"/>
+</pattern>
+<filter id="glow" x="-60%" y="-60%" width="220%" height="220%">
+  <feGaussianBlur stdDeviation="7" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+</filter>
+<filter id="soft" x="-40%" y="-40%" width="180%" height="180%">
+  <feGaussianBlur stdDeviation="3" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+</filter>
+
+</defs>
+<style>
+  text { font-family:system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif; }
+  .mono { font-family:ui-monospace,SFMono-Regular,'SF Mono',Menlo,Consolas,monospace; }
+  .h1 { fill:#E8EEF9; font-weight:700; }
+  .h2 { fill:#E8EEF9; font-weight:650; }
+  .lb { fill:#A9BAD8; font-weight:500; }
+  .mu { fill:#7286AB; font-weight:500; }
+  .kicker { fill:#7286AB; font-weight:600; letter-spacing:.16em; }
+  @media (prefers-reduced-motion: reduce) { * { animation:none !important; } }
+
+</style>
+<rect width="1200" height="436" rx="18" fill="url(#bg)"/>
+<rect width="1200" height="436" rx="18" fill="url(#grid)"/>
+<rect x=".5" y=".5" width="1199" height="435" rx="18" fill="none" stroke="#2E3F66"/>
+<text x="38" y="44" class="kicker" font-size="12">DESIGN DECISIONS · THE PART THAT WAS ACTUALLY HARD</text>
+<text x="36" y="76" class="h1" font-size="23">Three bugs found by refusing to accept a bad number</text>
+<text x="38" y="99" class="mu" font-size="12">Each was diagnosed from a metric that looked impossible, traced to a root cause, and fixed. The write-ups live in the source docstrings.</text>
+<rect x="38" y="124" width="362" height="268" rx="13" fill="url(#panel)" stroke="#2E3F66" stroke-width="1"/>
+<rect x="38" y="124" width="362" height="3" rx="1.5" fill="#e66767"/>
+<text x="58" y="154" class="mono h2" font-size="11.5" fill="#e66767">01</text>
+<text x="88" y="155" class="h2" font-size="14">Validity mask broadcast</text>
+<text x="58" y="174" class="mono mu" font-size="9.5">training/evaluator.py</text>
+<line x1="58" y1="184" x2="380" y2="184" stroke="#2E3F66"/>
+<text x="58" y="204" class="lb" font-size="10.8">SAR R² came back at −89.8, and every band</text>
+<text x="58" y="221" class="lb" font-size="10.8">reported the same valid-pixel count.</text>
+<text x="58" y="238" class="mu" font-size="10.8">The optical validity channel was broadcast</text>
+<text x="58" y="255" class="mu" font-size="10.8">across all 7 bands. SAR is 87.5% finite</text>
+<text x="58" y="272" class="mu" font-size="10.8">zero-fill, not NaN — so it passed the mask.</text>
+<text x="58" y="289" class="mu" font-size="10.8">R² = 1 − Σ(pred−0)²/Σ(0−mean)², and the</text>
+<text x="58" y="306" class="mu" font-size="10.8">denominator collapses toward zero.</text>
+<rect x="52" y="322" width="334" height="54" rx="9" fill="#e66767" opacity=".10"/>
+<text x="64" y="342" class="h2" font-size="10.5" fill="#e66767">FIX</text>
+<text x="94" y="342" class="lb" font-size="10.5">per-band validity + Welford single pass</text>
+<text x="64" y="363" class="mono h2" font-size="12" fill="#e66767">R² −89.8  →  −0.097</text>
+<rect x="419" y="124" width="362" height="268" rx="13" fill="url(#panel)" stroke="#2E3F66" stroke-width="1"/>
+<rect x="419" y="124" width="362" height="3" rx="1.5" fill="#c98500"/>
+<text x="439" y="154" class="mono h2" font-size="11.5" fill="#c98500">02</text>
+<text x="469" y="155" class="h2" font-size="14">Universal NaN fill</text>
+<text x="439" y="174" class="mono mu" font-size="9.5">datasets/eco_dataset_patch.py</text>
+<line x1="439" y1="184" x2="761" y2="184" stroke="#2E3F66"/>
+<text x="439" y="204" class="lb" font-size="10.8">Models systematically under-predicted</text>
+<text x="439" y="221" class="lb" font-size="10.8">vegetation everywhere.</text>
+<text x="439" y="238" class="mu" font-size="10.8">fill=0.0 was applied in normalised space.</text>
+<text x="439" y="255" class="mu" font-size="10.8">NDVI uses shift normalisation, where 0.0</text>
+<text x="439" y="272" class="mu" font-size="10.8">decodes to NDVI = −1 — bare water.</text>
+<text x="439" y="289" class="mu" font-size="10.8">Every cloud-gap pixel looked to the model</text>
+<text x="439" y="306" class="mu" font-size="10.8">like maximally dead vegetation.</text>
+<rect x="433" y="322" width="334" height="54" rx="9" fill="#c98500" opacity=".10"/>
+<text x="445" y="342" class="h2" font-size="10.5" fill="#c98500">FIX</text>
+<text x="475" y="342" class="lb" font-size="10.5">band-aware fill at each band's neutral point</text>
+<text x="445" y="363" class="mono h2" font-size="12" fill="#c98500">systematic bias  →  removed</text>
+<rect x="800" y="124" width="362" height="268" rx="13" fill="url(#panel)" stroke="#2E3F66" stroke-width="1"/>
+<rect x="800" y="124" width="362" height="3" rx="1.5" fill="#199e70"/>
+<text x="820" y="154" class="mono h2" font-size="11.5" fill="#199e70">03</text>
+<text x="850" y="155" class="h2" font-size="14">Compounding rollout drift</text>
+<text x="820" y="174" class="mono mu" font-size="9.5">inference/counterfactual.py</text>
+<line x1="820" y1="184" x2="1142" y2="184" stroke="#2E3F66"/>
+<text x="820" y="204" class="lb" font-size="10.8">Counterfactuals sank monotonically and</text>
+<text x="820" y="221" class="lb" font-size="10.8">never recovered.</text>
+<text x="820" y="238" class="mu" font-size="10.8">A predicted winter dip becomes the next</text>
+<text x="820" y="255" class="mu" font-size="10.8">input, producing a deeper dip, for 10</text>
+<text x="820" y="272" class="mu" font-size="10.8">autoregressive quarters.</text>
+<text x="820" y="289" class="mu" font-size="10.8">Seasonality and drift are indistinguishable</text>
+<text x="820" y="306" class="mu" font-size="10.8">to an unconstrained rollout.</text>
+<rect x="814" y="322" width="334" height="54" rx="9" fill="#199e70" opacity=".10"/>
+<text x="826" y="342" class="h2" font-size="10.5" fill="#199e70">FIX</text>
+<text x="856" y="342" class="lb" font-size="10.5">seasonal climatology floor, clamp at μ−2σ</text>
+<text x="826" y="363" class="mono h2" font-size="12" fill="#199e70">drift  →  bounded</text>
+<text x="38" y="422" class="mu" font-size="11.5">None of these were visible in the loss curve. All three were found by asking why a reported number was physically impossible.</text>
+</svg>

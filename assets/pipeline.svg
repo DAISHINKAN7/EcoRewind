@@ -1,0 +1,120 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 392" width="1200" height="392" role="img" aria-label="EcoRewind end-to-end pipeline">
+<title>EcoRewind end-to-end pipeline</title>
+<defs>
+<linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+  <stop offset="0" stop-color="#0B1020"/><stop offset="1" stop-color="#0E1628"/>
+</linearGradient>
+<linearGradient id="panel" x1="0" y1="0" x2="0" y2="1">
+  <stop offset="0" stop-color="#131C33"/><stop offset="1" stop-color="#0F1830"/>
+</linearGradient>
+<pattern id="grid" width="32" height="32" patternUnits="userSpaceOnUse">
+  <path d="M32 0H0V32" fill="none" stroke="#22304F" stroke-width="1" opacity=".38"/>
+</pattern>
+<filter id="glow" x="-60%" y="-60%" width="220%" height="220%">
+  <feGaussianBlur stdDeviation="7" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+</filter>
+<filter id="soft" x="-40%" y="-40%" width="180%" height="180%">
+  <feGaussianBlur stdDeviation="3" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+</filter>
+
+</defs>
+<style>
+  text { font-family:system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif; }
+  .mono { font-family:ui-monospace,SFMono-Regular,'SF Mono',Menlo,Consolas,monospace; }
+  .h1 { fill:#E8EEF9; font-weight:700; }
+  .h2 { fill:#E8EEF9; font-weight:650; }
+  .lb { fill:#A9BAD8; font-weight:500; }
+  .mu { fill:#7286AB; font-weight:500; }
+  .kicker { fill:#7286AB; font-weight:600; letter-spacing:.16em; }
+  @media (prefers-reduced-motion: reduce) { * { animation:none !important; } }
+
+ .flow { stroke-dasharray:4 12; animation:fl 1.9s linear infinite; }
+ @keyframes fl { to { stroke-dashoffset:-32; } }
+ .orb { animation:ob 4.6s cubic-bezier(.55,0,.45,1) infinite; }
+ @keyframes ob { 0%{offset-distance:0%;opacity:0} 8%{opacity:1} 92%{opacity:1} 100%{offset-distance:100%;opacity:0} }
+</style>
+<rect width="1200" height="392" rx="18" fill="url(#bg)"/>
+<rect width="1200" height="392" rx="18" fill="url(#grid)"/>
+<rect x=".5" y=".5" width="1199" height="391" rx="18" fill="none" stroke="#2E3F66"/>
+<text x="38" y="44" class="kicker" font-size="12">END-TO-END PIPELINE</text>
+<text x="36" y="74" class="h1" font-size="23">GeoTIFF → tensors → counterfactual → attribution</text>
+<rect x="38" y="108" width="206" height="214" rx="14" fill="url(#panel)" stroke="#2E3F66" stroke-width="1"/>
+<rect x="38" y="108" width="206" height="3" rx="1.5" fill="#3987e5"/>
+<text x="56" y="144" class="mono h2" font-size="12" fill="#3987e5">01</text>
+<text x="56" y="168" class="h2" font-size="14.5" letter-spacing=".06em">INGEST</text>
+<line x1="56" y1="180" x2="226" y2="180" stroke="#2E3F66"/>
+<circle cx="60" cy="202" r="2.4" fill="#3987e5" opacity=".85"/>
+<text x="70" y="206" class="lb" font-size="11.2">Google Earth Engine</text>
+<circle cx="60" cy="231" r="2.4" fill="#3987e5" opacity=".85"/>
+<text x="70" y="235" class="lb" font-size="11.2">Sentinel-2 SR + S-1 GRD</text>
+<circle cx="60" cy="260" r="2.4" fill="#3987e5" opacity=".85"/>
+<text x="70" y="264" class="lb" font-size="11.2">quarterly median composite</text>
+<circle cx="60" cy="289" r="2.4" fill="#3987e5" opacity=".85"/>
+<text x="70" y="293" class="lb" font-size="11.2">cloud-masked · 10 m</text>
+<line x1="247" y1="215.0" x2="265" y2="215.0" stroke="#2E3F66" stroke-width="2"/>
+<line x1="247" y1="215.0" x2="265" y2="215.0" stroke="#3987e5" stroke-width="2" class="flow"/>
+<path d="M259 210.5L266 215.0L259 219.5Z" fill="#3987e5"/>
+<rect x="268" y="108" width="206" height="214" rx="14" fill="url(#panel)" stroke="#2E3F66" stroke-width="1"/>
+<rect x="268" y="108" width="206" height="3" rx="1.5" fill="#199e70"/>
+<text x="286" y="144" class="mono h2" font-size="12" fill="#199e70">02</text>
+<text x="286" y="168" class="h2" font-size="14.5" letter-spacing=".06em">PREPROCESS</text>
+<line x1="286" y1="180" x2="456" y2="180" stroke="#2E3F66"/>
+<circle cx="290" cy="202" r="2.4" fill="#199e70" opacity=".85"/>
+<text x="300" y="206" class="lb" font-size="11.2">(T=32, C=7, H, W)</text>
+<circle cx="290" cy="231" r="2.4" fill="#199e70" opacity=".85"/>
+<text x="300" y="235" class="lb" font-size="11.2">minmax · shift · z-score</text>
+<circle cx="290" cy="260" r="2.4" fill="#199e70" opacity=".85"/>
+<text x="300" y="264" class="lb" font-size="11.2">band-aware NaN fill</text>
+<circle cx="290" cy="289" r="2.4" fill="#199e70" opacity=".85"/>
+<text x="300" y="293" class="lb" font-size="11.2">128² patches, stride 64</text>
+<line x1="477" y1="215.0" x2="495" y2="215.0" stroke="#2E3F66" stroke-width="2"/>
+<line x1="477" y1="215.0" x2="495" y2="215.0" stroke="#199e70" stroke-width="2" class="flow"/>
+<path d="M489 210.5L496 215.0L489 219.5Z" fill="#199e70"/>
+<rect x="498" y="108" width="206" height="214" rx="14" fill="url(#panel)" stroke="#2E3F66" stroke-width="1"/>
+<rect x="498" y="108" width="206" height="3" rx="1.5" fill="#9085e9"/>
+<text x="516" y="144" class="mono h2" font-size="12" fill="#9085e9">03</text>
+<text x="516" y="168" class="h2" font-size="14.5" letter-spacing=".06em">TRAIN</text>
+<line x1="516" y1="180" x2="686" y2="180" stroke="#2E3F66"/>
+<circle cx="520" cy="202" r="2.4" fill="#9085e9" opacity=".85"/>
+<text x="530" y="206" class="lb" font-size="11.2">T_in=4 → T_out=4</text>
+<circle cx="520" cy="231" r="2.4" fill="#9085e9" opacity=".85"/>
+<text x="530" y="235" class="lb" font-size="11.2">EcoRewindLoss (4 terms)</text>
+<circle cx="520" cy="260" r="2.4" fill="#9085e9" opacity=".85"/>
+<text x="530" y="264" class="lb" font-size="11.2">5 architectures</text>
+<circle cx="520" cy="289" r="2.4" fill="#9085e9" opacity=".85"/>
+<text x="530" y="293" class="lb" font-size="11.2">joint, both sites</text>
+<line x1="707" y1="215.0" x2="725" y2="215.0" stroke="#2E3F66" stroke-width="2"/>
+<line x1="707" y1="215.0" x2="725" y2="215.0" stroke="#9085e9" stroke-width="2" class="flow"/>
+<path d="M719 210.5L726 215.0L719 219.5Z" fill="#9085e9"/>
+<rect x="728" y="108" width="206" height="214" rx="14" fill="url(#panel)" stroke="#2E3F66" stroke-width="1"/>
+<rect x="728" y="108" width="206" height="3" rx="1.5" fill="#c98500"/>
+<text x="746" y="144" class="mono h2" font-size="12" fill="#c98500">04</text>
+<text x="746" y="168" class="h2" font-size="14.5" letter-spacing=".06em">ROLL OUT</text>
+<line x1="746" y1="180" x2="916" y2="180" stroke="#2E3F66"/>
+<circle cx="750" cy="202" r="2.4" fill="#c98500" opacity=".85"/>
+<text x="760" y="206" class="lb" font-size="11.2">autoregressive rollout</text>
+<circle cx="750" cy="231" r="2.4" fill="#c98500" opacity=".85"/>
+<text x="760" y="235" class="lb" font-size="11.2">MC Dropout × 50</text>
+<circle cx="750" cy="260" r="2.4" fill="#c98500" opacity=".85"/>
+<text x="760" y="264" class="lb" font-size="11.2">climatology floor μ−2σ</text>
+<circle cx="750" cy="289" r="2.4" fill="#c98500" opacity=".85"/>
+<text x="760" y="293" class="lb" font-size="11.2">never sees the storm</text>
+<line x1="937" y1="215.0" x2="955" y2="215.0" stroke="#2E3F66" stroke-width="2"/>
+<line x1="937" y1="215.0" x2="955" y2="215.0" stroke="#c98500" stroke-width="2" class="flow"/>
+<path d="M949 210.5L956 215.0L949 219.5Z" fill="#c98500"/>
+<rect x="958" y="108" width="206" height="214" rx="14" fill="url(#panel)" stroke="#2E3F66" stroke-width="1"/>
+<rect x="958" y="108" width="206" height="3" rx="1.5" fill="#d55181"/>
+<text x="976" y="144" class="mono h2" font-size="12" fill="#d55181">05</text>
+<text x="976" y="168" class="h2" font-size="14.5" letter-spacing=".06em">ATTRIBUTE</text>
+<line x1="976" y1="180" x2="1146" y2="180" stroke="#2E3F66"/>
+<circle cx="980" cy="202" r="2.4" fill="#d55181" opacity=".85"/>
+<text x="990" y="206" class="lb" font-size="11.2">ΔNDVI / ΔNDWI maps</text>
+<circle cx="980" cy="231" r="2.4" fill="#d55181" opacity=".85"/>
+<text x="990" y="235" class="lb" font-size="11.2">impacted hectares</text>
+<circle cx="980" cy="260" r="2.4" fill="#d55181" opacity=".85"/>
+<text x="990" y="264" class="lb" font-size="11.2">carbon loss tCO₂-eq</text>
+<circle cx="980" cy="289" r="2.4" fill="#d55181" opacity=".85"/>
+<text x="990" y="293" class="lb" font-size="11.2">recovery slope</text>
+<line x1="38" y1="352" x2="1162" y2="352" stroke="#2E3F66" stroke-dasharray="3 6"/>
+<text x="38" y="376" class="mu" font-size="11.5">Steps 01–03 are supervised and verifiable. Step 04 has no ground truth by construction — that is the hard part, and the reason for the limitations section.</text>
+</svg>
