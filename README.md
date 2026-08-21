@@ -1,4 +1,3 @@
-$ cat > README.md << 'READMEEOF'
 <div align="center">
 
 # 🌪️ EcoRewind
