@@ -1,3 +1,4 @@
+$ cat > README.md << 'READMEEOF'
 <div align="center">
 
 # 🌪️ EcoRewind
@@ -20,6 +21,7 @@
 ![Resolution](https://img.shields.io/badge/resolution-10_m-0EA5E9?style=flat-square)
 ![Timespan](https://img.shields.io/badge/timespan-32_quarters_(2016–2023)-0EA5E9?style=flat-square)
 ![Bands](https://img.shields.io/badge/bands-7_(optical_+_SAR)-0EA5E9?style=flat-square)
+![Pixels](https://img.shields.io/badge/pixels_evaluated-347.7M-0EA5E9?style=flat-square)
 ![Code](https://img.shields.io/badge/code-~11k_LOC-64748B?style=flat-square)
 ![Status](https://img.shields.io/badge/status-research_prototype-F59E0B?style=flat-square)
 
@@ -27,7 +29,7 @@
 
 <img src="outputs/maps/publication/fig5_dashboard/everglades_health_dashboard.png" alt="EcoRewind ecosystem health dashboard for the Everglades under Hurricane Irma" width="100%"/>
 
-<sub><b>Everglades × Hurricane Irma (2017)</b> — counterfactual vs. observed trajectories, damage extent, carbon-stock loss, and per-band spatial deltas.</sub>
+<sub><b>Everglades × Hurricane Irma (2017)</b> — carbon-stock loss by model, vegetation-loss area over time, ΔNDVI damage distribution (23.7% of pixels damaged), counterfactual-vs-actual agreement (R² = 0.821), and per-band spatial deltas.</sub>
 
 </div>
 
@@ -39,6 +41,7 @@
 - [Why This Is Hard](#why-this-is-hard)
 - [How It Works](#how-it-works)
 - [Results](#results)
+- [Results Gallery](#results-gallery)
 - [Model Architectures](#model-architectures)
 - [Design Decisions](#design-decisions)
 - [Data Pipeline](#data-pipeline)
@@ -140,7 +143,7 @@ The counterfactual rollout is the heart of it (`inference/counterfactual.py`):
 
 1. Feed the model the **four quarters immediately before** the hurricane as context.
 2. Predict forward autoregressively for the full post-event horizon, **never** feeding it observed post-storm data.
-3. Repeat **50×** with dropout active (MC Dropout) to get a mean trajectory and a per-pixel uncertainty band.
+3. Repeat **50×** with dropout active (MC Dropout) to get a mean trajectory and a per-pixel spread.
 4. Clamp each step to a **seasonal climatology floor** (μ − 2σ of pre-event same-quarter statistics) to stop compounding drift.
 5. Stitch patch predictions back to full resolution and inverse-normalise to physical units.
 
@@ -160,12 +163,21 @@ Per-band R² for next-window prediction. Validity-masked per band, single-pass W
 | ❌ UNet-Mamba | −3.51 | −1.19 | −23.1 | −269 | −347 | −680 | −6.34 | 0.6650 | 2.259 | 8h 57m |
 | ❌ UNet-PatchTST | −7.40 | −3.75 | −11.2 | −242 | −203 | −119 | −9.39 | 0.6635 | 2.348 | 3h 49m |
 
-<sub>Valid pixels: 347,677,067 (optical) · 44,348,305 (SAR). Source: `outputs/metrics/*_joint_eval.json`.</sub>
+<sub>Valid pixels: 347,677,067 (optical) · 44,348,305 (SAR). Source: <code>outputs/metrics/*_joint_eval.json</code>.</sub>
 
 > [!IMPORTANT]
 > **Read these numbers with the caveat in [Known Limitations](#known-limitations).** Patches are 128 px sampled at stride 64, so neighbouring patches overlap 50% and the train/val split is patch-level random. Train and validation patches share pixels — **R² = 0.901 is optimistic** and should be treated as an upper bound until the split is redone on disjoint spatial blocks.
 
 **Three of five architectures failed to converge**, and that is reported here deliberately rather than hidden. Note the diagnostic gap: UNet-Mamba and UNet-PatchTST reached validation losses (2.26, 2.35) within ~7% of the winning EcoTransformer (2.20), yet produce catastrophically negative R². The composite loss is dominated by terms that a degenerate near-constant predictor can satisfy, so **validation loss alone is not a usable model-selection signal on this task** — per-band R² is.
+
+### Counterfactual Agreement & Damage Extent
+
+Post-event counterfactual vs. observed NDVI, EcoTransformer:
+
+| Site | CF-vs-actual R² | Pixels classed damaged (ΔNDVI > 0.05) | Q1 impacted area |
+|---|---|---|---|
+| **Everglades** (Irma) | 0.821 | 23.7% | 4,041 ha |
+| **Barataria Bay** (Ida) | 0.858 | 36.6% | 9,905 ha (21.6%) |
 
 ### Attribution Sensitivity — The Headline Finding
 
@@ -181,39 +193,107 @@ The same counterfactual pipeline, differing only in backbone, yields wildly diff
 | Barataria Bay | UNet-Temporal | 37,836 | 1,006,257 | −0.0008 |
 
 > [!WARNING]
-> **Carbon-loss estimates vary by more than 20× across backbones on the same site and the same input data** (34,113 → 698,259 tCO₂-eq for the Everglades). This is the most important result in the project, and it is a negative one: **learned counterfactual attribution is dominated by architecture choice, not by the geophysical signal.** Any single headline damage figure from this class of method — including from the best model here — should be treated as unvalidated. Converged models (EcoTransformer, UNet-Mamba) agree within ~1.5× on Barataria Bay; the diverged model does not.
+> **Carbon-loss estimates vary by more than 20× across backbones on the same site and the same input data** (34,113 → 698,259 tCO₂-eq for the Everglades). This is the most important result in the project, and it is a negative one: **learned counterfactual attribution is dominated by architecture choice, not by the geophysical signal.** Any single headline damage figure from this class of method — including from the best model here — should be treated as unvalidated. The two converged models agree within ~1.5× on Barataria Bay; the diverged model does not.
 
-<sub>Source: `outputs/metrics/*_metrics_final.json`. **Note on provenance:** an early run overwrote `everglades_convlstm_metrics.json` with UNet-Temporal values (identical payload to `everglades_unet_temporal_metrics_final.json`). Only unambiguously-suffixed files are used above; legacy unsuffixed runs (`{site}_metrics_final.json`) are excluded pending a re-run.</sub>
+<sub><b>Note on provenance:</b> an early run overwrote <code>everglades_convlstm_metrics.json</code> with UNet-Temporal values. This is visible in the ConvLSTM and UNet-Tem bars of panels A and B below, which are <i>identical</i> — the visual signature of the overwrite. Only unambiguously-suffixed metrics files are used in the table above.</sub>
 
-### Qualitative Output
+---
+
+## Results Gallery
+
+### Multi-Model Impact Comparison
+
+<div align="center">
+<img src="outputs/maps/publication/fig3_model_comparison/everglades_mississippi_model_comparison.png" alt="Multi-model ecological impact comparison across both ecosystems" width="100%"/>
+</div>
+
+<sub><b>The attribution-sensitivity result in one figure.</b> <b>A</b> vegetation-loss area and <b>B</b> carbon-stock loss diverge by more than an order of magnitude across backbones on identical inputs. <b>C</b> recovery speed even flips sign between sites. The four radar plots score each model on area consistency, carbon precision, recovery speed, temporal coherence, and NDVI R². <b>E</b> reports time-to-recovery as 0 quarters for every model — a broken metric, not a finding (see Limitation 9).</sub>
+
+### Damage Attribution Maps — Actual vs. Counterfactual vs. Δ
+
+<table>
+<tr>
+<td width="50%">
+<img src="outputs/maps/publication/fig1_damage_comparison/everglades_eco_transformer_Q01_damage.png" alt="Everglades damage map, EcoTransformer"/>
+<sub><b>Everglades · EcoTransformer.</b> Observed post-Irma NDVI, the model's no-hurricane counterfactual, and the per-pixel damage map.</sub>
+</td>
+<td width="50%">
+<img src="outputs/maps/publication/fig1_damage_comparison/mississippi_eco_transformer_Q01_damage.png" alt="Barataria Bay damage map, EcoTransformer"/>
+<sub><b>Barataria Bay · EcoTransformer.</b> 21.6% of the scene impacted (9,905 ha) in the first post-Ida quarter.</sub>
+</td>
+</tr>
+<tr>
+<td width="50%">
+<img src="outputs/maps/publication/fig1_damage_comparison/everglades_unet_mamba_Q01_damage.png" alt="Everglades damage map, UNet-Mamba"/>
+<sub><b>Everglades · UNet-Mamba.</b> Same scene, different backbone — useful as a visual control against the panel above.</sub>
+</td>
+<td width="50%">
+<img src="outputs/maps/publication/fig1_damage_comparison/mississippi_unet_mamba_Q01_damage.png" alt="Barataria Bay damage map, UNet-Mamba"/>
+<sub><b>Barataria Bay · UNet-Mamba.</b> Spatial damage pattern is broadly consistent with EcoTransformer here; the aggregate totals are not.</sub>
+</td>
+</tr>
+</table>
+
+### Temporal Evolution — Full Recovery Horizon
+
+<div align="center">
+<img src="outputs/maps/publication/fig4_temporal_evolution/mississippi_eco_transformer_temporal_grid.png" alt="Barataria Bay temporal evolution grid, EcoTransformer" width="100%"/>
+<sub><b>Barataria Bay · EcoTransformer.</b> Row 1: pre-event context fed to the model (t−4 … t−1). Row 2: counterfactual rollout. Row 3: observed. Row 4: per-pixel ΔNDVI. Note the cloud-gap holes propagating through row 1 — the model receives a heavily masked context.</sub>
+</div>
+
+<br/>
+
+<table>
+<tr>
+<td width="50%">
+<img src="outputs/maps/publication/fig4_temporal_evolution/everglades_eco_transformer_temporal_grid.png" alt="Everglades temporal evolution, EcoTransformer"/>
+<sub><b>Everglades · EcoTransformer.</b></sub>
+</td>
+<td width="50%">
+<img src="outputs/maps/publication/fig4_temporal_evolution/everglades_unet_mamba_temporal_grid.png" alt="Everglades temporal evolution, UNet-Mamba"/>
+<sub><b>Everglades · UNet-Mamba.</b></sub>
+</td>
+</tr>
+<tr>
+<td width="50%">
+<img src="outputs/maps/publication/fig4_temporal_evolution/mississippi_unet_mamba_temporal_grid.png" alt="Barataria Bay temporal evolution, UNet-Mamba"/>
+<sub><b>Barataria Bay · UNet-Mamba.</b></sub>
+</td>
+<td width="50%">
+<img src="outputs/maps/publication/fig5_dashboard/mississippi_health_dashboard.png" alt="Barataria Bay ecosystem health dashboard"/>
+<sub><b>Barataria Bay health dashboard.</b> CF-vs-actual R² = 0.858, 36.6% of pixels damaged. The two converged models agree closely on carbon loss here (146,458 vs 149,006 tCO₂-eq).</sub>
+</td>
+</tr>
+</table>
+
+### Recovery Trajectories & Uncertainty
 
 <table>
 <tr>
 <td width="50%">
 <img src="outputs/maps/publication/fig2_trajectories/everglades_recovery_trajectories.png" alt="Everglades recovery trajectories"/>
-<sub><b>Recovery trajectories — Everglades.</b> Counterfactual vs. observed NDVI with MC-Dropout confidence band.</sub>
+<sub><b>Everglades · UNet-Mamba.</b> Counterfactual (dashed) sits consistently above observed, giving a persistent positive damage gap of 0.02–0.06 NDVI.</sub>
 </td>
 <td width="50%">
 <img src="outputs/maps/publication/fig2_trajectories/mississippi_recovery_trajectories.png" alt="Barataria Bay recovery trajectories"/>
-<sub><b>Recovery trajectories — Barataria Bay.</b> Hurricane Ida, Q4 2021.</sub>
-</td>
-</tr>
-<tr>
-<td width="50%">
-<img src="outputs/maps/publication/fig1_damage_comparison/everglades_eco_transformer_Q01_damage.png" alt="Everglades damage map"/>
-<sub><b>Damage attribution map.</b> Per-pixel ΔNDVI, first post-event quarter.</sub>
-</td>
-<td width="50%">
-<img src="outputs/maps/publication/fig4_temporal_evolution/everglades_eco_transformer_temporal_grid.png" alt="Temporal evolution grid"/>
-<sub><b>Temporal evolution.</b> Counterfactual / actual / delta across the recovery horizon.</sub>
+<sub><b>Barataria Bay · UNet-Mamba.</b> The damage gap oscillates in sign across quarters rather than closing monotonically — the direct cause of the broken convergence metric.</sub>
 </td>
 </tr>
 </table>
 
+> [!CAUTION]
+> **The shaded MC-Dropout bands in both panels above span roughly ±2.5 NDVI**, far outside the physically possible range of [−1, 1]. The uncertainty estimates are **uncalibrated and not currently usable** — see Limitation 11. The mean trajectories and the ΔNDVI panels are the interpretable parts of these figures.
+
 <div align="center">
-<img src="outputs/maps/publication/fig3_model_comparison/everglades_mississippi_model_comparison.png" alt="Cross-model comparison" width="85%"/>
-<br/>
-<sub><b>Cross-model, cross-ecosystem comparison.</b></sub>
+<img src="outputs/maps/everglades/trajectory_comparison.png" alt="Everglades counterfactual vs actual with calendar quarters" width="85%"/>
+<sub><b>Everglades, calendar-quarter view.</b> The damage gap is positive through 2018 (red, ecosystem below counterfactual) then <b>flips negative</b> from 2019 onward (green, ecosystem above counterfactual). A monotone-recovery assumption cannot describe this, which is why time-to-convergence returns 0.</sub>
+</div>
+
+### Ablation Study *(partially broken — shown as-is)*
+
+<div align="center">
+<img src="outputs/maps/ablation_comparison.png" alt="Ablation study results with four missing experiments" width="90%"/>
+<sub><b>Only 2 of 6 ablation configurations completed.</b> <code>full</code>, <code>no_eco_loss</code>, <code>no_temp_loss</code>, and <code>single_eco</code> all crash on a channel-count mismatch (the model is not rebuilt when input bands are dropped), leaving empty bars. Of what did run: dropping SAR costs little, while NDVI-only input degrades reconstruction MSE ~4× (0.193 → 0.750), indicating the multispectral context carries real predictive signal. This figure is included unretouched because the gap is part of the project's current state.</sub>
 </div>
 
 ---
@@ -277,7 +357,7 @@ Spatial U-Net encoder, temporal LSTM at the bottleneck with multi-head attention
 
 `models/unet_mamba.py` · `d_state=16, expand=2, n_layers=2, dropout=0.15, lr=1e-5`
 
-Replaces the LSTM bottleneck with Mamba selective state-space blocks for linear-time sequence modelling. **Diverged** despite a reduced learning rate — R² −3.5 on NDVI, −680 on blue. The blue-band collapse suggests the SSM latched onto a near-constant output for low-variance channels.
+Replaces the LSTM bottleneck with Mamba selective state-space blocks for linear-time sequence modelling. **Diverged** despite a reduced learning rate — R² −3.5 on NDVI, −680 on blue. The blue-band collapse suggests the SSM latched onto a near-constant output for low-variance channels. Its *spatial* damage patterns nonetheless remain broadly plausible (see gallery), which is itself a caution: visually reasonable maps do not imply a converged model.
 
 </details>
 
@@ -358,7 +438,7 @@ SSIM is **linearly warmed up over 20 epochs** (`ssim_warmup_epochs`). Applied fr
 
 <br/>
 
-50 stochastic forward passes with dropout active at inference give a per-pixel mean and standard deviation. This is what produces the confidence bands in the trajectory figures — necessary because a point-estimate counterfactual invites false precision on a quantity that can never be verified.
+50 stochastic forward passes with dropout active at inference give a per-pixel mean and standard deviation, motivated by the fact that a point-estimate counterfactual invites false precision on a quantity that can never be verified. **In its current form the resulting intervals are not calibrated** (Limitation 11) — the machinery works, the variance scaling does not.
 
 </details>
 
@@ -492,6 +572,9 @@ python scripts/05_compute_metrics.py
 
 # 5 · Publication figures
 python scripts/viz_01_damage_comparison.py
+python scripts/viz_02_recovery_trajectories.py
+python scripts/viz_03_model_comparison.py
+python scripts/viz_04_temporal_evolution.py
 python scripts/viz_05_ecosystem_health_dashboard.py
 ```
 
@@ -515,15 +598,17 @@ This section is deliberately detailed. The failure modes below are known, measur
 
 **5 · Three of five architectures diverged.** UNet-Temporal produces NaN metrics; UNet-Mamba and UNet-PatchTST have strongly negative R². Root causes are hypothesised above but not confirmed.
 
-**6 · The ablation study is broken.** Four of six experiments in `outputs/metrics/ablation_convlstm_results.json` crash with a channel-count mismatch (`expected 72 channels, got 66/71`) — the model is not rebuilt when input bands are dropped. Only `no_sar` and `ndvi_only` completed. Conclusions about loss-term contributions cannot currently be drawn.
+**6 · The ablation study is broken.** Four of six experiments crash with a channel-count mismatch (`expected 72 channels, got 66/71`) — the model is not rebuilt when input bands are dropped. Only `no_sar` and `ndvi_only` completed, as the empty bars in the [ablation figure](#ablation-study-partially-broken--shown-as-is) show. Conclusions about loss-term contributions cannot currently be drawn.
 
 **7 · SAR contributes nothing.** Negative R² for every converged model. With 87.2% zero fill, the band is effectively noise. It should either be repaired (proper fill handling, temporal interpolation) or dropped with justification.
 
 **8 · Carbon conversion is a coarse linear proxy.** `carbon_factor: 85.0` tCO₂ per unit ΔNDVI per hectare is a single global constant applied uniformly across marsh, mangrove, and open water. Real carbon density varies by an order of magnitude across those classes. Treat tCO₂ figures as relative indices, not absolute inventories.
 
-**9 · Convergence detection is unreliable.** `time_to_convergence_quarters = 0` for most runs, because the CF–actual gap oscillates in sign rather than closing monotonically. The metric assumes monotone recovery, which the data does not exhibit.
+**9 · Convergence detection is unreliable.** `time_to_convergence_quarters = 0` for every model in panel E of the comparison figure, because the CF–actual gap oscillates in sign rather than closing monotonically — clearly visible in the [calendar-quarter trajectory](#recovery-trajectories--uncertainty), where the gap is positive through 2018 and negative from 2019. The metric assumes monotone recovery, which the data does not exhibit.
 
-**10 · Reproducibility gaps.** The GEE export script is uncommitted; `configs/config.yaml` retains a hardcoded absolute path from the development machine; there is no test suite; checkpoints are gitignored.
+**10 · MC-Dropout intervals are uncalibrated.** The shaded bands in the trajectory figures span roughly **±2.5 NDVI**, exceeding the physical range of the index by more than an order of magnitude. Dropout variance in normalised space is evidently not being scaled correctly on inverse-transform. The intervals should not be read as confidence bounds until this is fixed.
+
+**11 · Reproducibility gaps.** The GEE export script is uncommitted; `configs/config.yaml` retains a hardcoded absolute path from the development machine; there is no test suite; checkpoints are gitignored. An early run also overwrote a metrics file under the wrong model name (see the provenance note in Results).
 
 ---
 
@@ -534,9 +619,11 @@ Ordered by scientific value per unit effort.
 - [ ] **Placebo validation** — roll counterfactuals over quiet pre-event windows, score against observed. *The single highest-value experiment; converts the method from unfalsifiable to validated.*
 - [ ] **Disjoint spatial-block splits** — re-report all R² without pixel leakage.
 - [ ] **Fix the ablation harness** — rebuild the model per band configuration so all six experiments run.
+- [ ] **Calibrate MC-Dropout intervals** — trace the variance through inverse-normalisation; add a coverage check against held-out data.
 - [ ] **Held-out test set** distinct from the early-stopping split.
 - [ ] **Diagnose the three divergent architectures** — LR sweeps, per-term loss logging, gradient-norm traces.
 - [ ] **Repair or remove SAR** — temporal interpolation over the 87% gap, or drop with justification.
+- [ ] **Replace the convergence metric** with one that tolerates non-monotone recovery.
 - [ ] **Land-cover-aware carbon factors** replacing the single global constant.
 - [ ] **Commit the GEE export script** + de-hardcode paths.
 - [ ] **📊 Interactive web report** — a deployable site presenting architectures, design decisions, and results with an explorable counterfactual map (site / band / quarter selectors, split-view actual-vs-counterfactual, model switcher). Scoped in `PORTFOLIO_PLAN.md`.
@@ -573,3 +660,23 @@ Built with Sentinel-1/2 imagery via Google Earth Engine. Copernicus data © ESA.
 <sub>Research prototype. Results are not validated for operational or policy use — see <a href="#known-limitations">Known Limitations</a>.</sub>
 
 </div>
+READMEEOF
+for p in $(grep -o 'src="[^"]*"' README.md | sed 's/src="//;s/"//'); do [ -f "$p" ] && echo "OK   $p" || echo "MISS $p"; done; echo "--- images: $(grep -c '<img src' README.md) | git: ---"; git status --short
+
+OK   outputs/maps/publication/fig5_dashboard/everglades_health_dashboard.png
+OK   outputs/maps/publication/fig3_model_comparison/everglades_mississippi_model_comparison.png
+OK   outputs/maps/publication/fig1_damage_comparison/everglades_eco_transformer_Q01_damage.png
+OK   outputs/maps/publication/fig1_damage_comparison/mississippi_eco_transformer_Q01_damage.png
+OK   outputs/maps/publication/fig1_damage_comparison/everglades_unet_mamba_Q01_damage.png
+OK   outputs/maps/publication/fig1_damage_comparison/mississippi_unet_mamba_Q01_damage.png
+OK   outputs/maps/publication/fig4_temporal_evolution/mississippi_eco_transformer_temporal_grid.png
+OK   outputs/maps/publication/fig4_temporal_evolution/everglades_eco_transformer_temporal_grid.png
+OK   outputs/maps/publication/fig4_temporal_evolution/everglades_unet_mamba_temporal_grid.png
+OK   outputs/maps/publication/fig4_temporal_evolution/mississippi_unet_mamba_temporal_grid.png
+OK   outputs/maps/publication/fig5_dashboard/mississippi_health_dashboard.png
+OK   outputs/maps/publication/fig2_trajectories/everglades_recovery_trajectories.png
+OK   outputs/maps/publication/fig2_trajectories/mississippi_recovery_trajectories.png
+OK   outputs/maps/everglades/trajectory_comparison.png
+OK   outputs/maps/ablation_comparison.png
+--- images: 15 | git: ---
+?? README.md
