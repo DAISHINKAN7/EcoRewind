@@ -1,0 +1,112 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 530" width="1200" height="530" role="img" aria-label="Honest project status: what holds and what does not">
+<title>Honest project status: what holds and what does not</title>
+<defs>
+<linearGradient id="bg" x1="0" y1="0" x2=".7" y2="1">
+  <stop offset="0" stop-color="#0A130F"/><stop offset="1" stop-color="#101C17"/>
+</linearGradient>
+<linearGradient id="panel" x1="0" y1="0" x2="0" y2="1">
+  <stop offset="0" stop-color="#16241E"/><stop offset="1" stop-color="#111D18"/>
+</linearGradient>
+<pattern id="contour" width="180" height="128" patternUnits="userSpaceOnUse"><path d="M0 14 Q5 14.0 10 16.4 Q15 16.4 20 18.6 Q25 18.6 30 20.1 Q35 20.1 40 20.9 Q45 20.9 50 20.8 Q55 20.8 60 19.9 Q65 19.9 70 18.2 Q75 18.2 80 16.0 Q85 16.0 90 13.5 Q95 13.5 100 11.1 Q105 11.1 110 9.0 Q115 9.0 120 7.6 Q125 7.6 130 7.0 Q135 7.0 140 7.3 Q145 7.3 150 8.4 Q155 8.4 160 10.2 Q165 10.2 170 12.5 Q175 12.5 180 15.0 Q185 15.0 190 17.4" fill="none" stroke="#25392F" stroke-width="1" opacity="0.3"/><path d="M0 34 Q5 38.5 10 39.0 Q15 39.0 20 38.9 Q25 38.9 30 38.1 Q35 38.1 40 36.9 Q45 36.9 50 35.3 Q55 35.3 60 33.5 Q65 33.5 70 31.8 Q75 31.8 80 30.4 Q85 30.4 90 29.4 Q95 29.4 100 29.0 Q105 29.0 110 29.2 Q115 29.2 120 30.1 Q125 30.1 130 31.4 Q135 31.4 140 33.1 Q145 33.1 150 34.9 Q155 34.9 160 36.5 Q165 36.5 170 37.9 Q175 37.9 180 38.7 Q185 38.7 190 39.0" fill="none" stroke="#25392F" stroke-width="1" opacity="0.24"/><path d="M0 54 Q5 60.5 10 58.4 Q15 58.4 20 55.8 Q25 55.8 30 53.0 Q35 53.0 40 50.3 Q45 50.3 50 48.0 Q55 48.0 60 46.5 Q65 46.5 70 46.0 Q75 46.0 80 46.5 Q85 46.5 90 47.9 Q95 47.9 100 50.1 Q105 50.1 110 52.8 Q115 52.8 120 55.6 Q125 55.6 130 58.2 Q135 58.2 140 60.3 Q145 60.3 150 61.7 Q155 61.7 160 62.0 Q165 62.0 170 61.3 Q175 61.3 180 59.7 Q185 59.7 190 57.4" fill="none" stroke="#25392F" stroke-width="1" opacity="0.3"/><path d="M0 74 Q5 77.4 10 78.9 Q15 78.9 20 79.8 Q25 79.8 30 80.0 Q35 80.0 40 79.4 Q45 79.4 50 78.1 Q55 78.1 60 76.3 Q65 76.3 70 74.2 Q75 74.2 80 72.1 Q85 72.1 90 70.3 Q95 70.3 100 68.9 Q105 68.9 110 68.1 Q115 68.1 120 68.1 Q125 68.1 130 68.8 Q135 68.8 140 70.2 Q145 70.2 150 72.1 Q155 72.1 160 74.2 Q165 74.2 170 76.3 Q175 76.3 180 78.1 Q185 78.1 190 79.4" fill="none" stroke="#25392F" stroke-width="1" opacity="0.22"/><path d="M0 94 Q5 100.9 10 100.2 Q15 100.2 20 98.7 Q25 98.7 30 96.5 Q35 96.5 40 94.1 Q45 94.1 50 91.6 Q55 91.6 60 89.5 Q65 89.5 70 87.9 Q75 87.9 80 87.1 Q85 87.1 90 87.1 Q95 87.1 100 88.1 Q105 88.1 110 89.7 Q115 89.7 120 91.9 Q125 91.9 130 94.4 Q135 94.4 140 96.8 Q145 96.8 150 98.9 Q155 98.9 160 100.3 Q165 100.3 170 101.0 Q175 101.0 180 100.7 Q185 100.7 190 99.6" fill="none" stroke="#25392F" stroke-width="1" opacity="0.28"/><path d="M0 114 Q5 115.7 10 113.9 Q15 113.9 20 112.2 Q25 112.2 30 110.7 Q35 110.7 40 109.6 Q45 109.6 50 109.0 Q55 109.0 60 109.1 Q65 109.1 70 109.8 Q75 109.8 80 111.1 Q85 111.1 90 112.7 Q95 112.7 100 114.4 Q105 114.4 110 116.2 Q115 116.2 120 117.6 Q125 117.6 130 118.6 Q135 118.6 140 119.0 Q145 119.0 150 118.8 Q155 118.8 160 117.9 Q165 117.9 170 116.6 Q175 116.6 180 115.0 Q185 115.0 190 113.2" fill="none" stroke="#25392F" stroke-width="1" opacity="0.2"/></pattern>
+<filter id="glow" x="-60%" y="-60%" width="220%" height="220%">
+  <feGaussianBlur stdDeviation="7" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+</filter>
+<filter id="soft" x="-40%" y="-40%" width="180%" height="180%">
+  <feGaussianBlur stdDeviation="3" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+</filter>
+
+</defs>
+<style>
+  text { font-family:system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif; }
+  .mono { font-family:ui-monospace,SFMono-Regular,'SF Mono',Menlo,Consolas,monospace; }
+  .h1 { fill:#EDF3EE; font-weight:700; }
+  .h2 { fill:#EDF3EE; font-weight:650; }
+  .lb { fill:#A8BFB0; font-weight:500; }
+  .mu { fill:#74907F; font-weight:500; }
+  .kicker { fill:#74907F; font-weight:600; letter-spacing:.16em; }
+  @media (prefers-reduced-motion: reduce) { * { animation:none !important; } }
+.tk{animation:tk 4s ease-in-out infinite}@keyframes tk{0%,100%{opacity:.6}50%{opacity:1}}
+</style>
+<rect width="1200" height="530" rx="18" fill="url(#bg)"/>
+<rect width="1200" height="530" rx="18" fill="url(#contour)"/>
+<rect x=".5" y=".5" width="1199" height="529" rx="18" fill="none" stroke="#324B3E"/>
+<text x="38" y="44" class="kicker" font-size="12">HONEST STATUS BOARD</text>
+<text x="36" y="76" class="h1" font-size="23">What holds up, and what does not</text>
+<text x="38" y="99" class="mu" font-size="12">Every item below is measured, reproducible from <tspan class="mono">outputs/metrics/</tspan>, and unresolved unless marked otherwise. Nothing here is hidden in a footnote.</text>
+<rect x="38" y="124" width="362" height="336" rx="13" fill="url(#panel)" stroke="#324B3E" stroke-width="1"/>
+<rect x="38" y="124" width="362" height="3" rx="1.5" fill="#3E9E52"/>
+<circle cx="64" cy="155" r="5.5" fill="#3E9E52" class="tk"/>
+<text x="80" y="160" class="h2" font-size="14.5" fill="#3E9E52" letter-spacing=".10em">SOLID</text>
+<text x="380" y="160" class="mono mu" font-size="12" text-anchor="end">6</text>
+<line x1="58" y1="172" x2="380" y2="172" stroke="#324B3E"/>
+<rect x="56" y="180" width="2.5" height="30" rx="1.25" fill="#3E9E52" opacity=".55"/>
+<text x="68" y="193" class="h2" font-size="11.8">Forecast skill</text>
+<text x="68" y="209" class="mu" font-size="10.5">NDVI R² 0.901 · NDWI 0.917, best model</text>
+<rect x="56" y="226" width="2.5" height="30" rx="1.25" fill="#3E9E52" opacity=".55"/>
+<text x="68" y="239" class="h2" font-size="11.8">5 architectures</text>
+<text x="68" y="255" class="mu" font-size="10.5">implemented from scratch, benchmarked</text>
+<rect x="56" y="272" width="2.5" height="30" rx="1.25" fill="#3E9E52" opacity=".55"/>
+<text x="68" y="285" class="h2" font-size="11.8">Domain-constrained loss</text>
+<text x="68" y="301" class="mu" font-size="10.5">Charbonnier + temporal + ecological + SSIM</text>
+<rect x="56" y="318" width="2.5" height="30" rx="1.25" fill="#3E9E52" opacity=".55"/>
+<text x="68" y="331" class="h2" font-size="11.8">Three real bugs</text>
+<text x="68" y="347" class="mu" font-size="10.5">diagnosed, root-caused, fixed</text>
+<rect x="56" y="364" width="2.5" height="30" rx="1.25" fill="#3E9E52" opacity=".55"/>
+<text x="68" y="377" class="h2" font-size="11.8">Rollout machinery</text>
+<text x="68" y="393" class="mu" font-size="10.5">MC Dropout + climatology floor</text>
+<rect x="56" y="410" width="2.5" height="30" rx="1.25" fill="#3E9E52" opacity=".55"/>
+<text x="68" y="423" class="h2" font-size="11.8">Data engineering</text>
+<text x="68" y="439" class="mu" font-size="10.5">7 bands · 32 quarters · validity masks</text>
+<rect x="419" y="124" width="362" height="336" rx="13" fill="url(#panel)" stroke="#324B3E" stroke-width="1"/>
+<rect x="419" y="124" width="362" height="3" rx="1.5" fill="#B8891F"/>
+<circle cx="445" cy="155" r="5.5" fill="#B8891F" class="tk"/>
+<text x="461" y="160" class="h2" font-size="14.5" fill="#B8891F" letter-spacing=".10em">SHAKY</text>
+<text x="761" y="160" class="mono mu" font-size="12" text-anchor="end">6</text>
+<line x1="439" y1="172" x2="761" y2="172" stroke="#324B3E"/>
+<rect x="437" y="180" width="2.5" height="30" rx="1.25" fill="#B8891F" opacity=".55"/>
+<text x="449" y="193" class="h2" font-size="11.8">Spatial leakage</text>
+<text x="449" y="209" class="mu" font-size="10.5">stride 64 on 128 px patches — R² is an upper bound</text>
+<rect x="437" y="226" width="2.5" height="30" rx="1.25" fill="#B8891F" opacity=".55"/>
+<text x="449" y="239" class="h2" font-size="11.8">No test set</text>
+<text x="449" y="255" class="mu" font-size="10.5">val split does early stopping AND reporting</text>
+<rect x="437" y="272" width="2.5" height="30" rx="1.25" fill="#B8891F" opacity=".55"/>
+<text x="449" y="285" class="h2" font-size="11.8">SAR unusable</text>
+<text x="449" y="301" class="mu" font-size="10.5">negative R² everywhere · 87% zero fill</text>
+<rect x="437" y="318" width="2.5" height="30" rx="1.25" fill="#B8891F" opacity=".55"/>
+<text x="449" y="331" class="h2" font-size="11.8">Carbon proxy</text>
+<text x="449" y="347" class="mu" font-size="10.5">one global 85 tCO₂ constant for all land cover</text>
+<rect x="437" y="364" width="2.5" height="30" rx="1.25" fill="#B8891F" opacity=".55"/>
+<text x="449" y="377" class="h2" font-size="11.8">Convergence metric</text>
+<text x="449" y="393" class="mu" font-size="10.5">assumes monotone recovery; data oscillates</text>
+<rect x="437" y="410" width="2.5" height="30" rx="1.25" fill="#B8891F" opacity=".55"/>
+<text x="449" y="423" class="h2" font-size="11.8">Metrics provenance</text>
+<text x="449" y="439" class="mu" font-size="10.5">one file overwritten under the wrong model name</text>
+<rect x="800" y="124" width="362" height="336" rx="13" fill="url(#panel)" stroke="#324B3E" stroke-width="1"/>
+<rect x="800" y="124" width="362" height="3" rx="1.5" fill="#C4553F"/>
+<circle cx="826" cy="155" r="5.5" fill="#C4553F" class="tk"/>
+<text x="842" y="160" class="h2" font-size="14.5" fill="#C4553F" letter-spacing=".10em">BROKEN</text>
+<text x="1142" y="160" class="mono mu" font-size="12" text-anchor="end">6</text>
+<line x1="820" y1="172" x2="1142" y2="172" stroke="#324B3E"/>
+<rect x="818" y="180" width="2.5" height="30" rx="1.25" fill="#C4553F" opacity=".55"/>
+<text x="830" y="193" class="h2" font-size="11.8">Counterfactual unvalidated</text>
+<text x="830" y="209" class="mu" font-size="10.5">no placebo test exists — the central gap</text>
+<rect x="818" y="226" width="2.5" height="30" rx="1.25" fill="#C4553F" opacity=".55"/>
+<text x="830" y="239" class="h2" font-size="11.8">Attribution is architecture-bound</text>
+<text x="830" y="255" class="mu" font-size="10.5">carbon loss varies &gt;20× across backbones</text>
+<rect x="818" y="272" width="2.5" height="30" rx="1.25" fill="#C4553F" opacity=".55"/>
+<text x="830" y="285" class="h2" font-size="11.8">3 of 5 models diverged</text>
+<text x="830" y="301" class="mu" font-size="10.5">UNet-Temporal NaN · Mamba −3.5 · PatchTST −7.4</text>
+<rect x="818" y="318" width="2.5" height="30" rx="1.25" fill="#C4553F" opacity=".55"/>
+<text x="830" y="331" class="h2" font-size="11.8">Ablation harness</text>
+<text x="830" y="347" class="mu" font-size="10.5">4 of 6 configs crash on channel mismatch</text>
+<rect x="818" y="364" width="2.5" height="30" rx="1.25" fill="#C4553F" opacity=".55"/>
+<text x="830" y="377" class="h2" font-size="11.8">MC-Dropout uncalibrated</text>
+<text x="830" y="393" class="mu" font-size="10.5">bands span ±2.5 NDVI — physically impossible</text>
+<rect x="818" y="410" width="2.5" height="30" rx="1.25" fill="#C4553F" opacity=".55"/>
+<text x="830" y="423" class="h2" font-size="11.8">Reproducibility</text>
+<text x="830" y="439" class="mu" font-size="10.5">GEE export uncommitted · hardcoded paths · no tests</text>
+<rect x="38" y="474" width="1124" height="0" rx="0" fill="url(#panel)" stroke="#324B3E" stroke-width="1"/>
+<line x1="38" y1="478" x2="1162" y2="478" stroke="#324B3E" stroke-dasharray="3 6"/>
+<text x="38" y="499" class="lb" font-size="11.8">Top of the roadmap is the placebo test: roll the counterfactual across a quiet, non-hurricane window and score it against what actually happened.</text>
+<text x="38" y="517" class="mu" font-size="11.8">That one experiment moves the first item of column three into column one — and it is the difference between a demo and a result.</text>
+</svg>

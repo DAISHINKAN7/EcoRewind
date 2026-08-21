@@ -1,0 +1,88 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 436" width="1200" height="436" role="img" aria-label="Three bugs found by reading bad numbers">
+<title>Three bugs found by reading bad numbers</title>
+<defs>
+<linearGradient id="bg" x1="0" y1="0" x2=".7" y2="1">
+  <stop offset="0" stop-color="#0A130F"/><stop offset="1" stop-color="#101C17"/>
+</linearGradient>
+<linearGradient id="panel" x1="0" y1="0" x2="0" y2="1">
+  <stop offset="0" stop-color="#16241E"/><stop offset="1" stop-color="#111D18"/>
+</linearGradient>
+<pattern id="contour" width="180" height="128" patternUnits="userSpaceOnUse"><path d="M0 14 Q5 14.0 10 16.4 Q15 16.4 20 18.6 Q25 18.6 30 20.1 Q35 20.1 40 20.9 Q45 20.9 50 20.8 Q55 20.8 60 19.9 Q65 19.9 70 18.2 Q75 18.2 80 16.0 Q85 16.0 90 13.5 Q95 13.5 100 11.1 Q105 11.1 110 9.0 Q115 9.0 120 7.6 Q125 7.6 130 7.0 Q135 7.0 140 7.3 Q145 7.3 150 8.4 Q155 8.4 160 10.2 Q165 10.2 170 12.5 Q175 12.5 180 15.0 Q185 15.0 190 17.4" fill="none" stroke="#25392F" stroke-width="1" opacity="0.3"/><path d="M0 34 Q5 38.5 10 39.0 Q15 39.0 20 38.9 Q25 38.9 30 38.1 Q35 38.1 40 36.9 Q45 36.9 50 35.3 Q55 35.3 60 33.5 Q65 33.5 70 31.8 Q75 31.8 80 30.4 Q85 30.4 90 29.4 Q95 29.4 100 29.0 Q105 29.0 110 29.2 Q115 29.2 120 30.1 Q125 30.1 130 31.4 Q135 31.4 140 33.1 Q145 33.1 150 34.9 Q155 34.9 160 36.5 Q165 36.5 170 37.9 Q175 37.9 180 38.7 Q185 38.7 190 39.0" fill="none" stroke="#25392F" stroke-width="1" opacity="0.24"/><path d="M0 54 Q5 60.5 10 58.4 Q15 58.4 20 55.8 Q25 55.8 30 53.0 Q35 53.0 40 50.3 Q45 50.3 50 48.0 Q55 48.0 60 46.5 Q65 46.5 70 46.0 Q75 46.0 80 46.5 Q85 46.5 90 47.9 Q95 47.9 100 50.1 Q105 50.1 110 52.8 Q115 52.8 120 55.6 Q125 55.6 130 58.2 Q135 58.2 140 60.3 Q145 60.3 150 61.7 Q155 61.7 160 62.0 Q165 62.0 170 61.3 Q175 61.3 180 59.7 Q185 59.7 190 57.4" fill="none" stroke="#25392F" stroke-width="1" opacity="0.3"/><path d="M0 74 Q5 77.4 10 78.9 Q15 78.9 20 79.8 Q25 79.8 30 80.0 Q35 80.0 40 79.4 Q45 79.4 50 78.1 Q55 78.1 60 76.3 Q65 76.3 70 74.2 Q75 74.2 80 72.1 Q85 72.1 90 70.3 Q95 70.3 100 68.9 Q105 68.9 110 68.1 Q115 68.1 120 68.1 Q125 68.1 130 68.8 Q135 68.8 140 70.2 Q145 70.2 150 72.1 Q155 72.1 160 74.2 Q165 74.2 170 76.3 Q175 76.3 180 78.1 Q185 78.1 190 79.4" fill="none" stroke="#25392F" stroke-width="1" opacity="0.22"/><path d="M0 94 Q5 100.9 10 100.2 Q15 100.2 20 98.7 Q25 98.7 30 96.5 Q35 96.5 40 94.1 Q45 94.1 50 91.6 Q55 91.6 60 89.5 Q65 89.5 70 87.9 Q75 87.9 80 87.1 Q85 87.1 90 87.1 Q95 87.1 100 88.1 Q105 88.1 110 89.7 Q115 89.7 120 91.9 Q125 91.9 130 94.4 Q135 94.4 140 96.8 Q145 96.8 150 98.9 Q155 98.9 160 100.3 Q165 100.3 170 101.0 Q175 101.0 180 100.7 Q185 100.7 190 99.6" fill="none" stroke="#25392F" stroke-width="1" opacity="0.28"/><path d="M0 114 Q5 115.7 10 113.9 Q15 113.9 20 112.2 Q25 112.2 30 110.7 Q35 110.7 40 109.6 Q45 109.6 50 109.0 Q55 109.0 60 109.1 Q65 109.1 70 109.8 Q75 109.8 80 111.1 Q85 111.1 90 112.7 Q95 112.7 100 114.4 Q105 114.4 110 116.2 Q115 116.2 120 117.6 Q125 117.6 130 118.6 Q135 118.6 140 119.0 Q145 119.0 150 118.8 Q155 118.8 160 117.9 Q165 117.9 170 116.6 Q175 116.6 180 115.0 Q185 115.0 190 113.2" fill="none" stroke="#25392F" stroke-width="1" opacity="0.2"/></pattern>
+<filter id="glow" x="-60%" y="-60%" width="220%" height="220%">
+  <feGaussianBlur stdDeviation="7" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+</filter>
+<filter id="soft" x="-40%" y="-40%" width="180%" height="180%">
+  <feGaussianBlur stdDeviation="3" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+</filter>
+
+</defs>
+<style>
+  text { font-family:system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif; }
+  .mono { font-family:ui-monospace,SFMono-Regular,'SF Mono',Menlo,Consolas,monospace; }
+  .h1 { fill:#EDF3EE; font-weight:700; }
+  .h2 { fill:#EDF3EE; font-weight:650; }
+  .lb { fill:#A8BFB0; font-weight:500; }
+  .mu { fill:#74907F; font-weight:500; }
+  .kicker { fill:#74907F; font-weight:600; letter-spacing:.16em; }
+  @media (prefers-reduced-motion: reduce) { * { animation:none !important; } }
+
+</style>
+<rect width="1200" height="436" rx="18" fill="url(#bg)"/>
+<rect width="1200" height="436" rx="18" fill="url(#contour)"/>
+<rect x=".5" y=".5" width="1199" height="435" rx="18" fill="none" stroke="#324B3E"/>
+<text x="38" y="44" class="kicker" font-size="12">DESIGN DECISIONS · THE PART THAT WAS ACTUALLY HARD</text>
+<text x="36" y="76" class="h1" font-size="23">Three bugs found by refusing to accept a bad number</text>
+<text x="38" y="99" class="mu" font-size="12">Each was diagnosed from a metric that looked impossible, traced to a root cause, and fixed. The write-ups live in the source docstrings.</text>
+<rect x="38" y="124" width="362" height="268" rx="13" fill="url(#panel)" stroke="#324B3E" stroke-width="1"/>
+<rect x="38" y="124" width="362" height="3" rx="1.5" fill="#C4553F"/>
+<text x="58" y="154" class="mono h2" font-size="11.5" fill="#C4553F">01</text>
+<text x="88" y="155" class="h2" font-size="14">Validity mask broadcast</text>
+<text x="58" y="174" class="mono mu" font-size="9.5">training/evaluator.py</text>
+<line x1="58" y1="184" x2="380" y2="184" stroke="#324B3E"/>
+<text x="58" y="204" class="lb" font-size="10.8">SAR R² came back at −89.8, and every band</text>
+<text x="58" y="221" class="lb" font-size="10.8">reported the same valid-pixel count.</text>
+<text x="58" y="238" class="mu" font-size="10.8">The optical validity channel was broadcast</text>
+<text x="58" y="255" class="mu" font-size="10.8">across all 7 bands. SAR is 87.5% finite</text>
+<text x="58" y="272" class="mu" font-size="10.8">zero-fill, not NaN — so it passed the mask.</text>
+<text x="58" y="289" class="mu" font-size="10.8">R² = 1 − Σ(pred−0)²/Σ(0−mean)², and the</text>
+<text x="58" y="306" class="mu" font-size="10.8">denominator collapses toward zero.</text>
+<rect x="52" y="322" width="334" height="54" rx="9" fill="#C4553F" opacity=".10"/>
+<text x="64" y="342" class="h2" font-size="10.5" fill="#C4553F">FIX</text>
+<text x="94" y="342" class="lb" font-size="10.5">per-band validity + Welford single pass</text>
+<text x="64" y="363" class="mono h2" font-size="12" fill="#C4553F">R² −89.8  →  −0.097</text>
+<rect x="419" y="124" width="362" height="268" rx="13" fill="url(#panel)" stroke="#324B3E" stroke-width="1"/>
+<rect x="419" y="124" width="362" height="3" rx="1.5" fill="#B8891F"/>
+<text x="439" y="154" class="mono h2" font-size="11.5" fill="#B8891F">02</text>
+<text x="469" y="155" class="h2" font-size="14">Universal NaN fill</text>
+<text x="439" y="174" class="mono mu" font-size="9.5">datasets/eco_dataset_patch.py</text>
+<line x1="439" y1="184" x2="761" y2="184" stroke="#324B3E"/>
+<text x="439" y="204" class="lb" font-size="10.8">Models systematically under-predicted</text>
+<text x="439" y="221" class="lb" font-size="10.8">vegetation everywhere.</text>
+<text x="439" y="238" class="mu" font-size="10.8">fill=0.0 was applied in normalised space.</text>
+<text x="439" y="255" class="mu" font-size="10.8">NDVI uses shift normalisation, where 0.0</text>
+<text x="439" y="272" class="mu" font-size="10.8">decodes to NDVI = −1 — bare water.</text>
+<text x="439" y="289" class="mu" font-size="10.8">Every cloud-gap pixel looked to the model</text>
+<text x="439" y="306" class="mu" font-size="10.8">like maximally dead vegetation.</text>
+<rect x="433" y="322" width="334" height="54" rx="9" fill="#B8891F" opacity=".10"/>
+<text x="445" y="342" class="h2" font-size="10.5" fill="#B8891F">FIX</text>
+<text x="475" y="342" class="lb" font-size="10.5">band-aware fill at each band's neutral point</text>
+<text x="445" y="363" class="mono h2" font-size="12" fill="#B8891F">systematic bias  →  removed</text>
+<rect x="800" y="124" width="362" height="268" rx="13" fill="url(#panel)" stroke="#324B3E" stroke-width="1"/>
+<rect x="800" y="124" width="362" height="3" rx="1.5" fill="#3E9E52"/>
+<text x="820" y="154" class="mono h2" font-size="11.5" fill="#3E9E52">03</text>
+<text x="850" y="155" class="h2" font-size="14">Compounding rollout drift</text>
+<text x="820" y="174" class="mono mu" font-size="9.5">inference/counterfactual.py</text>
+<line x1="820" y1="184" x2="1142" y2="184" stroke="#324B3E"/>
+<text x="820" y="204" class="lb" font-size="10.8">Counterfactuals sank monotonically and</text>
+<text x="820" y="221" class="lb" font-size="10.8">never recovered.</text>
+<text x="820" y="238" class="mu" font-size="10.8">A predicted winter dip becomes the next</text>
+<text x="820" y="255" class="mu" font-size="10.8">input, producing a deeper dip, for 10</text>
+<text x="820" y="272" class="mu" font-size="10.8">autoregressive quarters.</text>
+<text x="820" y="289" class="mu" font-size="10.8">Seasonality and drift are indistinguishable</text>
+<text x="820" y="306" class="mu" font-size="10.8">to an unconstrained rollout.</text>
+<rect x="814" y="322" width="334" height="54" rx="9" fill="#3E9E52" opacity=".10"/>
+<text x="826" y="342" class="h2" font-size="10.5" fill="#3E9E52">FIX</text>
+<text x="856" y="342" class="lb" font-size="10.5">seasonal climatology floor, clamp at μ−2σ</text>
+<text x="826" y="363" class="mono h2" font-size="12" fill="#3E9E52">drift  →  bounded</text>
+<text x="38" y="422" class="mu" font-size="11.5">None of these were visible in the loss curve. All three were found by asking why a reported number was physically impossible.</text>
+</svg>

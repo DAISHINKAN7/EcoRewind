@@ -1,0 +1,205 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 524" width="1200" height="524" role="img" aria-label="Per-band R² scoreboard across five architectures">
+<title>Per-band R² scoreboard across five architectures</title>
+<defs>
+<linearGradient id="bg" x1="0" y1="0" x2=".7" y2="1">
+  <stop offset="0" stop-color="#0A130F"/><stop offset="1" stop-color="#101C17"/>
+</linearGradient>
+<linearGradient id="panel" x1="0" y1="0" x2="0" y2="1">
+  <stop offset="0" stop-color="#16241E"/><stop offset="1" stop-color="#111D18"/>
+</linearGradient>
+<pattern id="contour" width="180" height="128" patternUnits="userSpaceOnUse"><path d="M0 14 Q5 14.0 10 16.4 Q15 16.4 20 18.6 Q25 18.6 30 20.1 Q35 20.1 40 20.9 Q45 20.9 50 20.8 Q55 20.8 60 19.9 Q65 19.9 70 18.2 Q75 18.2 80 16.0 Q85 16.0 90 13.5 Q95 13.5 100 11.1 Q105 11.1 110 9.0 Q115 9.0 120 7.6 Q125 7.6 130 7.0 Q135 7.0 140 7.3 Q145 7.3 150 8.4 Q155 8.4 160 10.2 Q165 10.2 170 12.5 Q175 12.5 180 15.0 Q185 15.0 190 17.4" fill="none" stroke="#25392F" stroke-width="1" opacity="0.3"/><path d="M0 34 Q5 38.5 10 39.0 Q15 39.0 20 38.9 Q25 38.9 30 38.1 Q35 38.1 40 36.9 Q45 36.9 50 35.3 Q55 35.3 60 33.5 Q65 33.5 70 31.8 Q75 31.8 80 30.4 Q85 30.4 90 29.4 Q95 29.4 100 29.0 Q105 29.0 110 29.2 Q115 29.2 120 30.1 Q125 30.1 130 31.4 Q135 31.4 140 33.1 Q145 33.1 150 34.9 Q155 34.9 160 36.5 Q165 36.5 170 37.9 Q175 37.9 180 38.7 Q185 38.7 190 39.0" fill="none" stroke="#25392F" stroke-width="1" opacity="0.24"/><path d="M0 54 Q5 60.5 10 58.4 Q15 58.4 20 55.8 Q25 55.8 30 53.0 Q35 53.0 40 50.3 Q45 50.3 50 48.0 Q55 48.0 60 46.5 Q65 46.5 70 46.0 Q75 46.0 80 46.5 Q85 46.5 90 47.9 Q95 47.9 100 50.1 Q105 50.1 110 52.8 Q115 52.8 120 55.6 Q125 55.6 130 58.2 Q135 58.2 140 60.3 Q145 60.3 150 61.7 Q155 61.7 160 62.0 Q165 62.0 170 61.3 Q175 61.3 180 59.7 Q185 59.7 190 57.4" fill="none" stroke="#25392F" stroke-width="1" opacity="0.3"/><path d="M0 74 Q5 77.4 10 78.9 Q15 78.9 20 79.8 Q25 79.8 30 80.0 Q35 80.0 40 79.4 Q45 79.4 50 78.1 Q55 78.1 60 76.3 Q65 76.3 70 74.2 Q75 74.2 80 72.1 Q85 72.1 90 70.3 Q95 70.3 100 68.9 Q105 68.9 110 68.1 Q115 68.1 120 68.1 Q125 68.1 130 68.8 Q135 68.8 140 70.2 Q145 70.2 150 72.1 Q155 72.1 160 74.2 Q165 74.2 170 76.3 Q175 76.3 180 78.1 Q185 78.1 190 79.4" fill="none" stroke="#25392F" stroke-width="1" opacity="0.22"/><path d="M0 94 Q5 100.9 10 100.2 Q15 100.2 20 98.7 Q25 98.7 30 96.5 Q35 96.5 40 94.1 Q45 94.1 50 91.6 Q55 91.6 60 89.5 Q65 89.5 70 87.9 Q75 87.9 80 87.1 Q85 87.1 90 87.1 Q95 87.1 100 88.1 Q105 88.1 110 89.7 Q115 89.7 120 91.9 Q125 91.9 130 94.4 Q135 94.4 140 96.8 Q145 96.8 150 98.9 Q155 98.9 160 100.3 Q165 100.3 170 101.0 Q175 101.0 180 100.7 Q185 100.7 190 99.6" fill="none" stroke="#25392F" stroke-width="1" opacity="0.28"/><path d="M0 114 Q5 115.7 10 113.9 Q15 113.9 20 112.2 Q25 112.2 30 110.7 Q35 110.7 40 109.6 Q45 109.6 50 109.0 Q55 109.0 60 109.1 Q65 109.1 70 109.8 Q75 109.8 80 111.1 Q85 111.1 90 112.7 Q95 112.7 100 114.4 Q105 114.4 110 116.2 Q115 116.2 120 117.6 Q125 117.6 130 118.6 Q135 118.6 140 119.0 Q145 119.0 150 118.8 Q155 118.8 160 117.9 Q165 117.9 170 116.6 Q175 116.6 180 115.0 Q185 115.0 190 113.2" fill="none" stroke="#25392F" stroke-width="1" opacity="0.2"/></pattern>
+<filter id="glow" x="-60%" y="-60%" width="220%" height="220%">
+  <feGaussianBlur stdDeviation="7" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+</filter>
+<filter id="soft" x="-40%" y="-40%" width="180%" height="180%">
+  <feGaussianBlur stdDeviation="3" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+</filter>
+<pattern id="hatch" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+ <rect width="7" height="7" fill="#2E1512"/><line x1="0" y1="0" x2="0" y2="7" stroke="#C4553F" stroke-width="2.2" opacity=".75"/></pattern>
+<pattern id="nan" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+ <rect width="7" height="7" fill="#111D18"/><line x1="0" y1="0" x2="0" y2="7" stroke="#74907F" stroke-width="1.4" opacity=".45"/></pattern>
+</defs>
+<style>
+  text { font-family:system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif; }
+  .mono { font-family:ui-monospace,SFMono-Regular,'SF Mono',Menlo,Consolas,monospace; }
+  .h1 { fill:#EDF3EE; font-weight:700; }
+  .h2 { fill:#EDF3EE; font-weight:650; }
+  .lb { fill:#A8BFB0; font-weight:500; }
+  .mu { fill:#74907F; font-weight:500; }
+  .kicker { fill:#74907F; font-weight:600; letter-spacing:.16em; }
+  @media (prefers-reduced-motion: reduce) { * { animation:none !important; } }
+.rise{opacity:0;animation:rs .5s ease-out forwards}@keyframes rs{to{opacity:1}}
+</style>
+<rect width="1200" height="524" rx="18" fill="url(#bg)"/>
+<rect width="1200" height="524" rx="18" fill="url(#contour)"/>
+<rect x=".5" y=".5" width="1199" height="523" rx="18" fill="none" stroke="#324B3E"/>
+<text x="38" y="44" class="kicker" font-size="12">FORECAST SKILL · HELD-OUT PATCHES · BOTH ECOSYSTEMS</text>
+<text x="36" y="76" class="h1" font-size="23">Per-band R² — one architecture worked, three collapsed</text>
+<text x="38" y="99" class="mu" font-size="12">Diverging scale clipped to ±1. Cells beyond −1 are off-scale and hatched, with the true value printed. 347,677,067 optical pixels · 44,348,305 SAR.</text>
+<text x="302.0" y="118" class="lb" font-size="11.5" text-anchor="middle">Blue</text>
+<text x="413.0" y="118" class="lb" font-size="11.5" text-anchor="middle">Green</text>
+<text x="524.0" y="118" class="lb" font-size="11.5" text-anchor="middle">Red</text>
+<text x="635.0" y="118" class="lb" font-size="11.5" text-anchor="middle">NIR</text>
+<text x="746.0" y="118" class="lb" font-size="11.5" text-anchor="middle">NDVI</text>
+<text x="857.0" y="118" class="lb" font-size="11.5" text-anchor="middle">NDWI</text>
+<text x="968.0" y="118" class="lb" font-size="11.5" text-anchor="middle">SAR_VV</text>
+<text x="1061" y="118" class="lb" font-size="11.5" text-anchor="middle">train</text>
+<text x="234" y="150" class="h2" font-size="12.5" text-anchor="end">EcoTransformer</text>
+<text x="234" y="166" font-size="10" text-anchor="end" fill="#3E9E52" font-weight="600">converged</text>
+<rect x="242" y="134" width="3" height="38" rx="1.5" fill="#3E9E52"/>
+<rect x="250" y="128" width="104" height="50" rx="7" fill="#5f8d81" stroke="#324B3E" stroke-width=".8"/>
+<text x="302.0" y="159" class="mono h2" font-size="15" fill="#08201A" text-anchor="middle">+0.559</text>
+<rect x="361" y="128" width="104" height="50" rx="7" fill="#7dbbac" stroke="#324B3E" stroke-width=".8"/>
+<text x="413.0" y="159" class="mono h2" font-size="15" fill="#08201A" text-anchor="middle">+0.833</text>
+<rect x="472" y="128" width="104" height="50" rx="7" fill="#7dbcac" stroke="#324B3E" stroke-width=".8"/>
+<text x="524.0" y="159" class="mono h2" font-size="15" fill="#08201A" text-anchor="middle">+0.836</text>
+<rect x="583" y="128" width="104" height="50" rx="7" fill="#81c3b2" stroke="#324B3E" stroke-width=".8"/>
+<text x="635.0" y="159" class="mono h2" font-size="15" fill="#08201A" text-anchor="middle">+0.877</text>
+<rect x="694" y="128" width="104" height="50" rx="7" fill="#84c7b6" stroke="#324B3E" stroke-width=".8"/>
+<text x="746.0" y="159" class="mono h2" font-size="15" fill="#08201A" text-anchor="middle">+0.901</text>
+<rect x="805" y="128" width="104" height="50" rx="7" fill="#86cab9" stroke="#324B3E" stroke-width=".8"/>
+<text x="857.0" y="159" class="mono h2" font-size="15" fill="#08201A" text-anchor="middle">+0.917</text>
+<rect x="916" y="128" width="104" height="50" rx="7" fill="#353932" stroke="#324B3E" stroke-width=".8"/>
+<text x="968.0" y="159" class="mono h2" font-size="15" fill="#EDF3EE" text-anchor="middle">-0.097</text>
+<text x="1061" y="159" class="mono lb" font-size="11.5" text-anchor="middle">6h 10m</text>
+<text x="234" y="207" class="h2" font-size="12.5" text-anchor="end">ConvLSTM  (baseline)</text>
+<text x="234" y="223" font-size="10" text-anchor="end" fill="#B8891F" font-weight="600">partial</text>
+<rect x="242" y="191" width="3" height="38" rx="1.5" fill="#B8891F"/>
+<rect x="250" y="185" width="104" height="50" rx="7" fill="#6da295" stroke="#324B3E" stroke-width=".8"/>
+<text x="302.0" y="216" class="mono h2" font-size="15" fill="#08201A" text-anchor="middle">+0.684</text>
+<rect x="361" y="185" width="104" height="50" rx="7" fill="#78b4a5" stroke="#324B3E" stroke-width=".8"/>
+<text x="413.0" y="216" class="mono h2" font-size="15" fill="#08201A" text-anchor="middle">+0.790</text>
+<rect x="472" y="185" width="104" height="50" rx="7" fill="#7bb9a9" stroke="#324B3E" stroke-width=".8"/>
+<text x="524.0" y="216" class="mono h2" font-size="15" fill="#08201A" text-anchor="middle">+0.818</text>
+<rect x="583" y="185" width="104" height="50" rx="7" fill="#80c1b1" stroke="#324B3E" stroke-width=".8"/>
+<text x="635.0" y="216" class="mono h2" font-size="15" fill="#08201A" text-anchor="middle">+0.865</text>
+<rect x="694" y="185" width="104" height="50" rx="7" fill="#364d46" stroke="#324B3E" stroke-width=".8"/>
+<text x="746.0" y="216" class="mono h2" font-size="15" fill="#EDF3EE" text-anchor="middle">+0.177</text>
+<rect x="805" y="185" width="104" height="50" rx="7" fill="#76b1a2" stroke="#324B3E" stroke-width=".8"/>
+<text x="857.0" y="216" class="mono h2" font-size="15" fill="#08201A" text-anchor="middle">+0.772</text>
+<rect x="916" y="185" width="104" height="50" rx="7" fill="#364d45" stroke="#324B3E" stroke-width=".8"/>
+<text x="968.0" y="216" class="mono h2" font-size="15" fill="#EDF3EE" text-anchor="middle">+0.173</text>
+<text x="1061" y="216" class="mono lb" font-size="11.5" text-anchor="middle">—</text>
+<text x="234" y="264" class="h2" font-size="12.5" text-anchor="end">UNet-Temporal</text>
+<text x="234" y="280" font-size="10" text-anchor="end" fill="#74907F" font-weight="600">no metrics</text>
+<rect x="242" y="248" width="3" height="38" rx="1.5" fill="#74907F"/>
+<rect x="250" y="242" width="104" height="50" rx="7" fill="url(#nan)" stroke="#324B3E" stroke-dasharray="4 3"/>
+<text x="302.0" y="272" class="mono" font-size="13" fill="#74907F" text-anchor="middle">NaN</text>
+<rect x="361" y="242" width="104" height="50" rx="7" fill="url(#nan)" stroke="#324B3E" stroke-dasharray="4 3"/>
+<text x="413.0" y="272" class="mono" font-size="13" fill="#74907F" text-anchor="middle">NaN</text>
+<rect x="472" y="242" width="104" height="50" rx="7" fill="url(#nan)" stroke="#324B3E" stroke-dasharray="4 3"/>
+<text x="524.0" y="272" class="mono" font-size="13" fill="#74907F" text-anchor="middle">NaN</text>
+<rect x="583" y="242" width="104" height="50" rx="7" fill="url(#nan)" stroke="#324B3E" stroke-dasharray="4 3"/>
+<text x="635.0" y="272" class="mono" font-size="13" fill="#74907F" text-anchor="middle">NaN</text>
+<rect x="694" y="242" width="104" height="50" rx="7" fill="url(#nan)" stroke="#324B3E" stroke-dasharray="4 3"/>
+<text x="746.0" y="272" class="mono" font-size="13" fill="#74907F" text-anchor="middle">NaN</text>
+<rect x="805" y="242" width="104" height="50" rx="7" fill="url(#nan)" stroke="#324B3E" stroke-dasharray="4 3"/>
+<text x="857.0" y="272" class="mono" font-size="13" fill="#74907F" text-anchor="middle">NaN</text>
+<rect x="916" y="242" width="104" height="50" rx="7" fill="url(#nan)" stroke="#324B3E" stroke-dasharray="4 3"/>
+<text x="968.0" y="272" class="mono" font-size="13" fill="#74907F" text-anchor="middle">NaN</text>
+<text x="1061" y="273" class="mono lb" font-size="11.5" text-anchor="middle">—</text>
+<text x="234" y="321" class="h2" font-size="12.5" text-anchor="end">UNet-Mamba</text>
+<text x="234" y="337" font-size="10" text-anchor="end" fill="#C4553F" font-weight="600">diverged</text>
+<rect x="242" y="305" width="3" height="38" rx="1.5" fill="#C4553F"/>
+<rect x="250" y="299" width="104" height="50" rx="7" fill="url(#hatch)" stroke="#C4553F" stroke-width="1.2"/>
+<text x="302.0" y="324" class="mono h2" font-size="13" fill="#FBE6DF" text-anchor="middle">-680.0</text>
+<text x="302.0" y="338" font-size="8.5" fill="#EEC3B6" text-anchor="middle" letter-spacing=".08em">OFF SCALE</text>
+<rect x="361" y="299" width="104" height="50" rx="7" fill="url(#hatch)" stroke="#C4553F" stroke-width="1.2"/>
+<text x="413.0" y="324" class="mono h2" font-size="13" fill="#FBE6DF" text-anchor="middle">-346.9</text>
+<text x="413.0" y="338" font-size="8.5" fill="#EEC3B6" text-anchor="middle" letter-spacing=".08em">OFF SCALE</text>
+<rect x="472" y="299" width="104" height="50" rx="7" fill="url(#hatch)" stroke="#C4553F" stroke-width="1.2"/>
+<text x="524.0" y="324" class="mono h2" font-size="13" fill="#FBE6DF" text-anchor="middle">-269.5</text>
+<text x="524.0" y="338" font-size="8.5" fill="#EEC3B6" text-anchor="middle" letter-spacing=".08em">OFF SCALE</text>
+<rect x="583" y="299" width="104" height="50" rx="7" fill="url(#hatch)" stroke="#C4553F" stroke-width="1.2"/>
+<text x="635.0" y="324" class="mono h2" font-size="13" fill="#FBE6DF" text-anchor="middle">-23.1</text>
+<text x="635.0" y="338" font-size="8.5" fill="#EEC3B6" text-anchor="middle" letter-spacing=".08em">OFF SCALE</text>
+<rect x="694" y="299" width="104" height="50" rx="7" fill="url(#hatch)" stroke="#C4553F" stroke-width="1.2"/>
+<text x="746.0" y="324" class="mono h2" font-size="13" fill="#FBE6DF" text-anchor="middle">-3.5</text>
+<text x="746.0" y="338" font-size="8.5" fill="#EEC3B6" text-anchor="middle" letter-spacing=".08em">OFF SCALE</text>
+<rect x="805" y="299" width="104" height="50" rx="7" fill="url(#hatch)" stroke="#C4553F" stroke-width="1.2"/>
+<text x="857.0" y="324" class="mono h2" font-size="13" fill="#FBE6DF" text-anchor="middle">-1.2</text>
+<text x="857.0" y="338" font-size="8.5" fill="#EEC3B6" text-anchor="middle" letter-spacing=".08em">OFF SCALE</text>
+<rect x="916" y="299" width="104" height="50" rx="7" fill="url(#hatch)" stroke="#C4553F" stroke-width="1.2"/>
+<text x="968.0" y="324" class="mono h2" font-size="13" fill="#FBE6DF" text-anchor="middle">-6.3</text>
+<text x="968.0" y="338" font-size="8.5" fill="#EEC3B6" text-anchor="middle" letter-spacing=".08em">OFF SCALE</text>
+<text x="1061" y="330" class="mono lb" font-size="11.5" text-anchor="middle">8h 57m</text>
+<text x="234" y="378" class="h2" font-size="12.5" text-anchor="end">UNet-PatchTST</text>
+<text x="234" y="394" font-size="10" text-anchor="end" fill="#C4553F" font-weight="600">diverged</text>
+<rect x="242" y="362" width="3" height="38" rx="1.5" fill="#C4553F"/>
+<rect x="250" y="356" width="104" height="50" rx="7" fill="url(#hatch)" stroke="#C4553F" stroke-width="1.2"/>
+<text x="302.0" y="381" class="mono h2" font-size="13" fill="#FBE6DF" text-anchor="middle">-119.3</text>
+<text x="302.0" y="395" font-size="8.5" fill="#EEC3B6" text-anchor="middle" letter-spacing=".08em">OFF SCALE</text>
+<rect x="361" y="356" width="104" height="50" rx="7" fill="url(#hatch)" stroke="#C4553F" stroke-width="1.2"/>
+<text x="413.0" y="381" class="mono h2" font-size="13" fill="#FBE6DF" text-anchor="middle">-202.8</text>
+<text x="413.0" y="395" font-size="8.5" fill="#EEC3B6" text-anchor="middle" letter-spacing=".08em">OFF SCALE</text>
+<rect x="472" y="356" width="104" height="50" rx="7" fill="url(#hatch)" stroke="#C4553F" stroke-width="1.2"/>
+<text x="524.0" y="381" class="mono h2" font-size="13" fill="#FBE6DF" text-anchor="middle">-242.2</text>
+<text x="524.0" y="395" font-size="8.5" fill="#EEC3B6" text-anchor="middle" letter-spacing=".08em">OFF SCALE</text>
+<rect x="583" y="356" width="104" height="50" rx="7" fill="url(#hatch)" stroke="#C4553F" stroke-width="1.2"/>
+<text x="635.0" y="381" class="mono h2" font-size="13" fill="#FBE6DF" text-anchor="middle">-11.2</text>
+<text x="635.0" y="395" font-size="8.5" fill="#EEC3B6" text-anchor="middle" letter-spacing=".08em">OFF SCALE</text>
+<rect x="694" y="356" width="104" height="50" rx="7" fill="url(#hatch)" stroke="#C4553F" stroke-width="1.2"/>
+<text x="746.0" y="381" class="mono h2" font-size="13" fill="#FBE6DF" text-anchor="middle">-7.4</text>
+<text x="746.0" y="395" font-size="8.5" fill="#EEC3B6" text-anchor="middle" letter-spacing=".08em">OFF SCALE</text>
+<rect x="805" y="356" width="104" height="50" rx="7" fill="url(#hatch)" stroke="#C4553F" stroke-width="1.2"/>
+<text x="857.0" y="381" class="mono h2" font-size="13" fill="#FBE6DF" text-anchor="middle">-3.8</text>
+<text x="857.0" y="395" font-size="8.5" fill="#EEC3B6" text-anchor="middle" letter-spacing=".08em">OFF SCALE</text>
+<rect x="916" y="356" width="104" height="50" rx="7" fill="url(#hatch)" stroke="#C4553F" stroke-width="1.2"/>
+<text x="968.0" y="381" class="mono h2" font-size="13" fill="#FBE6DF" text-anchor="middle">-9.4</text>
+<text x="968.0" y="395" font-size="8.5" fill="#EEC3B6" text-anchor="middle" letter-spacing=".08em">OFF SCALE</text>
+<text x="1061" y="387" class="mono lb" font-size="11.5" text-anchor="middle">3h 49m</text>
+<line x1="38" y1="424" x2="1162" y2="424" stroke="#324B3E" stroke-dasharray="3 6"/>
+<text x="38" y="461" class="mu" font-size="11">R²</text>
+<rect x="62" y="451" width="5" height="12" fill="#d98d78"/>
+<rect x="67" y="451" width="5" height="12" fill="#d08874"/>
+<rect x="72" y="451" width="5" height="12" fill="#c88470"/>
+<rect x="77" y="451" width="5" height="12" fill="#bf806d"/>
+<rect x="82" y="451" width="5" height="12" fill="#b77b69"/>
+<rect x="87" y="451" width="5" height="12" fill="#ae7766"/>
+<rect x="92" y="451" width="5" height="12" fill="#a67362"/>
+<rect x="97" y="451" width="5" height="12" fill="#9e6e5e"/>
+<rect x="102" y="451" width="5" height="12" fill="#956a5b"/>
+<rect x="107" y="451" width="5" height="12" fill="#8d6657"/>
+<rect x="112" y="451" width="5" height="12" fill="#846154"/>
+<rect x="117" y="451" width="5" height="12" fill="#7c5d50"/>
+<rect x="122" y="451" width="5" height="12" fill="#73594d"/>
+<rect x="127" y="451" width="5" height="12" fill="#6b5449"/>
+<rect x="132" y="451" width="5" height="12" fill="#635045"/>
+<rect x="137" y="451" width="5" height="12" fill="#5a4c42"/>
+<rect x="142" y="451" width="5" height="12" fill="#52473e"/>
+<rect x="147" y="451" width="5" height="12" fill="#49433b"/>
+<rect x="152" y="451" width="5" height="12" fill="#413f37"/>
+<rect x="157" y="451" width="5" height="12" fill="#393a33"/>
+<rect x="162" y="451" width="5" height="12" fill="#303630"/>
+<rect x="167" y="451" width="5" height="12" fill="#28322c"/>
+<rect x="172" y="451" width="5" height="12" fill="#26332e"/>
+<rect x="177" y="451" width="5" height="12" fill="#2b3b35"/>
+<rect x="182" y="451" width="5" height="12" fill="#30433d"/>
+<rect x="187" y="451" width="5" height="12" fill="#354b44"/>
+<rect x="192" y="451" width="5" height="12" fill="#3a534b"/>
+<rect x="197" y="451" width="5" height="12" fill="#3f5a52"/>
+<rect x="202" y="451" width="5" height="12" fill="#446259"/>
+<rect x="207" y="451" width="5" height="12" fill="#496a61"/>
+<rect x="212" y="451" width="5" height="12" fill="#4e7268"/>
+<rect x="217" y="451" width="5" height="12" fill="#537a6f"/>
+<rect x="222" y="451" width="5" height="12" fill="#588276"/>
+<rect x="227" y="451" width="5" height="12" fill="#5d897d"/>
+<rect x="232" y="451" width="5" height="12" fill="#629185"/>
+<rect x="237" y="451" width="5" height="12" fill="#67998c"/>
+<rect x="242" y="451" width="5" height="12" fill="#6ca193"/>
+<rect x="247" y="451" width="5" height="12" fill="#71a99a"/>
+<rect x="252" y="451" width="5" height="12" fill="#76b0a1"/>
+<rect x="257" y="451" width="5" height="12" fill="#7bb8a9"/>
+<rect x="262" y="451" width="5" height="12" fill="#80c0b0"/>
+<rect x="267" y="451" width="5" height="12" fill="#85c8b7"/>
+<rect x="272" y="451" width="5" height="12" fill="#8ad0be"/>
+<rect x="277" y="451" width="5" height="12" fill="#8fd8c6"/>
+<text x="62" y="476" class="mu mono" font-size="9.5" text-anchor="middle">−1</text>
+<text x="172" y="476" class="mu mono" font-size="9.5" text-anchor="middle">0</text>
+<text x="277" y="476" class="mu mono" font-size="9.5" text-anchor="middle">+1</text>
+<rect x="338" y="451" width="20" height="12" rx="3" fill="url(#hatch)"/>
+<text x="364" y="461" class="mu" font-size="11">off-scale (&lt; −1)</text>
+<rect x="490" y="451" width="20" height="12" rx="3" fill="url(#nan)"/>
+<text x="516" y="461" class="mu" font-size="11">no finite metric</text>
+<text x="38" y="504" class="lb" font-size="11.8">Validation loss ranked these within 7% of each other. R² did not — loss alone is not a model-selection signal on this task.</text>
+</svg>

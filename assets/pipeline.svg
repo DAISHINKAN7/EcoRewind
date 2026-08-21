@@ -1,0 +1,118 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 392" width="1200" height="392" role="img" aria-label="EcoRewind end-to-end pipeline">
+<title>EcoRewind end-to-end pipeline</title>
+<defs>
+<linearGradient id="bg" x1="0" y1="0" x2=".7" y2="1">
+  <stop offset="0" stop-color="#0A130F"/><stop offset="1" stop-color="#101C17"/>
+</linearGradient>
+<linearGradient id="panel" x1="0" y1="0" x2="0" y2="1">
+  <stop offset="0" stop-color="#16241E"/><stop offset="1" stop-color="#111D18"/>
+</linearGradient>
+<pattern id="contour" width="180" height="128" patternUnits="userSpaceOnUse"><path d="M0 14 Q5 14.0 10 16.4 Q15 16.4 20 18.6 Q25 18.6 30 20.1 Q35 20.1 40 20.9 Q45 20.9 50 20.8 Q55 20.8 60 19.9 Q65 19.9 70 18.2 Q75 18.2 80 16.0 Q85 16.0 90 13.5 Q95 13.5 100 11.1 Q105 11.1 110 9.0 Q115 9.0 120 7.6 Q125 7.6 130 7.0 Q135 7.0 140 7.3 Q145 7.3 150 8.4 Q155 8.4 160 10.2 Q165 10.2 170 12.5 Q175 12.5 180 15.0 Q185 15.0 190 17.4" fill="none" stroke="#25392F" stroke-width="1" opacity="0.3"/><path d="M0 34 Q5 38.5 10 39.0 Q15 39.0 20 38.9 Q25 38.9 30 38.1 Q35 38.1 40 36.9 Q45 36.9 50 35.3 Q55 35.3 60 33.5 Q65 33.5 70 31.8 Q75 31.8 80 30.4 Q85 30.4 90 29.4 Q95 29.4 100 29.0 Q105 29.0 110 29.2 Q115 29.2 120 30.1 Q125 30.1 130 31.4 Q135 31.4 140 33.1 Q145 33.1 150 34.9 Q155 34.9 160 36.5 Q165 36.5 170 37.9 Q175 37.9 180 38.7 Q185 38.7 190 39.0" fill="none" stroke="#25392F" stroke-width="1" opacity="0.24"/><path d="M0 54 Q5 60.5 10 58.4 Q15 58.4 20 55.8 Q25 55.8 30 53.0 Q35 53.0 40 50.3 Q45 50.3 50 48.0 Q55 48.0 60 46.5 Q65 46.5 70 46.0 Q75 46.0 80 46.5 Q85 46.5 90 47.9 Q95 47.9 100 50.1 Q105 50.1 110 52.8 Q115 52.8 120 55.6 Q125 55.6 130 58.2 Q135 58.2 140 60.3 Q145 60.3 150 61.7 Q155 61.7 160 62.0 Q165 62.0 170 61.3 Q175 61.3 180 59.7 Q185 59.7 190 57.4" fill="none" stroke="#25392F" stroke-width="1" opacity="0.3"/><path d="M0 74 Q5 77.4 10 78.9 Q15 78.9 20 79.8 Q25 79.8 30 80.0 Q35 80.0 40 79.4 Q45 79.4 50 78.1 Q55 78.1 60 76.3 Q65 76.3 70 74.2 Q75 74.2 80 72.1 Q85 72.1 90 70.3 Q95 70.3 100 68.9 Q105 68.9 110 68.1 Q115 68.1 120 68.1 Q125 68.1 130 68.8 Q135 68.8 140 70.2 Q145 70.2 150 72.1 Q155 72.1 160 74.2 Q165 74.2 170 76.3 Q175 76.3 180 78.1 Q185 78.1 190 79.4" fill="none" stroke="#25392F" stroke-width="1" opacity="0.22"/><path d="M0 94 Q5 100.9 10 100.2 Q15 100.2 20 98.7 Q25 98.7 30 96.5 Q35 96.5 40 94.1 Q45 94.1 50 91.6 Q55 91.6 60 89.5 Q65 89.5 70 87.9 Q75 87.9 80 87.1 Q85 87.1 90 87.1 Q95 87.1 100 88.1 Q105 88.1 110 89.7 Q115 89.7 120 91.9 Q125 91.9 130 94.4 Q135 94.4 140 96.8 Q145 96.8 150 98.9 Q155 98.9 160 100.3 Q165 100.3 170 101.0 Q175 101.0 180 100.7 Q185 100.7 190 99.6" fill="none" stroke="#25392F" stroke-width="1" opacity="0.28"/><path d="M0 114 Q5 115.7 10 113.9 Q15 113.9 20 112.2 Q25 112.2 30 110.7 Q35 110.7 40 109.6 Q45 109.6 50 109.0 Q55 109.0 60 109.1 Q65 109.1 70 109.8 Q75 109.8 80 111.1 Q85 111.1 90 112.7 Q95 112.7 100 114.4 Q105 114.4 110 116.2 Q115 116.2 120 117.6 Q125 117.6 130 118.6 Q135 118.6 140 119.0 Q145 119.0 150 118.8 Q155 118.8 160 117.9 Q165 117.9 170 116.6 Q175 116.6 180 115.0 Q185 115.0 190 113.2" fill="none" stroke="#25392F" stroke-width="1" opacity="0.2"/></pattern>
+<filter id="glow" x="-60%" y="-60%" width="220%" height="220%">
+  <feGaussianBlur stdDeviation="7" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+</filter>
+<filter id="soft" x="-40%" y="-40%" width="180%" height="180%">
+  <feGaussianBlur stdDeviation="3" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+</filter>
+
+</defs>
+<style>
+  text { font-family:system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif; }
+  .mono { font-family:ui-monospace,SFMono-Regular,'SF Mono',Menlo,Consolas,monospace; }
+  .h1 { fill:#EDF3EE; font-weight:700; }
+  .h2 { fill:#EDF3EE; font-weight:650; }
+  .lb { fill:#A8BFB0; font-weight:500; }
+  .mu { fill:#74907F; font-weight:500; }
+  .kicker { fill:#74907F; font-weight:600; letter-spacing:.16em; }
+  @media (prefers-reduced-motion: reduce) { * { animation:none !important; } }
+
+ .flow { stroke-dasharray:4 12; animation:fl 1.9s linear infinite; }
+ @keyframes fl { to { stroke-dashoffset:-32; } }
+ .orb { animation:ob 4.6s cubic-bezier(.55,0,.45,1) infinite; }
+ @keyframes ob { 0%{offset-distance:0%;opacity:0} 8%{opacity:1} 92%{opacity:1} 100%{offset-distance:100%;opacity:0} }
+</style>
+<rect width="1200" height="392" rx="18" fill="url(#bg)"/>
+<rect width="1200" height="392" rx="18" fill="url(#contour)"/>
+<rect x=".5" y=".5" width="1199" height="391" rx="18" fill="none" stroke="#324B3E"/>
+<text x="38" y="44" class="kicker" font-size="12">END-TO-END PIPELINE</text>
+<text x="36" y="74" class="h1" font-size="23">GeoTIFF → tensors → counterfactual → attribution</text>
+<rect x="38" y="108" width="206" height="214" rx="14" fill="url(#panel)" stroke="#324B3E" stroke-width="1"/>
+<rect x="38" y="108" width="206" height="3" rx="1.5" fill="#3E8FD0"/>
+<text x="56" y="144" class="mono h2" font-size="12" fill="#3E8FD0">01</text>
+<text x="56" y="168" class="h2" font-size="14.5" letter-spacing=".06em">INGEST</text>
+<line x1="56" y1="180" x2="226" y2="180" stroke="#324B3E"/>
+<circle cx="60" cy="202" r="2.4" fill="#3E8FD0" opacity=".85"/>
+<text x="70" y="206" class="lb" font-size="11.2">Google Earth Engine</text>
+<circle cx="60" cy="231" r="2.4" fill="#3E8FD0" opacity=".85"/>
+<text x="70" y="235" class="lb" font-size="11.2">Sentinel-2 SR + S-1 GRD</text>
+<circle cx="60" cy="260" r="2.4" fill="#3E8FD0" opacity=".85"/>
+<text x="70" y="264" class="lb" font-size="11.2">quarterly median composite</text>
+<circle cx="60" cy="289" r="2.4" fill="#3E8FD0" opacity=".85"/>
+<text x="70" y="293" class="lb" font-size="11.2">cloud-masked · 10 m</text>
+<line x1="247" y1="215.0" x2="265" y2="215.0" stroke="#324B3E" stroke-width="2"/>
+<line x1="247" y1="215.0" x2="265" y2="215.0" stroke="#3E8FD0" stroke-width="2" class="flow"/>
+<path d="M259 210.5L266 215.0L259 219.5Z" fill="#3E8FD0"/>
+<rect x="268" y="108" width="206" height="214" rx="14" fill="url(#panel)" stroke="#324B3E" stroke-width="1"/>
+<rect x="268" y="108" width="206" height="3" rx="1.5" fill="#1E9E86"/>
+<text x="286" y="144" class="mono h2" font-size="12" fill="#1E9E86">02</text>
+<text x="286" y="168" class="h2" font-size="14.5" letter-spacing=".06em">PREPROCESS</text>
+<line x1="286" y1="180" x2="456" y2="180" stroke="#324B3E"/>
+<circle cx="290" cy="202" r="2.4" fill="#1E9E86" opacity=".85"/>
+<text x="300" y="206" class="lb" font-size="11.2">(T=32, C=7, H, W)</text>
+<circle cx="290" cy="231" r="2.4" fill="#1E9E86" opacity=".85"/>
+<text x="300" y="235" class="lb" font-size="11.2">minmax · shift · z-score</text>
+<circle cx="290" cy="260" r="2.4" fill="#1E9E86" opacity=".85"/>
+<text x="300" y="264" class="lb" font-size="11.2">band-aware NaN fill</text>
+<circle cx="290" cy="289" r="2.4" fill="#1E9E86" opacity=".85"/>
+<text x="300" y="293" class="lb" font-size="11.2">128² patches, stride 64</text>
+<line x1="477" y1="215.0" x2="495" y2="215.0" stroke="#324B3E" stroke-width="2"/>
+<line x1="477" y1="215.0" x2="495" y2="215.0" stroke="#1E9E86" stroke-width="2" class="flow"/>
+<path d="M489 210.5L496 215.0L489 219.5Z" fill="#1E9E86"/>
+<rect x="498" y="108" width="206" height="214" rx="14" fill="url(#panel)" stroke="#324B3E" stroke-width="1"/>
+<rect x="498" y="108" width="206" height="3" rx="1.5" fill="#5EA469"/>
+<text x="516" y="144" class="mono h2" font-size="12" fill="#5EA469">03</text>
+<text x="516" y="168" class="h2" font-size="14.5" letter-spacing=".06em">TRAIN</text>
+<line x1="516" y1="180" x2="686" y2="180" stroke="#324B3E"/>
+<circle cx="520" cy="202" r="2.4" fill="#5EA469" opacity=".85"/>
+<text x="530" y="206" class="lb" font-size="11.2">T_in=4 → T_out=4</text>
+<circle cx="520" cy="231" r="2.4" fill="#5EA469" opacity=".85"/>
+<text x="530" y="235" class="lb" font-size="11.2">EcoRewindLoss (4 terms)</text>
+<circle cx="520" cy="260" r="2.4" fill="#5EA469" opacity=".85"/>
+<text x="530" y="264" class="lb" font-size="11.2">5 architectures</text>
+<circle cx="520" cy="289" r="2.4" fill="#5EA469" opacity=".85"/>
+<text x="530" y="293" class="lb" font-size="11.2">joint, both sites</text>
+<line x1="707" y1="215.0" x2="725" y2="215.0" stroke="#324B3E" stroke-width="2"/>
+<line x1="707" y1="215.0" x2="725" y2="215.0" stroke="#5EA469" stroke-width="2" class="flow"/>
+<path d="M719 210.5L726 215.0L719 219.5Z" fill="#5EA469"/>
+<rect x="728" y="108" width="206" height="214" rx="14" fill="url(#panel)" stroke="#324B3E" stroke-width="1"/>
+<rect x="728" y="108" width="206" height="3" rx="1.5" fill="#B8891F"/>
+<text x="746" y="144" class="mono h2" font-size="12" fill="#B8891F">04</text>
+<text x="746" y="168" class="h2" font-size="14.5" letter-spacing=".06em">ROLL OUT</text>
+<line x1="746" y1="180" x2="916" y2="180" stroke="#324B3E"/>
+<circle cx="750" cy="202" r="2.4" fill="#B8891F" opacity=".85"/>
+<text x="760" y="206" class="lb" font-size="11.2">autoregressive rollout</text>
+<circle cx="750" cy="231" r="2.4" fill="#B8891F" opacity=".85"/>
+<text x="760" y="235" class="lb" font-size="11.2">MC Dropout × 50</text>
+<circle cx="750" cy="260" r="2.4" fill="#B8891F" opacity=".85"/>
+<text x="760" y="264" class="lb" font-size="11.2">climatology floor μ−2σ</text>
+<circle cx="750" cy="289" r="2.4" fill="#B8891F" opacity=".85"/>
+<text x="760" y="293" class="lb" font-size="11.2">never sees the storm</text>
+<line x1="937" y1="215.0" x2="955" y2="215.0" stroke="#324B3E" stroke-width="2"/>
+<line x1="937" y1="215.0" x2="955" y2="215.0" stroke="#B8891F" stroke-width="2" class="flow"/>
+<path d="M949 210.5L956 215.0L949 219.5Z" fill="#B8891F"/>
+<rect x="958" y="108" width="206" height="214" rx="14" fill="url(#panel)" stroke="#324B3E" stroke-width="1"/>
+<rect x="958" y="108" width="206" height="3" rx="1.5" fill="#CE6E96"/>
+<text x="976" y="144" class="mono h2" font-size="12" fill="#CE6E96">05</text>
+<text x="976" y="168" class="h2" font-size="14.5" letter-spacing=".06em">ATTRIBUTE</text>
+<line x1="976" y1="180" x2="1146" y2="180" stroke="#324B3E"/>
+<circle cx="980" cy="202" r="2.4" fill="#CE6E96" opacity=".85"/>
+<text x="990" y="206" class="lb" font-size="11.2">ΔNDVI / ΔNDWI maps</text>
+<circle cx="980" cy="231" r="2.4" fill="#CE6E96" opacity=".85"/>
+<text x="990" y="235" class="lb" font-size="11.2">impacted hectares</text>
+<circle cx="980" cy="260" r="2.4" fill="#CE6E96" opacity=".85"/>
+<text x="990" y="264" class="lb" font-size="11.2">carbon loss tCO₂-eq</text>
+<circle cx="980" cy="289" r="2.4" fill="#CE6E96" opacity=".85"/>
+<text x="990" y="293" class="lb" font-size="11.2">recovery slope</text>
+<line x1="38" y1="352" x2="1162" y2="352" stroke="#324B3E" stroke-dasharray="3 6"/>
+<text x="38" y="376" class="mu" font-size="11.5">Steps 01–03 are supervised and verifiable. Step 04 has no ground truth by construction — that is the hard part, and the reason for the limitations section.</text>
+</svg>
